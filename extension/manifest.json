@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube Aegisub Loader v7.9",
+  "version": "7.9",
+  "permissions": ["storage", "activeTab", "scripting", "unlimitedStorage"],
+  "host_permissions": [
+    "https://www.youtube.com/*",
+    "https://api.github.com/repos/zingky/Kull-Vietsub/*"
+  ],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_title": "Mở Menu Sub" },
+  "content_scripts": [{
+    "matches": ["https://www.youtube.com/*"],
+    "js": ["content.js"],
+    "run_at": "document_idle"
+  }],
+  "web_accessible_resources": [{
+    "resources": ["vnf-comic-sans.ttf"],
+    "matches": ["https://www.youtube.com/*"]
+  }]
+}
