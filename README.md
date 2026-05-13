@@ -1,4 +1,4 @@
-# 🎬 AEGISUB LOADER by Gemini x Kull
+# 🎬 YOUTUBE AEGISUB LOADER by Gemini x Kull
 
 **YouTube Subtitle Engine** is a simple Chrome Extension designed to render basic Aegisub subtitles directly on YouTube. It provides a lightweight solution for viewing `.ass` files with essential styling and simple karaoke effects.
 
@@ -40,7 +40,7 @@ This extension uses **HTML/CSS rendering**, which means it only supports **basic
 ---
 
 <a name="tiếng-việt"></a>
-# 🎬 AEGISUB LOADER by Gemini x Kull (Bản Tiếng Việt)
+# 🎬 YOUTUBE AEGISUB LOADER by Gemini x Kull (Bản Tiếng Việt)
 
 **YouTube Subtitle Engine** là một tiện ích mở rộng đơn giản giúp hiển thị các phụ đề Aegisub cơ bản ngay trên YouTube. Đây là giải pháp gọn nhẹ để xem file `.ass` với các tùy chỉnh kiểu chữ thiết yếu và hiệu ứng karaoke đơn giản.
 
