@@ -5,7 +5,15 @@
     const GITHUB_REPO = "zingky/Kull-Vietsub";
     const GITHUB_PATH = "subs";
 
+    // --- BIẾN MỚI CHO LIBASS ---
+    let octopusInstance = null;
+    let resizeObserver = null;
+    let currentRawAss = ""; 
+    let octopusWorkerUrl = null;
+    let octopusLegacyWorkerUrl = null;
+
     const DEFAULTS = {
+        useLibass: true, // Mặc định bật chế độ Libass
         fontSize: 23, outlineWidth: 1.5, blur: 2, color1: '#ffffff', color3: '#000000',
         useBox: false, boxColor: '#000000', boxOpacity: 0.5, fontFamily: 'VNF-Comic Sans',
         fadIn: 200, fadOut: 200, popupOpacity: 0.95, popupFontSize: 13,
@@ -18,6 +26,8 @@
     };
 
     let globalSettings = JSON.parse(localStorage.getItem(STORAGE_KEY_GLOBAL)) || { ...DEFAULTS };
+    if (typeof globalSettings.useLibass === 'undefined') globalSettings.useLibass = true;
+
     let styleSettings = {};
     let subtitles = [], playResX = 384, playResY = 288, currentVideoId = "";
     let isFullscreen = false;
@@ -53,6 +63,55 @@
     `;
     document.head.appendChild(styleEl);
 
+    // --- HÀM TẠO BLOB ĐỂ QUA MẶT YOUTUBE CORS ---
+    async function createWorkerBlobUrl(fileName, isWasm) {
+        const url = chrome.runtime.getURL('lib/' + fileName);
+        const response = await fetch(url);
+        let text = await response.text();
+        if (isWasm) {
+            const wasmUrl = chrome.runtime.getURL('lib/subtitles-octopus-worker.wasm');
+            text = text.replace(/["']?subtitles-octopus-worker\.wasm["']?/g, `"${wasmUrl}"`);
+        }
+        const blob = new Blob([text], { type: 'application/javascript' });
+        return URL.createObjectURL(blob);
+    }
+
+    // --- HÀM KHỞI TẠO LIBASS ---
+    async function initOctopus(assText) {
+        const videoElement = document.querySelector('video.html5-main-video') || document.querySelector('video');
+        if (!videoElement || !assText) return;
+
+        if (!globalSettings.useLibass) {
+            if (octopusInstance) { try { octopusInstance.dispose(); } catch(e){} octopusInstance = null; }
+            return; 
+        }
+
+        try {
+            // Nạp code dạng Blob ảo để Worker không bị block
+            if (!octopusWorkerUrl) octopusWorkerUrl = await createWorkerBlobUrl('subtitles-octopus-worker.js', true);
+            if (!octopusLegacyWorkerUrl) octopusLegacyWorkerUrl = await createWorkerBlobUrl('subtitles-octopus-worker-legacy.js', false);
+
+            if (octopusInstance) {
+                // Dùng đúng hàm setTrack để không phá huỷ luồng xử lý nền
+                octopusInstance.setTrack(assText);
+            } else {
+                octopusInstance = new SubtitlesOctopus({
+                    video: videoElement,
+                    subContent: assText,
+                    fonts: [fontUrl],
+                    workerUrl: octopusWorkerUrl,
+                    legacyWorkerUrl: octopusLegacyWorkerUrl
+                });
+                if (!resizeObserver) {
+                    resizeObserver = new ResizeObserver(() => { if (octopusInstance) octopusInstance.resize(); });
+                    resizeObserver.observe(videoElement);
+                }
+            }
+        } catch (e) {
+            console.error("Libass init error:", e);
+        }
+    }
+
     function createUI() {
         if (document.getElementById('sub-pro-popup')) return;
         const popup = document.createElement('div');
@@ -65,7 +124,10 @@
 
         popup.innerHTML = `
             <div id="sub-header" style="padding: 10px 15px; background: rgba(255,255,255,0.05); cursor: move; display: flex; justify-content: space-between; align-items: center; border-bottom:1px solid rgba(255,255,255,0.1);">
-                <button id="reset-ui" style="border:1px solid #555; color:#ccc; cursor:pointer; background:rgba(255,255,255,0.1); font-size:10px; padding:2px 8px; border-radius:4px;">🔄 RESET</button>
+                <div style="display:flex; gap:5px; align-items:center;">
+                    <button id="reset-ui" style="border:1px solid #555; color:#ccc; cursor:pointer; background:rgba(255,255,255,0.1); font-size:10px; padding:2px 8px; border-radius:4px;">🔄 RESET</button>
+                    <button id="toggle-libass" style="border:1px solid ${globalSettings.useLibass ? '#00ffaa' : '#ff4e45'}; color:${globalSettings.useLibass ? '#00ffaa' : '#ff4e45'}; background:rgba(0,0,0,0.2); font-size:10px; padding:2px 8px; border-radius:4px; font-weight:bold; cursor:pointer;">LIBASS: ${globalSettings.useLibass ? 'ON' : 'OFF'}</button>
+                </div>
                 <span style="font-weight: bold; color: #3ea6ff; font-size: 12px; flex:1; text-align:center; padding: 0 10px;">AEGISUB LOADER by Gemini x Kull</span>
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <div style="display:flex; align-items:center; gap:5px;"><span style="font-size:9px; color:#aaa;">UI</span><input type="range" id="pop-ui-size" min="10" max="22" value="${globalSettings.popupFontSize}" style="width:40px;"></div>
@@ -81,6 +143,7 @@
                             <span>Status: <span id="auto-sub-status" class="status-tag status-none">Searching...</span></span>
                             <button id="btn-re-auto" title="Fetch GitHub" style="background:none; border:1px solid #444; color:#aaa; cursor:pointer; font-size:10px; border-radius:3px; padding:1px 5px;">🔄 Fetch</button>
                         </div>
+                        <div id="vlc-warning" style="display:${globalSettings.useLibass?'block':'none'}; color:#ffaa00; font-size:10px; margin-bottom:8px; border:1px dashed #ffaa00; padding:4px; border-radius:4px;">⚠️ Đang ở chế độ LIBASS. Các cài đặt bên dưới (Màu, Size, Font) tạm thời không khả dụng trừ khi TẮT Libass!</div>
                         <div class="g-row"><b>Sub:</b> <input type="file" id="assFile" accept=".ass" style="font-size:10px; flex:1;"></div>
                         <div class="g-row"><b>Font:</b> <select id="fontSelect" style="background:#222; color:#fff; flex:1; border:1px solid #444; border-radius:4px;">
                             <option value="VNF-Comic Sans" ${globalSettings.fontFamily === 'VNF-Comic Sans'?'selected':''}>VNF-Comic Sans</option>
@@ -167,10 +230,6 @@
         return `<div class="g-row"><label>${l}</label><input type="range" id="g-${k}" min="${min}" max="${max}" step="${s}" value="${globalSettings[k]}"><input type="number" id="g-${k}Val" value="${globalSettings[k]}" step="${s}" class="num-in"></div>`;
     }
 
-    function renderGlobalColorRow(l, k) {
-        return `<div class="g-row" style="display:none;"><input type="color" id="g-${k}" value="${globalSettings[k]}"></div>`;
-    }
-
     function togglePopup() {
         const p = document.getElementById('sub-pro-popup');
         if (p) {
@@ -191,6 +250,23 @@
         header.onmousedown = (e) => { if(e.target.tagName==='BUTTON'||e.target.tagName==='INPUT') return; isDragging=true; offset=[popup.offsetLeft-e.clientX, popup.offsetTop-e.clientY]; };
         document.addEventListener('mousemove', (e) => { if(isDragging){ popup.style.left=(e.clientX+offset[0])+'px'; popup.style.top=(e.clientY+offset[1])+'px'; }});
         document.addEventListener('mouseup', () => { if(isDragging) saveCache(); isDragging=false; });
+
+        // Tắt bật LIBASS
+        document.getElementById('toggle-libass').onclick = (e) => {
+            globalSettings.useLibass = !globalSettings.useLibass;
+            saveCache();
+            e.target.innerText = `LIBASS: ${globalSettings.useLibass ? 'ON' : 'OFF'}`;
+            e.target.style.color = globalSettings.useLibass ? '#00ffaa' : '#ff4e45';
+            e.target.style.borderColor = globalSettings.useLibass ? '#00ffaa' : '#ff4e45';
+            document.getElementById('vlc-warning').style.display = globalSettings.useLibass ? 'block' : 'none';
+            
+            if (globalSettings.useLibass) {
+                document.getElementById('sub-ultra-layer').innerHTML = ''; // dọn sạch UI cũ trước khi load Libass
+                initOctopus(currentRawAss);
+            } else {
+                if (octopusInstance) { try { octopusInstance.dispose(); } catch(e){} octopusInstance = null; }
+            }
+        };
 
         document.getElementById('btn-k-apply').onclick = () => {
             ['kPre', 'kActive', 'kPost'].forEach(key => {
@@ -260,7 +336,26 @@
         document.getElementById('btn-re-auto').onclick = () => autoFetchSub(getVideoId());
         document.getElementById('reset-ui').onclick = () => { localStorage.clear(); chrome.storage.local.clear(); location.reload(); };
         document.getElementById('closeSubPopup').onclick = () => popup.style.display = 'none';
-        document.getElementById('assFile').onchange = async (e) => { parseASS(await e.target.files[0].text()); };
+        
+        // SỰ KIỆN UPLOAD FILE CHUẨN ĐƯỢC GỌI VỚI SETTRACK VÀ BLOB WORKER
+        document.getElementById('assFile').onchange = (e) => { 
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const text = event.target.result;
+                currentRawAss = text; 
+                parseASS(text);       
+                initOctopus(text);    
+
+                const statusEl = document.getElementById('auto-sub-status');
+                if(statusEl) {
+                    statusEl.className = "status-tag status-ok"; 
+                    statusEl.innerText = "Loaded Local 📄";
+                }
+            };
+            reader.readAsText(file);
+        };
     }
 
     async function autoFetchSub(id) {
@@ -271,7 +366,10 @@
             const found = files.find(f => f.name.startsWith(id) && f.name.endsWith('.ass'));
             if (found) {
                 const text = await (await fetch(`https://cdn.jsdelivr.net/gh/${GITHUB_REPO}@main/${GITHUB_PATH}/${found.name}`)).text();
-                parseASS(text); document.getElementById('auto-sub-status').className = "status-tag status-ok"; document.getElementById('auto-sub-status').innerText = "Auto-Synced ✅";
+                currentRawAss = text;
+                parseASS(text); 
+                initOctopus(text);
+                document.getElementById('auto-sub-status').className = "status-tag status-ok"; document.getElementById('auto-sub-status').innerText = "Auto-Synced ✅";
             } else { document.getElementById('auto-sub-status').innerText = "Not Found ❌"; }
         } catch (e) { document.getElementById('auto-sub-status').innerText = "Error 🚫"; }
     }
@@ -281,7 +379,16 @@
         subtitles = []; styleSettings = {}; document.getElementById('sub-ultra-layer').innerHTML = ''; currentVideoId = id;
         const idDisp = document.getElementById('yt-id-display'); if(idDisp) idDisp.innerText = id;
         chrome.storage.local.get([id], (result) => {
-            if (result[id]) { subtitles = result[id].subtitles; playResX = result[id].playResX; playResY = result[id].playResY; styleSettings = result[id].styleSettings; renderStyles(); document.getElementById('auto-sub-status').innerText = "Cached 💾"; }
+            if (result[id]) { 
+                subtitles = result[id].subtitles; 
+                playResX = result[id].playResX; 
+                playResY = result[id].playResY; 
+                styleSettings = result[id].styleSettings; 
+                currentRawAss = result[id].rawAssContent || ""; 
+                renderStyles(); 
+                if (currentRawAss) initOctopus(currentRawAss);
+                document.getElementById('auto-sub-status').innerText = "Cached 💾"; 
+            }
             else autoFetchSub(id);
         });
     }
@@ -331,11 +438,19 @@
     }
 
     async function saveSubToStorage() {
-        const id = getVideoId(); if (id && subtitles.length) chrome.storage.local.set({ [id]: { subtitles, playResX, playResY, styleSettings } });
+        const id = getVideoId(); 
+        if (id && subtitles.length) chrome.storage.local.set({ [id]: { subtitles, playResX, playResY, styleSettings, rawAssContent: currentRawAss } });
     }
 
     function updateSubtitle() {
         const video = document.querySelector('video'), layer = document.getElementById('sub-ultra-layer');
+        
+        if (globalSettings.useLibass) {
+            if (layer) layer.innerHTML = ''; // Đảm bảo DOM Engine ẩn khi Libass đang hoạt động
+            requestAnimationFrame(updateSubtitle);
+            return;
+        }
+
         if (video && layer && subtitles.length) {
             const time = video.currentTime; const active = subtitles.filter(s => time >= s.start && time <= s.end);
             layer.innerHTML = '';
