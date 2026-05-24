@@ -4,6 +4,8 @@
 
 [Tiếng Việt bên dưới](#tiếng-việt)
 
+<img width="1318" height="1063" alt="image" src="https://github.com/user-attachments/assets/59f9323d-debb-47cf-a589-1c610e69ca9a" />
+
 ---
 
 ## 🌟 Key Features
