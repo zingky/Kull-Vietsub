@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "YouTube Aegisub Loader v10.5 (Iframe Core)",
-  "version": "10.5",
+  "name": "YouTube Aegisub Loader v7.9",
+  "version": "7.9",
   "permissions": ["storage", "activeTab", "scripting", "unlimitedStorage"],
   "host_permissions": [
     "https://www.youtube.com/*",
@@ -11,14 +11,11 @@
   "action": { "default_title": "Mở Menu Sub" },
   "content_scripts": [{
     "matches": ["https://www.youtube.com/*"],
-    "js": ["core-ui.js", "mode-html.js", "mode-jassub.js"],
+    "js": ["content.js", "js/globals.js", "js/parser.js", "js/engine-css.js", "js/ui.js", "js/main.js"],
     "run_at": "document_idle"
   }],
   "web_accessible_resources": [{
-    "resources": ["vnf-comic-sans.ttf", "lib/*", "jassub-renderer.html"],
+    "resources": ["vnf-comic-sans.ttf"],
     "matches": ["https://www.youtube.com/*"]
-  }],
-  "content_security_policy": {
-    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
-  }
+  }]
 }
