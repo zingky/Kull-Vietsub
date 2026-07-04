@@ -121,8 +121,8 @@
                     <span id="yt-id-display" style="color:#3ea6ff; font-weight:bold; font-size:9px;">${__.getVideoId() || 'N/A'}</span>
                     <span id="auto-sub-status" class="status-tag status-none" style="font-size:8px;">Searching...</span>
                     <div style="position:relative; display:inline-flex; align-items:center; gap:2px;">
-                        <input id="sub-search-input" type="text" placeholder="Search sub..." style="background:rgba(255,255,255,0.1); border:1px solid #444; color:#fff; font-size:8px; width:70px; border-radius:3px; padding:1px 3px;">
-                        <button id="btn-fetch-list" title="Fetch file list" style="background:none; border:1px solid #444; color:#aaa; cursor:pointer; font-size:8px; border-radius:3px; padding:0px 3px;">�</button>
+                        <input id="sub-search-input" type="text" placeholder="Search sub..." style="background:rgba(255,255,255,0.1); border:1px solid #444; color:#fff; font-size:8px; width:100px; border-radius:3px; padding:1px 3px;">
+                        <button id="btn-fetch-list" title="Fetch/Refresh file list" style="background:none; border:1px solid #444; color:#aaa; cursor:pointer; font-size:8px; border-radius:3px; padding:0px 3px;">🔍</button>
                         <div id="sub-file-dropdown" style="display:none; position:absolute; top:100%; left:0; background:rgba(20,20,20,0.98); border:1px solid #444; border-radius:4px; max-height:150px; overflow-y:auto; min-width:180px; z-index:2147483647; box-shadow:0 8px 24px rgba(0,0,0,0.8);"></div>
                     </div>
                 </div>
@@ -329,36 +329,32 @@
             }
         });
 
-        // Fetch file list button
-        document.getElementById('btn-fetch-list').onclick = async () => {
-            const btnFetch = document.getElementById('btn-fetch-list');
-            const dropdown = document.getElementById('sub-file-dropdown');
-            btnFetch.innerText = '...';
-            btnFetch.disabled = true;
-            await __.fetchFileList();
-            btnFetch.innerText = '?';
-            btnFetch.disabled = false;
-            // Show dropdown with all files (sorted by relevance)
-            __.renderFileDropdown(dropdown, document.getElementById('sub-search-input').value);
-            dropdown.style.display = 'block';
-        };
-
         // Search input handler
         const searchInput = document.getElementById('sub-search-input');
         const dropdown = document.getElementById('sub-file-dropdown');
 
-        searchInput.addEventListener('focus', () => {
-            if (__.assFileCache.length > 0) {
-                __.renderFileDropdown(dropdown, searchInput.value);
-                dropdown.style.display = 'block';
-            }
+        // Fetch file list button - Explicit Refresh
+        document.getElementById('btn-fetch-list').onclick = async () => {
+            const btnFetch = document.getElementById('btn-fetch-list');
+            btnFetch.innerText = '...';
+            btnFetch.disabled = true;
+            await __.fetchFileList(true); // force refresh from server
+            btnFetch.innerText = '🔍';
+            btnFetch.disabled = false;
+            __.renderFileDropdown(dropdown, searchInput.value);
+            dropdown.style.display = 'block';
+        };
+
+        searchInput.addEventListener('focus', async () => {
+            await __.fetchFileList(false); // load cache if exists
+            __.renderFileDropdown(dropdown, searchInput.value);
+            dropdown.style.display = 'block';
         });
 
-        searchInput.addEventListener('input', () => {
-            if (__.assFileCache.length > 0) {
-                __.renderFileDropdown(dropdown, searchInput.value);
-                dropdown.style.display = 'block';
-            }
+        searchInput.addEventListener('input', async () => {
+            await __.fetchFileList(false); // load cache if exists
+            __.renderFileDropdown(dropdown, searchInput.value);
+            dropdown.style.display = 'block';
         });
 
         // Close dropdown when clicking outside
@@ -399,11 +395,35 @@
         // Footer settings panel toggle
         const footerPanel = document.getElementById('footer-popup-settings-panel');
         const footerBtn = document.getElementById('footer-popup-settings-btn');
+
+        function renderSourcesList() {
+            let html = '';
+            __.subSources.forEach(src => {
+                html += `<div style="display:flex; align-items:center; gap:3px; margin-bottom:2px; font-size:9px;">
+                    <input type="checkbox" id="src-tgl-${src.id}" ${src.enabled ? 'checked' : ''} style="margin:0;">
+                    <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#ccc;">${src.repo}/${src.path}</span>
+                    <button class="src-remove-btn" data-id="${src.id}" style="background:none; border:1px solid #c33; color:#c33; cursor:pointer; border-radius:2px; padding:0px 4px; font-size:8px;">×</button>
+                </div>`;
+            });
+            return html;
+        }
+
         footerPanel.innerHTML = `
-            <div style="display:flex; align-items:center; gap:4px; margin-bottom:8px;">
+            <div style="display:flex; align-items:center; gap:4px; margin-bottom:6px;">
                 <input type="checkbox" id="g-closeOnClickOutside" ${__.globalSettings.closeOnClickOutside ? 'checked' : ''}> <b style="font-size:10px;">Close on click outside</b>
             </div>
+            <div style="display:flex; align-items:center; gap:4px; margin-bottom:6px;">
+                <input type="checkbox" id="g-constrainToVideo" ${__.globalSettings.constrainToVideo ? 'checked' : ''}> <b style="font-size:10px;">Constrain to Video Frame</b>
+            </div>
             <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:6px;">
+                <b style="font-size:10px;">📂 Sub Sources</b>
+                <div id="sources-list" style="margin-top:3px;">${renderSourcesList()}</div>
+                <div style="display:flex; gap:3px; margin-top:4px;">
+                    <input type="text" id="new-source-url" placeholder="Paste GitHub URL..." style="flex:1; background:rgba(255,255,255,0.1); border:1px solid #444; color:#fff; font-size:8px; border-radius:3px; padding:1px 4px;">
+                    <button id="btn-add-source" style="background:rgba(255,255,255,0.1); border:1px solid #4a4; color:#4a4; cursor:pointer; font-size:9px; border-radius:3px; padding:1px 5px;">+ Add</button>
+                </div>
+            </div>
+            <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:6px; margin-top:4px;">
                 <b style="font-size:10px;">📦 Data Management</b>
                 <div style="display:flex; gap:4px; margin-top:4px; flex-wrap:wrap;">
                     <button id="btn-backup-all" style="background:rgba(255,255,255,0.1); border:1px solid #444; color:#fff; font-size:9px; padding:2px 8px; border-radius:4px; cursor:pointer;">Backup All</button>
@@ -418,7 +438,45 @@
                 __.globalSettings.closeOnClickOutside = e.target.checked;
                 __.saveCache();
             }
+            if (e.target.id === 'g-constrainToVideo') {
+                __.globalSettings.constrainToVideo = e.target.checked;
+                __.saveCache();
+            }
         });
+
+        // Sources add/remove/toggle
+        document.getElementById('btn-add-source').onclick = () => {
+            const url = document.getElementById('new-source-url').value.trim();
+            if (!url) return;
+            if (__.addSource(url)) {
+                document.getElementById('new-source-url').value = '';
+                document.getElementById('sources-list').innerHTML = renderSourcesList();
+                wireSourceEvents();
+            } else {
+                alert('Invalid GitHub URL. Expected format: https://github.com/user/repo/tree/branch/path');
+            }
+        };
+        // Allow Enter key to add source
+        document.getElementById('new-source-url').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') document.getElementById('btn-add-source').click();
+        });
+
+        function wireSourceEvents() {
+            document.querySelectorAll('.src-remove-btn').forEach(btn => {
+                btn.onclick = () => {
+                    __.removeSource(btn.dataset.id);
+                    document.getElementById('sources-list').innerHTML = renderSourcesList();
+                    wireSourceEvents();
+                };
+            });
+            document.querySelectorAll('#sources-list input[type="checkbox"]').forEach(cb => {
+                cb.onchange = () => {
+                    const id = cb.id.replace('src-tgl-', '');
+                    __.toggleSource(id);
+                };
+            });
+        }
+        wireSourceEvents();
         footerBtn.onclick = (e) => {
             e.stopPropagation();
             const isOpen = footerPanel.style.display !== 'none';

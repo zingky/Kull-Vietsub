@@ -41,7 +41,7 @@
                 e.stopPropagation();
                 s.posX = __.playResX / 2;
                 if (sName.toLowerCase().includes('roma')) s.posY = 80;
-                else if (sName.toLowerCase().includes('kanji')) s.posY = 135;
+                else if (sName.toLowerCase().includes('kanji')) s.posY = 155;
                 else s.posY = __.playResY - 80;
                 s.fontSize = 23;
                 s.outlineWidth = 1.5;
@@ -67,15 +67,43 @@
         });
     };
 
+    // ============ RESIZE LAYER TO MATCH ACTIVE VIDEO RECT ============
+    function resizeLayer() {
+        const layer = document.getElementById('sub-ultra-layer');
+        const video = document.querySelector('video');
+        if (!layer || !video) return;
+        if (__.globalSettings.constrainToVideo && typeof __.getActiveVideoRect === 'function') {
+            const vr = __.getActiveVideoRect();
+            if (vr) {
+                layer.style.left = vr.left + 'px';
+                layer.style.top = vr.top + 'px';
+                layer.style.width = vr.width + 'px';
+                layer.style.height = vr.height + 'px';
+                layer.style.position = 'absolute';
+                return;
+            }
+        }
+        // Fallback: cover full player container
+        layer.style.left = '0';
+        layer.style.top = '0';
+        layer.style.width = '100%';
+        layer.style.height = '100%';
+    }
+
     // ============ UPDATE SUBTITLES ============
     function updateSubtitle() {
         const video = document.querySelector('video');
         const layer = document.getElementById('sub-ultra-layer');
         if (video && layer && __.subtitles.length) {
+            // Resize layer to active video area each frame (handles fullscreen transitions)
+            resizeLayer();
             layer.innerHTML = '';
             const time = video.currentTime;
             const shifted = __.getShiftedSubs();
             const active = shifted.filter(s => time >= s.start && time <= s.end);
+
+            // ============ FIRST PASS: compute line data & detect explicit ============
+            const lines = [];
             active.forEach(sub => {
                 const s = __.styleSettings[sub.style] || { visible: true };
                 if (!s.visible) return;
@@ -83,19 +111,50 @@
                 const fs = (isO ? s.fontSize : __.globalSettings.fontSize) + (__.isFullscreen ? 10 : 0);
                 const ow = isO ? s.outlineWidth : __.globalSettings.outlineWidth;
                 const bl = isO ? s.blur : __.globalSettings.blur;
-                const oc = s.color3 || __.globalSettings.color3;
+                const oc = isO ? (s.color3 || __.globalSettings.color3) : __.globalSettings.color3;
                 const c1 = isO ? s.color1 : __.globalSettings.color1;
                 const ub = __.globalSettings.useBox;
                 const bc = __.globalSettings.boxColor;
                 const bo = __.globalSettings.boxOpacity;
-                const posX = sub.filePos ? sub.filePos.x : (s.posX || __.playResX / 2);
-                const posY = sub.filePos ? sub.filePos.y : (s.posY || __.playResY - 35);
+                let posX = sub.filePos ? sub.filePos.x : (s.posX || __.playResX / 2);
+                let posY = sub.filePos ? sub.filePos.y : (s.posY || __.playResY - 35);
+                // Explicit positioning: has \pos() in ASS, or style's pos differs from parser default
+                const isExplicit = !!sub.filePos;
+
+                lines.push({ sub, s, isO, fs, ow, bl, oc, c1, ub, bc, bo, posX, posY, isExplicit });
+            });
+
+            // ============ RESOLVE OVERLAP for AUTO-positioned lines ============
+            // Only auto-positioned lines (no \pos() in ASS) get auto-stacked
+            const autoLines = lines.filter(l => !l.isExplicit).sort((a, b) => a.posY - b.posY);
+            let idx = 0;
+            while (idx < autoLines.length) {
+                let end = idx;
+                // Group lines whose Y positions are within 40px of each other
+                while (end + 1 < autoLines.length && autoLines[end + 1].posY - autoLines[idx].posY < 40) {
+                    end++;
+                }
+                const group = autoLines.slice(idx, end + 1);
+                if (group.length > 1) {
+                    // Offset each subsequent line downward by (fontSize + 10px) spacing
+                    const baseY = group[0].posY;
+                    group.forEach((line, i) => {
+                        line.posY = baseY + i * (line.fs + 10);
+                    });
+                }
+                idx = end + 1;
+            }
+
+            // ============ SECOND PASS: render all lines ============
+            lines.forEach(({ sub, s, isO, fs, ow, bl, oc, c1, ub, bc, bo, posX, posY }) => {
                 let opacity = 1;
                 const fadIn = __.globalSettings.fadIn / 1000;
                 const fadOut = __.globalSettings.fadOut / 1000;
                 if (time - sub.start < fadIn) opacity = (time - sub.start) / fadIn;
                 else if (sub.end - time < fadOut) opacity = (sub.end - time) / fadOut;
 
+                // Always use percentage-based positioning within the layer
+                // (the layer is already sized to active video rect via resizeLayer())
                 const div = document.createElement('div');
                 div.style.cssText = `position:absolute; left:${(posX / __.playResX * 100)}%; top:${(posY / __.playResY * 100)}%; transform:translate(-50%, -50%); font-size:${fs}px; font-family:'${__.globalSettings.fontFamily}'; font-weight:${__.globalSettings.isBold ? 'bold' : 'normal'}; font-style:${__.globalSettings.isItalic ? 'italic' : 'normal'}; text-decoration:${__.globalSettings.isUnderline ? 'underline' : ''} ${__.globalSettings.isStrike ? 'line-through' : ''}; text-align:center; white-space:nowrap; pointer-events:none; width:calc(100% - 20px); z-index:99; opacity:${Math.max(0, opacity)};`;
                 const spanWrap = document.createElement('span');
@@ -141,7 +200,7 @@
                     });
                 } else {
                     const outlineSize = isO ? s.outlineWidth : __.globalSettings.outlineWidth;
-                    const outlineColor = s.color3 || __.globalSettings.color3;
+                    const outlineColor = isO ? (s.color3 || __.globalSettings.color3) : __.globalSettings.color3;
                     if (outlineSize > 0) {
                         spanWrap.style.webkitTextStroke = `${outlineSize}px ${outlineColor}`;
                         spanWrap.style.paintOrder = 'stroke fill';
@@ -156,6 +215,24 @@
         }
         requestAnimationFrame(updateSubtitle);
     }
+
+    // ============ FULLSCREEN / RESIZE MONITORING ============
+    const origRequestFullscreen = HTMLVideoElement.prototype.requestFullscreen || HTMLVideoElement.prototype.webkitRequestFullscreen;
+    if (origRequestFullscreen) {
+        HTMLVideoElement.prototype.requestFullscreen = HTMLVideoElement.prototype.webkitRequestFullscreen = function () {
+            __.isFullscreen = true;
+            return origRequestFullscreen.apply(this, arguments);
+        };
+    }
+
+    document.addEventListener('fullscreenchange', () => { __.isFullscreen = !!document.fullscreenElement; });
+    document.addEventListener('webkitfullscreenchange', () => { __.isFullscreen = !!document.webkitFullscreenElement; });
+    // YouTube fires transitionend when switching to/from fullscreen
+    document.addEventListener('transitionend', (e) => {
+        if (e.target.closest && e.target.closest('.html5-video-player')) {
+            // invalidate rect cache, next frame will recalculate
+        }
+    });
 
     __.startEngine = function () {
         requestAnimationFrame(updateSubtitle);

@@ -3,53 +3,80 @@
 
     const __ = window.__SUB;
 
-    // ============ FETCH FILE LIST FROM GITHUB ============
-    __.fetchFileList = async function () {
-        try {
-            const apiUrl = `https://api.github.com/repos/${__.GITHUB_REPO}/contents/${__.GITHUB_PATH}`;
-            const files = await (await fetch(apiUrl)).json();
-            if (Array.isArray(files)) {
-                __.assFileCache = files.filter(f => f.name.endsWith('.ass')).map(f => f.name);
-            }
-        } catch (e) {
-            __.assFileCache = [];
+    // ============ FETCH FILE LIST FROM ALL ENABLED SOURCES ============
+    __.fetchFileList = async function (forceFetch = false) {
+        if (!forceFetch && __.assFileCache && __.assFileCache.length > 0) {
+            return __.assFileCache;
         }
-        return __.assFileCache;
+        return new Promise((resolve) => {
+            chrome.storage.local.get(['github_file_cache'], async (res) => {
+                if (!forceFetch && res.github_file_cache && res.github_file_cache.length > 0) {
+                    __.assFileCache = res.github_file_cache;
+                    resolve(__.assFileCache);
+                } else {
+                    const allFiles = [];
+                    const sources = __.getEnabledSources();
+                    for (const src of sources) {
+                        try {
+                            const apiUrl = `https://api.github.com/repos/${src.repo}/contents/${src.path}`;
+                            const files = await (await fetch(apiUrl)).json();
+                            if (Array.isArray(files)) {
+                                const assFiles = files.filter(f => f.name.endsWith('.ass')).map(f => f.name);
+                                assFiles.forEach(f => { if (!allFiles.includes(f)) allFiles.push(f); });
+                            }
+                        } catch (e) {
+                            // skip failed source
+                        }
+                    }
+                    __.assFileCache = allFiles;
+                    chrome.storage.local.set({ 'github_file_cache': __.assFileCache });
+                    resolve(__.assFileCache);
+                }
+            });
+        });
     };
 
-    // ============ LOAD ASS FROM GITHUB BY NAME ============
+    // ============ LOAD ASS FROM GITHUB BY NAME (try all sources) ============
     __.loadAssFromGitHub = async function (filename) {
-        try {
-            const text = await (await fetch(`https://cdn.jsdelivr.net/gh/${__.GITHUB_REPO}@main/${__.GITHUB_PATH}/${filename}`)).text();
-            __.parseASS(text);
-            const status = document.getElementById('auto-sub-status');
-            if (status) { status.className = "status-tag status-ok"; status.innerText = "Loaded ✅"; }
-            return true;
-        } catch (e) {
-            const status = document.getElementById('auto-sub-status');
-            if (status) status.innerText = "Error 🚫";
-            return false;
+        const sources = __.getEnabledSources();
+        for (const src of sources) {
+            try {
+                const text = await (await fetch(`https://cdn.jsdelivr.net/gh/${src.repo}@main/${src.path}/${filename}`)).text();
+                __.parseASS(text);
+                const status = document.getElementById('auto-sub-status');
+                if (status) { status.className = "status-tag status-ok"; status.innerText = "Loaded ✅"; }
+                return true;
+            } catch (e) {
+                // try next source
+            }
         }
+        const status = document.getElementById('auto-sub-status');
+        if (status) status.innerText = "Error 🚫";
+        return false;
     };
 
-    // ============ AUTO FETCH (by video ID - legacy) ============
+    // ============ AUTO FETCH (by video ID - try all sources) ============
     __.autoFetchSub = async function (id) {
         if (!id) return;
-        try {
-            const apiUrl = `https://api.github.com/repos/${__.GITHUB_REPO}/contents/${__.GITHUB_PATH}`;
-            const files = await (await fetch(apiUrl)).json();
-            const found = files.find(f => f.name.startsWith(id) && f.name.endsWith('.ass'));
-            if (found) {
-                const text = await (await fetch(`https://cdn.jsdelivr.net/gh/${__.GITHUB_REPO}@main/${__.GITHUB_PATH}/${found.name}`)).text();
-                __.parseASS(text);
-                document.getElementById('auto-sub-status').className = "status-tag status-ok";
-                document.getElementById('auto-sub-status').innerText = "Auto-Synced ✅";
-            } else {
-                document.getElementById('auto-sub-status').innerText = "Not Found ❌";
+        const sources = __.getEnabledSources();
+        for (const src of sources) {
+            try {
+                const apiUrl = `https://api.github.com/repos/${src.repo}/contents/${src.path}`;
+                const files = await (await fetch(apiUrl)).json();
+                if (!Array.isArray(files)) continue;
+                const found = files.find(f => f.name.startsWith(id) && f.name.endsWith('.ass'));
+                if (found) {
+                    const text = await (await fetch(`https://cdn.jsdelivr.net/gh/${src.repo}@main/${src.path}/${found.name}`)).text();
+                    __.parseASS(text);
+                    document.getElementById('auto-sub-status').className = "status-tag status-ok";
+                    document.getElementById('auto-sub-status').innerText = "Auto-Synced ✅";
+                    return;
+                }
+            } catch (e) {
+                // try next source
             }
-        } catch (e) {
-            document.getElementById('auto-sub-status').innerText = "Error 🚫";
         }
+        document.getElementById('auto-sub-status').innerText = "Not Found ❌";
     };
 
     __.checkAndLoadVideoSub = async function () {
