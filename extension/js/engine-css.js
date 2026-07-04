@@ -67,23 +67,43 @@
         });
     };
 
-    // ============ RESIZE LAYER TO MATCH ACTIVE VIDEO RECT ============
+    // ============ RESIZE LAYER TO COVER FULL PLAYER ============
+    // Subtitles always span the full player height (including controls area)
+    // so they can appear near the bottom, under the YouTube controls overlay.
     function resizeLayer() {
         const layer = document.getElementById('sub-ultra-layer');
         const video = document.querySelector('video');
         if (!layer || !video) return;
-        if (__.globalSettings.constrainToVideo && typeof __.getActiveVideoRect === 'function') {
-            const vr = __.getActiveVideoRect();
-            if (vr) {
-                layer.style.left = vr.left + 'px';
-                layer.style.top = vr.top + 'px';
-                layer.style.width = vr.width + 'px';
-                layer.style.height = vr.height + 'px';
-                layer.style.position = 'absolute';
-                return;
+        const player = video.closest('.html5-video-player');
+        if (player) {
+            const pRect = player.getBoundingClientRect();
+            const vRect = video.getBoundingClientRect();
+            const offsetLeft = vRect.left - pRect.left;
+            const offsetTop = vRect.top - pRect.top;
+
+            if (__.globalSettings.constrainToVideo && typeof __.getActiveVideoRect === 'function') {
+                const vr = __.getActiveVideoRect();
+                if (vr) {
+                    // Keep subtitles inside the active video area (no overflow into controls)
+                    layer.style.left = vr.left + 'px';
+                    layer.style.top = vr.top + 'px';
+                    layer.style.width = vr.width + 'px';
+                    layer.style.height = vr.height + 'px';
+                    layer.style.position = 'absolute';
+                    layer.style.bottom = 'auto';
+                    return;
+                }
             }
+            // Cover full player area (extends into controls area at bottom)
+            layer.style.left = '0';
+            layer.style.top = '0';
+            layer.style.width = '100%';
+            layer.style.height = '100%';
+            layer.style.position = 'absolute';
+            layer.style.bottom = 'auto';
+            return;
         }
-        // Fallback: cover full player container
+        // Fallback
         layer.style.left = '0';
         layer.style.top = '0';
         layer.style.width = '100%';
