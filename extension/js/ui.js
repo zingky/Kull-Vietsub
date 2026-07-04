@@ -25,6 +25,73 @@
         return `<div class="g-row"><label>${l}</label><input type="range" id="g-${k}" min="${min}" max="${max}" step="${s}" value="${__.globalSettings[k]}"><input type="number" id="g-${k}Val" value="${__.globalSettings[k]}" step="${s}" class="num-in"></div>`;
     }
 
+    // ============ FILE DROPDOWN SEARCH ============
+    __.renderFileDropdown = function (dropdown, query) {
+        dropdown.innerHTML = '';
+        const files = __.assFileCache || [];
+        if (!files.length) {
+            dropdown.innerHTML = '<div style="padding:6px;color:#888;font-size:8px;">No files. Click ? to load list.</div>';
+            return;
+        }
+        const titleWords = (async () => {
+            try {
+                const t = await __.getVideoTitle();
+                return t ? t.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/).filter(w => w.length > 1) : [];
+            } catch(e) { return []; }
+        })();
+        // Score function: how well a filename matches
+        const scoreFile = (fname, words, q) => {
+            const fn = fname.toLowerCase().replace(/[^\w\s]/g, '');
+            let s = 0;
+            // Search query match
+            if (q && q.length > 0) {
+                const ql = q.toLowerCase();
+                if (fn.includes(ql)) s += 100;
+            }
+            // Title word matches
+            if (words && words.length) {
+                words.forEach(w => {
+                    if (fn.includes(w)) s += 10;
+                });
+            }
+            return s;
+        };
+        // Use sync approach with current title state
+        const title = document.querySelector('h1.ytd-watch-metadata yt-formatted-string');
+        const titleText = title ? title.textContent.trim() : document.title.replace(' - YouTube', '').trim();
+        const titleWordsArr = titleText.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/).filter(w => w.length > 1);
+        const q = (query || '').toLowerCase().trim();
+        // Score and sort
+        const scored = files.map(f => ({ name: f, score: scoreFile(f, titleWordsArr, q) }));
+        scored.sort((a, b) => b.score - a.score);
+        // Filter: if query, show all; else show top 20
+        const show = q ? scored : scored.slice(0, 20);
+        if (!show.length) {
+            dropdown.innerHTML = '<div style="padding:6px;color:#888;font-size:8px;">No matching files.</div>';
+            return;
+        }
+        show.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'sub-file-item';
+            div.dataset.filename = item.name;
+            div.style.cssText = 'padding:4px 8px; cursor:pointer; font-size:8px; color:#ccc; border-bottom:1px solid rgba(255,255,255,0.05); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;';
+            // Highlight matching parts
+            if (item.score > 0) {
+                div.style.color = '#3ea6ff';
+                div.style.background = 'rgba(62,166,255,0.05)';
+            }
+            div.textContent = item.name;
+            div.onmouseenter = () => div.style.background = 'rgba(62,166,255,0.15)';
+            div.onmouseleave = () => div.style.background = item.score > 0 ? 'rgba(62,166,255,0.05)' : 'transparent';
+            dropdown.appendChild(div);
+        });
+        // Count
+        const info = document.createElement('div');
+        info.style.cssText = 'padding:3px 8px; font-size:7px; color:#666; border-top:1px solid rgba(255,255,255,0.1);';
+        info.textContent = q ? `${show.length} results` : `${files.length} files (showing top 20)`;
+        dropdown.appendChild(info);
+    };
+
     __.togglePopup = function () {
         const p = document.getElementById('sub-pro-popup');
         if (p) {
@@ -53,7 +120,11 @@
                 <div style="display:flex; align-items:center; gap:2px; font-size:9px; color:#aaa; flex:1;">
                     <span id="yt-id-display" style="color:#3ea6ff; font-weight:bold; font-size:9px;">${__.getVideoId() || 'N/A'}</span>
                     <span id="auto-sub-status" class="status-tag status-none" style="font-size:8px;">Searching...</span>
-                    <button id="btn-re-auto" title="Fetch GitHub" style="background:none; border:1px solid #444; color:#aaa; cursor:pointer; font-size:8px; border-radius:3px; padding:0px 3px;">🔄</button>
+                    <div style="position:relative; display:inline-flex; align-items:center; gap:2px;">
+                        <input id="sub-search-input" type="text" placeholder="Search sub..." style="background:rgba(255,255,255,0.1); border:1px solid #444; color:#fff; font-size:8px; width:70px; border-radius:3px; padding:1px 3px;">
+                        <button id="btn-fetch-list" title="Fetch file list" style="background:none; border:1px solid #444; color:#aaa; cursor:pointer; font-size:8px; border-radius:3px; padding:0px 3px;">�</button>
+                        <div id="sub-file-dropdown" style="display:none; position:absolute; top:100%; left:0; background:rgba(20,20,20,0.98); border:1px solid #444; border-radius:4px; max-height:150px; overflow-y:auto; min-width:180px; z-index:2147483647; box-shadow:0 8px 24px rgba(0,0,0,0.8);"></div>
+                    </div>
                 </div>
                 <div style="display:flex; flex-direction:column; gap:1px; align-items:flex-end; position:relative; padding-right:16px;">
                     <div style="display:flex; align-items:center; gap:2px;"><span style="font-size:7px; color:#aaa;">Zoom</span><input type="range" id="pop-zoom" min="1.0" max="1.3" step="0.1" value="${__.globalSettings.popupZoom}" style="width:45px;height:3px;"></div>
@@ -258,7 +329,56 @@
             }
         });
 
-        document.getElementById('btn-re-auto').onclick = () => { if (typeof __.autoFetchSub === 'function') __.autoFetchSub(__.getVideoId()); };
+        // Fetch file list button
+        document.getElementById('btn-fetch-list').onclick = async () => {
+            const btnFetch = document.getElementById('btn-fetch-list');
+            const dropdown = document.getElementById('sub-file-dropdown');
+            btnFetch.innerText = '...';
+            btnFetch.disabled = true;
+            await __.fetchFileList();
+            btnFetch.innerText = '?';
+            btnFetch.disabled = false;
+            // Show dropdown with all files (sorted by relevance)
+            __.renderFileDropdown(dropdown, document.getElementById('sub-search-input').value);
+            dropdown.style.display = 'block';
+        };
+
+        // Search input handler
+        const searchInput = document.getElementById('sub-search-input');
+        const dropdown = document.getElementById('sub-file-dropdown');
+
+        searchInput.addEventListener('focus', () => {
+            if (__.assFileCache.length > 0) {
+                __.renderFileDropdown(dropdown, searchInput.value);
+                dropdown.style.display = 'block';
+            }
+        });
+
+        searchInput.addEventListener('input', () => {
+            if (__.assFileCache.length > 0) {
+                __.renderFileDropdown(dropdown, searchInput.value);
+                dropdown.style.display = 'block';
+            }
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('mousedown', function __closeSearchDropdown(e) {
+            if (!dropdown.contains(e.target) && e.target !== searchInput) {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        // When user selects a file from dropdown
+        dropdown.addEventListener('click', async (e) => {
+            const item = e.target.closest('.sub-file-item');
+            if (item && item.dataset.filename) {
+                dropdown.style.display = 'none';
+                searchInput.value = item.dataset.filename;
+                const statusEl = document.getElementById('auto-sub-status');
+                if (statusEl) { statusEl.className = "status-tag status-none"; statusEl.innerText = "Loading..."; }
+                await __.loadAssFromGitHub(item.dataset.filename);
+            }
+        });
         document.getElementById('reset-ui').onclick = () => { localStorage.clear(); chrome.storage.local.clear(); location.reload(); };
         document.getElementById('closeSubPopup').onclick = () => popup.style.display = 'none';
         document.getElementById('assFile').onchange = async (e) => { if (typeof __.parseASS === 'function') __.parseASS(await e.target.files[0].text()); };

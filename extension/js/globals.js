@@ -33,6 +33,7 @@
     __.isFullscreen = false;
     __.timeShiftMs = 0;
     __.fontUrl = chrome.runtime.getURL("vnf-comic-sans.ttf");
+    __.assFileCache = [];
 
     __.getVideoId = function () {
         const urlParams = new URLSearchParams(window.location.search);
