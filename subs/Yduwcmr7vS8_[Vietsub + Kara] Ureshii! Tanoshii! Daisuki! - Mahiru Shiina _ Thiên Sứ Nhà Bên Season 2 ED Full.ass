@@ -1,0 +1,86 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 3840
+PlayResY: 2160
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Arial,20,&HFFFFFF,&H0000FF,&H000000,&H000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,10,1
+Style: kanji,Arial,20,&HFFFFFF,&H0000FF,&H7F1AFD,&H000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,10,1
+Style: romaji,Arial,20,&HFFFFFF,&H0000FF,&H7F1AFD,&H000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,10,1
+Style: vietsub,Arial,20,&HFFFFFF,&H0000FF,&H7F1AFD,&H000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,10,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:13.21,0:00:21.51,romaji,,0,0,0,,{\k22}{\k50}ha{\k29}ji{\k16}me{\k52}te {\k28}a{\k36}tta {\k52}to{\k30}ki {\k14}ka{\k62}ra {\k30}chi{\k17}ga{\k37}u {\k26}mo{\k27}no {\k13}ka{\k62}n{\k44}ji{\k29}te{\k154}ta
+Dialogue: 0,0:00:21.51,0:00:29.90,romaji,,0,0,0,,{\k39}{\k56}ji{\k28}bu{\k15}n {\k51}no {\k14}na{\k16}ka {\k37}no {\k53}da{\k27}re{\k13}ka {\k66}ga {\k27}ko{\k13}ko{\k40}ro {\k25}o {\k26}tsu{\k27}tsu{\k54}i{\k26}te {\k13}i{\k173}ta
+Dialogue: 0,0:00:29.90,0:00:38.36,romaji,,0,0,0,,{\k26}{\k28}to{\k27}mo{\k25}da{\k27}chi {\k14}ni {\k92}wa {\k15}u{\k11}ma{\k31}ku {\k24}i{\k27}e{\k24}na{\k79}i {\k29}ko{\k26}no {\k26}pa{\k26}wa{\k15}a {\k93}no {\k24}mi{\k27}na{\k28}mo{\k27}to {\k75}o
+Dialogue: 0,0:00:38.36,0:00:42.73,romaji,,0,0,0,,{\k16}{\k41}“ko{\k26}i {\k24}o {\k31}shi{\k12}te{\k93}ru” {\k12}ta{\k15}da {\k27}so{\k13}re {\k28}da{\k24}ke {\k75}ja
+Dialogue: 0,0:00:42.73,0:00:46.57,romaji,,0,0,0,,{\k14}{\k17}su{\k11}ma{\k28}sa{\k16}re{\k13}na{\k16}i {\k24}ko{\k39}to {\k10}no {\k16}yo{\k12}u {\k27}na {\k39}ki {\k11}ga {\k32}shi{\k26}te{\k33}ru
+Dialogue: 0,0:00:46.57,0:00:55.07,romaji,,0,0,0,,{\k17}{\k26}ki{\k30}tto {\k45}so{\k21}u {\k27}na{\k13}n{\k54}da {\k12}me{\k13}gu{\k27}ri{\k37}a{\k28}e{\k24}ta{\k17}n{\k64}da {\k43}zu{\k34}tto {\k31}sa{\k22}ga{\k31}shi{\k54}te{\k46}ta {\k60}hi{\k37}to {\k37}ni
+Dialogue: 0,0:00:55.07,0:01:03.63,romaji,,0,0,0,,{\k20}{\k13}ma{\k13}bu{\k29}ka {\k50}ni {\k39}shi{\k13}te{\k56}ta {\k11}bo{\k9}u{\k33}shi {\k55}no {\k36}tsu{\k14}ba {\k66}o {\k41}gu{\k39}tto {\k26}a{\k27}ge{\k27}ta{\k50}i {\k29}ki{\k12}bu{\k148}n
+Dialogue: 0,0:01:18.86,0:01:27.51,romaji,,0,0,0,,{\k43}{\k51}‘wa{\k40}ka{\k55}tte{\k14}i{\k14}ta {\k38}no {\k54}ma{\k26}e {\k15}ka{\k65}ra {\k26}ko{\k14}u {\k39}na{\k25}ru {\k29}ko{\k26}to {\k51}mo {\k69}zu{\k171}tto’
+Dialogue: 0,0:01:27.51,0:01:35.72,romaji,,0,0,0,,{\k28}{\k52}wa{\k20}ta{\k22}shi {\k51}no {\k12}ko{\k16}to{\k37}ba {\k54}ha{\k26}n{\k15}bu{\k64}n {\k29}wa{\k52}ra{\k26}tte {\k28}ki{\k25}i{\k54}te{\k26}ru {\k15}ke{\k169}do
+Dialogue: 0,0:01:35.72,0:01:44.17,romaji,,0,0,0,,{\k29}{\k23}sho{\k28}u{\k29}ko {\k39}da{\k93}tte {\k31}cha{\k24}n{\k26}to {\k24}a{\k14}ru {\k96}yo {\k23}ha{\k29}ji{\k26}me{\k26}te {\k15}te {\k91}o {\k26}tsu{\k26}na{\k27}i{\k26}de {\k15}ka{\k59}ra
+Dialogue: 0,0:01:44.17,0:01:48.56,romaji,,0,0,0,,{\k19}{\k30}so{\k11}no {\k26}a{\k21}to {\k32}su{\k14}gu {\k94}ni {\k12}wa{\k10}ta{\k31}shi {\k25}no {\k26}mi{\k14}gi{\k74}te
+Dialogue: 0,0:01:48.56,0:01:52.44,romaji,,0,0,0,,{\k15}{\k18}su{\k12}u{\k22}pa{\k19}a {\k23}de {\k30}su{\k34}pe{\k19}sha{\k26}ru {\k28}ni {\k52}na{\k29}tta {\k26}mo{\k35}no
+Dialogue: 0,0:01:52.44,0:01:56.84,romaji,,0,0,0,,{\k17}{\k26}ya{\k27}ppa{\k63}ri {\k31}so{\k12}u {\k54}da {\k11}a{\k16}na{\k25}ta {\k66}da{\k24}tta {\k17}n{\k51}da
+Dialogue: 0,0:01:56.84,0:02:00.99,romaji,,0,0,0,,{\k15}{\k26}u{\k8}re{\k44}shi{\k29}i! {\k26}ta{\k21}no{\k58}shi{\k54}i! {\k29}da{\k15}i{\k48}su{\k42}ki!
+Dialogue: 0,0:02:00.99,0:02:09.96,romaji,,0,0,0,,{\k12}{\k13}na{\k13}n{\k26}de{\k67}mo {\k27}de{\k12}ki{\k48}ru {\k18}tsu{\k23}yo{\k16}i {\k64}pa{\k30}wa{\k15}a {\k66}ga {\k25}do{\k15}n{\k31}do{\k34}n {\k26}wa{\k28}i{\k52}te {\k25}ku{\k16}ru {\k195}yo
+Dialogue: 0,0:02:27.18,0:02:31.60,romaji,,0,0,0,,{\k37}{\k13}~ho{\k11}n{\k17}to {\k23}wa {\k40}a{\k26}na{\k27}ta {\k21}mo {\k84}shi{\k52}tte{\k27}ta {\k13}ha{\k51}zu
+Dialogue: 0,0:02:31.60,0:02:37.83,romaji,,0,0,0,,{\k14}{\k28}sa{\k10}i{\k32}sho {\k40}ka{\k24}ra {\k26}wa{\k23}ta{\k56}shi {\k24}o {\k30}su{\k25}ki {\k46}da{\k35}tta {\k26}ku{\k15}se {\k169}ni~
+Dialogue: 0,0:02:38.93,0:02:47.64,romaji,,0,0,0,,{\k39}{\k27}ya{\k27}ppa{\k59}ri {\k34}so{\k14}u {\k53}da {\k14}me{\k13}gu{\k27}ri{\k39}a{\k25}e{\k28}ta{\k13}n{\k65}da {\k42}zu{\k27}tto {\k38}sa{\k21}ga{\k33}shi{\k54}te{\k45}ta {\k59}hi{\k42}to {\k33}ni
+Dialogue: 0,0:02:47.64,0:02:56.14,romaji,,0,0,0,,{\k19}{\k12}i{\k15}tsu{\k26}mo {\k67}ko{\k26}n{\k12}na {\k49}ni {\k22}shi{\k11}a{\k23}wa{\k43}se {\k23}na {\k30}ki{\k12}mo{\k65}chi {\k26}mo{\k15}chi{\k38}tsu{\k28}zu{\k28}ke{\k25}te {\k52}i{\k28}ra{\k14}re{\k141}ru
+Dialogue: 0,0:02:56.14,0:03:00.63,romaji,,0,0,0,,{\k20}{\k11}a{\k14}na{\k26}ta {\k62}ga {\k33}so{\k10}u {\k56}da {\k10}a{\k16}na{\k25}ta {\k65}da{\k25}tta {\k16}n{\k60}da
+Dialogue: 0,0:03:00.63,0:03:04.62,romaji,,0,0,0,,{\k15}{\k26}u{\k8}re{\k44}shi{\k29}i! {\k26}ta{\k21}no{\k58}shi{\k54}i! {\k29}da{\k15}i{\k48}su{\k26}ki!
+Dialogue: 0,0:03:04.62,0:03:09.11,romaji,,0,0,0,,{\k19}{\k28}ya{\k27}ppa{\k58}ri {\k33}so{\k14}u {\k39}da {\k28}me{\k14}gu{\k24}ri{\k41}a{\k26}e{\k28}ta{\k14}n{\k56}da {\k0}
+Dialogue: 0,0:03:09.11,0:03:13.26,romaji,,0,0,0,,{\k8}{\k27}u{\k11}re{\k48}shi{\k21}i! {\k26}ta{\k17}no{\k63}shi{\k41}i! {\k20}da{\k11}i{\k59}su{\k63}ki!
+Dialogue: 0,0:03:13.26,0:03:30.28,romaji,,0,0,0,,
+Dialogue: 0,0:00:13.21,0:00:21.51,kanji,,0,0,0,,{\k22}{\k79}初{\k16}め{\k52}て{\k19}会{\k9}っ{\k36}た{\k82}時{\k14}か{\k62}ら　{\k47}違{\k47}う{\k26}モ{\k27}ノ{\k75}感{\k44}じ{\k29}て{\k154}た
+Dialogue: 0,0:00:21.51,0:00:29.90,kanji,,0,0,0,,{\k39}{\k56}自{\k43}分{\k51}の{\k30}中{\k37}の{\k80}誰{\k13}か{\k66}が　{\k80}心{\k25}を{\k26}つ{\k27}つ{\k54}い{\k26}て{\k13}い{\k173}た
+Dialogue: 0,0:00:29.90,0:00:38.36,kanji,,0,0,0,,{\k26}{\k55}友{\k52}達{\k14}に{\k92}は{\k15}う{\k11}ま{\k31}く{\k24}言{\k27}え{\k24}な{\k79}い　{\k29}こ{\k26}の{\k26}パ{\k26}ワ{\k15}ー{\k93}の{\k106}源{\k75}を
+Dialogue: 0,0:00:38.36,0:00:42.73,kanji,,0,0,0,,{\k16}{\k67}“恋{\k24}を{\k31}し{\k12}て{\k93}る” {\k12}た{\k15}だ{\k27}そ{\k13}れ{\k28}だ{\k24}け{\k24}じ{\k75}ゃ
+Dialogue: 0,0:00:42.73,0:00:46.57,kanji,,0,0,0,,{\k14}{\k17}済{\k11}ま{\k28}さ{\k16}れ{\k13}な{\k16}い{\k24}こ{\k39}と{\k10}の{\k16}よ{\k12}う{\k27}な{\k39}気{\k11}が{\k32}し{\k26}て{\k33}る
+Dialogue: 0,0:00:46.57,0:00:55.07,kanji,,0,0,0,,{\k17}{\k26}き{\k10}っ{\k20}と{\k45}そ{\k21}う{\k27}な{\k13}ん{\k54}だ　{\k12}め{\k13}ぐ{\k27}り{\k37}あ{\k28}え{\k24}た{\k17}ん{\k64}だ{\k43}　ず{\k11}っ{\k33}と{\k53}探{\k31}し{\k41}て{\k46}た{\k97}人{\k37}に
+Dialogue: 0,0:00:55.07,0:01:03.63,kanji,,0,0,0,,{\k20}{\k13}目{\k42}深{\k50}に{\k39}し{\k13}て{\k56}た{\k20}帽{\k33}子{\k55}の{\k36}つ{\k14}ば{\k66}を　{\k41}ぐ{\k13}っ{\k26}と{\k26}上{\k27}げ{\k27}た{\k50}い{\k29}気{\k160}分
+Dialogue: 0,0:01:18.86,0:01:27.51,kanji,,0,0,0,,{\k43}{\k51}‘わ{\k40}か{\k18}っ{\k37}て{\k14}い{\k14}た{\k38}の{\k80}前{\k37}か{\k65}ら　{\k26}こ{\k14}う{\k39}な{\k25}る{\k29}こ{\k26}と{\k51}も{\k69}ず{\k57}っ{\k114}と’
+Dialogue: 0,0:01:27.51,0:01:35.72,kanji,,0,0,0,,{\k28}{\k94}私{\k51}の{\k28}言{\k37}葉　{\k80}半{\k79}分{\k18}笑{\k9}っ{\k26}て{\k28}聞{\k25}い{\k54}て{\k26}る{\k15}け{\k169}ど
+Dialogue: 0,0:01:35.72,0:01:44.17,kanji,,0,0,0,,{\k29}{\k51}証{\k29}拠{\k26}だ{\k13}っ{\k93}て{\k10}ち{\k21}ゃ{\k24}ん{\k26}と{\k24}あ{\k14}る{\k96}よ　{\k52}初{\k26}め{\k26}て{\k15}手{\k91}を{\k26}つ{\k26}な{\k27}い{\k26}で{\k15}か{\k59}ら
+Dialogue: 0,0:01:44.17,0:01:48.56,kanji,,0,0,0,,{\k19}{\k30}そ{\k11}の{\k47}後{\k32}す{\k14}ぐ{\k94}に　{\k53}私{\k25}の{\k40}右{\k74}手
+Dialogue: 0,0:01:48.56,0:01:52.44,kanji,,0,0,0,,{\k15}{\k18}ス{\k12}ー{\k22}パ{\k19}ー{\k23}で{\k30}ス{\k34}ペ{\k13}シ{\k6}ャ{\k26}ル{\k28}に{\k35}な{\k17}っ{\k29}た{\k26}も{\k35}の
+Dialogue: 0,0:01:52.44,0:01:56.84,kanji,,0,0,0,,{\k17}{\k26}や{\k8}っ{\k27}ぱ{\k63}り{\k31}そ{\k12}う{\k54}だ　{\k11}あ{\k16}な{\k25}た{\k44}だ{\k22}っ{\k24}た{\k17}ん{\k51}だ
+Dialogue: 0,0:01:56.84,0:02:00.99,kanji,,0,0,0,,{\k15}{\k26}う{\k8}れ{\k44}し{\k29}い！ {\k26}た{\k21}の{\k58}し{\k54}い！ {\k29}大{\k15}き{\k48}す{\k42}き！
+Dialogue: 0,0:02:00.99,0:02:09.96,kanji,,0,0,0,,{\k12}{\k26}何{\k26}で{\k67}も{\k27}で{\k12}き{\k48}る{\k41}強{\k16}い{\k64}パ{\k30}ワ{\k15}ー{\k66}が　{\k25}ど{\k15}ん{\k31}ど{\k34}ん{\k26}湧{\k28}い{\k52}て{\k25}く{\k16}る{\k195}よ
+Dialogue: 0,0:02:27.18,0:02:31.60,kanji,,0,0,0,,{\k37}{\k13}～ホ{\k11}ン{\k17}ト{\k23}は　{\k40}あ{\k26}な{\k27}た{\k21}も{\k56}知{\k28}っ{\k52}て{\k27}た{\k13}は{\k51}ず
+Dialogue: 0,0:02:31.60,0:02:37.83,kanji,,0,0,0,,{\k14}{\k38}最{\k32}初{\k40}か{\k24}ら　{\k105}私{\k24}を{\k30}好{\k25}き{\k31}だ{\k15}っ{\k35}た{\k26}く{\k15}せ{\k169}に～
+Dialogue: 0,0:02:38.93,0:02:47.64,kanji,,0,0,0,,{\k39}{\k19}や{\k9}っ{\k27}ぱ{\k59}り{\k34}そ{\k14}う{\k53}だ　{\k14}め{\k13}ぐ{\k27}り{\k39}あ{\k25}え{\k28}た{\k13}ん{\k65}だ　{\k28}ず{\k14}っ{\k27}と{\k59}探{\k33}し{\k54}て{\k45}た{\k101}人{\k33}に
+Dialogue: 0,0:02:47.64,0:02:56.14,kanji,,0,0,0,,{\k19}{\k12}い{\k15}つ{\k26}も{\k67}こ{\k26}ん{\k12}な{\k49}に{\k22}シ{\k11}ア{\k23}ワ{\k43}セ{\k34}な{\k30}気{\k12}持{\k65}ち　{\k26}持{\k15}ち{\k66}続{\k28}け{\k25}て{\k52}い{\k28}ら{\k14}れ{\k141}る
+Dialogue: 0,0:02:56.14,0:03:00.63,kanji,,0,0,0,,{\k20}{\k11}あ{\k14}な{\k26}た{\k62}が{\k33}そ{\k10}う{\k56}だ　{\k10}あ{\k16}な{\k25}た{\k44}だ{\k21}っ{\k25}た{\k16}ん{\k60}だ
+Dialogue: 0,0:03:00.63,0:03:04.62,kanji,,0,0,0,,{\k15}{\k26}う{\k8}れ{\k44}し{\k29}い！{\k26}た{\k21}の{\k58}し{\k54}い！{\k44}大{\k48}好{\k26}き！
+Dialogue: 0,0:03:04.62,0:03:09.11,kanji,,0,0,0,,{\k19}{\k19}や{\k9}っ{\k27}ぱ{\k58}り{\k33}そ{\k14}う{\k39}だ　{\k28}め{\k14}ぐ{\k24}り{\k41}あ{\k26}え{\k28}た{\k14}ん{\k56}だ
+Dialogue: 0,0:03:09.11,0:03:13.26,kanji,,0,0,0,,{\k8}{\k27}う{\k11}れ{\k48}し{\k21}い！{\k26}た{\k17}の{\k63}し{\k41}い！{\k31}大{\k59}好{\k63}き！
+Dialogue: 0,0:03:13.26,0:03:30.28,kanji,,0,0,0,,
+Dialogue: 0,0:00:13.21,0:00:21.51,vietsub,,0,0,0,,Từ giây phút lần đầu gặp gỡ, tớ đã cảm thấy một điều thật khác lạ.
+Dialogue: 0,0:00:21.51,0:00:29.90,vietsub,,0,0,0,,Như thể trong lòng tớ có ai đó, đang lay động con tim này vậy.
+Dialogue: 0,0:00:29.90,0:00:38.36,vietsub,,0,0,0,,Chẳng thể nào diễn tả, với bạn với bè, nguồn gốc của sức mạnh này.
+Dialogue: 0,0:00:38.36,0:00:42.73,vietsub,,0,0,0,,"Tớ đang yêu đấy", nếu chỉ nói vậy thôi,
+Dialogue: 0,0:00:42.73,0:00:46.57,vietsub,,0,0,0,,thì chẳng thể giải thích được hết mọi điều đâu.
+Dialogue: 0,0:00:46.57,0:00:55.07,vietsub,,0,0,0,,Nhất định là vậy rồi, tớ đã gặp được một bóng hình, tớ hằng tìm kiếm bấy lâu.
+Dialogue: 0,0:00:55.07,0:01:03.63,vietsub,,0,0,0,,Cảm giác như muốn vén lên cao, cái vành nón đang che khuất mắt mình.
+Dialogue: 0,0:01:18.86,0:01:27.51,vietsub,,0,0,0,,"Tớ đã biết từ trước rồi, chuyện chúng mình rồi sẽ đến bước này."
+Dialogue: 0,0:01:27.51,0:01:35.72,vietsub,,0,0,0,,Dù nghe những lời tớ nói, cậu cũng, chỉ hé nửa nụ cười mà thôi.
+Dialogue: 0,0:01:35.72,0:01:44.17,vietsub,,0,0,0,,Nhưng tớ có bằng chứng đấy nhé, từ lần đầu tiên ta nắm tay nhau.
+Dialogue: 0,0:01:44.17,0:01:48.56,vietsub,,0,0,0,,Và rồi ngay sau đó, tay phải của tớ
+Dialogue: 0,0:01:48.56,0:01:52.44,vietsub,,0,0,0,,đã trở nên siêu cấp đặc biệt.
+Dialogue: 0,0:01:52.44,0:01:56.84,vietsub,,0,0,0,,Quả nhiên là vậy, đúng là cậu rồi!
+Dialogue: 0,0:01:56.84,0:02:00.99,vietsub,,0,0,0,,Hạnh phúc lắm! Vui sướng lắm! Tớ yêu lắm!
+Dialogue: 0,0:02:00.99,0:02:09.96,vietsub,,0,0,0,,Một nguồn sức mạnh, đủ sức làm mọi điều, đang không ngừng trào dâng.
+Dialogue: 0,0:02:27.18,0:02:31.60,vietsub,,0,0,0,,~Sự thật thì, chắc hẳn cậu cũng biết mà.
+Dialogue: 0,0:02:31.60,0:02:37.83,vietsub,,0,0,0,,Ngay từ đầu, cậu đã thích tớ rồi đúng không nhỉ~
+Dialogue: 0,0:02:38.93,0:02:47.64,vietsub,,0,0,0,,Quả nhiên là vậy rồi, tớ đã gặp được bóng hình, tớ hằng tìm kiếm bấy lâu.
+Dialogue: 0,0:02:47.64,0:02:56.14,vietsub,,0,0,0,,Những cảm xúc hạnh phúc, tràn ngập đến thế này, tớ có thể giữ mãi không buông.
+Dialogue: 0,0:02:56.14,0:03:00.63,vietsub,,0,0,0,,Người đó là cậu, đúng là cậu rồi!
+Dialogue: 0,0:03:00.63,0:03:04.62,vietsub,,0,0,0,,Hạnh phúc lắm! Vui sướng lắm! Tớ yêu lắm!
+Dialogue: 0,0:03:04.62,0:03:09.11,vietsub,,0,0,0,,Quả nhiên là vậy rồi, tớ đã gặp được cậu rồi!
+Dialogue: 0,0:03:09.11,0:03:13.26,vietsub,,0,0,0,,Hạnh phúc lắm! Vui sướng lắm! Tớ yêu lắm!
+Dialogue: 0,0:03:13.26,0:03:30.28,vietsub,,0,0,0,,
