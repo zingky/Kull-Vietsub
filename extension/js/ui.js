@@ -38,26 +38,27 @@
         const popup = document.createElement('div');
         popup.id = "sub-pro-popup";
         Object.assign(popup.style, {
-            position: 'fixed', width: __.globalSettings.width + 'px', height: __.globalSettings.height + 'px',
+            position: 'fixed', width: 'auto', minWidth: '620px', height: 'auto',
+            minHeight: '300px', maxHeight: '90vh',
             top: __.globalSettings.posY + 'px', left: __.globalSettings.posX + 'px',
             background: `rgba(15, 15, 15, ${__.globalSettings.popupOpacity})`, backdropFilter: 'blur(15px)',
             color: '#fff', zIndex: '2147483647', borderRadius: '12px', border: '1px solid #444',
-            display: 'none', flexDirection: 'column', resize: 'both', overflow: 'hidden',
+            display: 'none', flexDirection: 'column', resize: 'both', overflow: 'auto',
             boxShadow: '0 20px 50px rgba(0,0,0,0.8)'
         });
 
         popup.innerHTML = `
-            <div id="sub-header" style="padding: 8px 15px; background: rgba(255,255,255,0.05); cursor: move; display: flex; align-items: center; border-bottom:1px solid rgba(255,255,255,0.1); gap:8px;">
-                <button id="reset-ui" style="border:1px solid #555; color:#ccc; cursor:pointer; background:rgba(255,255,255,0.1); font-size:10px; padding:2px 8px; border-radius:4px;">Reset 🔄</button>
-                <div style="display:flex; align-items:center; gap:4px; font-size:10px; color:#aaa; flex:1;">
-                    <span id="yt-id-display" style="color:#3ea6ff; font-weight:bold;">${__.getVideoId() || 'N/A'}</span>
-                    <span id="auto-sub-status" class="status-tag status-none">Searching...</span>
-                    <button id="btn-re-auto" title="Fetch GitHub" style="background:none; border:1px solid #444; color:#aaa; cursor:pointer; font-size:9px; border-radius:3px; padding:1px 4px;">🔄</button>
+            <div id="sub-header" style="padding: 4px 10px; background: rgba(255,255,255,0.05); cursor: move; display: flex; align-items: center; border-bottom:1px solid rgba(255,255,255,0.1); gap:4px;">
+                <button id="reset-ui" style="border:1px solid #555; color:#ccc; cursor:pointer; background:rgba(255,255,255,0.1); font-size:9px; padding:1px 6px; border-radius:4px;">Reset 🔄</button>
+                <div style="display:flex; align-items:center; gap:2px; font-size:9px; color:#aaa; flex:1;">
+                    <span id="yt-id-display" style="color:#3ea6ff; font-weight:bold; font-size:9px;">${__.getVideoId() || 'N/A'}</span>
+                    <span id="auto-sub-status" class="status-tag status-none" style="font-size:8px;">Searching...</span>
+                    <button id="btn-re-auto" title="Fetch GitHub" style="background:none; border:1px solid #444; color:#aaa; cursor:pointer; font-size:8px; border-radius:3px; padding:0px 3px;">🔄</button>
                 </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <div style="display:flex; align-items:center; gap:3px;"><span style="font-size:9px; color:#aaa;">Zoom</span><input type="range" id="pop-zoom" min="1.0" max="1.3" step="0.1" value="${__.globalSettings.popupZoom}" style="width:60px;"></div>
-                    <div style="display:flex; align-items:center; gap:3px;"><span style="font-size:9px; color:#aaa;">OPA</span><input type="range" id="pop-opacity" min="0.2" max="1" step="0.05" value="${__.globalSettings.popupOpacity}" style="width:35px;"></div>
-                    <span id="closeSubPopup" style="cursor:pointer; font-size:20px; line-height:18px;">&times;</span>
+                <div style="display:flex; flex-direction:column; gap:1px; align-items:flex-end; position:relative; padding-right:16px;">
+                    <div style="display:flex; align-items:center; gap:2px;"><span style="font-size:7px; color:#aaa;">Zoom</span><input type="range" id="pop-zoom" min="1.0" max="1.3" step="0.1" value="${__.globalSettings.popupZoom}" style="width:45px;height:3px;"></div>
+                    <div style="display:flex; align-items:center; gap:2px;"><span style="font-size:7px; color:#aaa;">OPA</span><input type="range" id="pop-opacity" min="0.2" max="1" step="0.05" value="${__.globalSettings.popupOpacity}" style="width:45px;height:3px;"></div>
+                    <span id="closeSubPopup" style="cursor:pointer; font-size:16px; line-height:22px; position:absolute; right:0; top:50%; transform:translateY(-50%);">&times;</span>
                 </div>
             </div>
             <div id="popup-inner" style="display:flex; flex:1; overflow:hidden; position:relative;">
@@ -126,17 +127,8 @@
                     </div>
 
                     <div class="pill-panel" data-pill="advanced">
-                        <div style="margin-top:4px; display:flex; align-items:center; gap:4px;">
+                        <div style="display:flex; align-items:center; gap:4px;">
                             <input type="checkbox" id="g-deepGlow" ${__.globalSettings.deepGlow ? 'checked' : ''}> <b style="font-size:10px;">Deep Glow</b>
-                        </div>
-                        <div style="margin-top:8px; border-top:1px solid rgba(255,255,255,0.1); padding-top:6px;">
-                            <b style="font-size:10px;">📦 Data Management</b>
-                            <div style="display:flex; gap:4px; margin-top:4px; flex-wrap:wrap;">
-                                <button id="btn-backup-all" style="background:rgba(255,255,255,0.1); border:1px solid #444; color:#fff; font-size:9px; padding:2px 8px; border-radius:4px; cursor:pointer;">Backup All</button>
-                                <button id="btn-export-current" style="background:rgba(255,255,255,0.1); border:1px solid #444; color:#fff; font-size:9px; padding:2px 8px; border-radius:4px; cursor:pointer;">Export Current</button>
-                                <button id="btn-import-data" style="background:rgba(255,255,255,0.1); border:1px solid #444; color:#fff; font-size:9px; padding:2px 8px; border-radius:4px; cursor:pointer;">Import</button>
-                            </div>
-                            <input type="file" id="importFile" accept=".json" style="font-size:8px; width:100%; margin-top:4px; display:none;">
                         </div>
                     </div>
                 </div>
@@ -144,15 +136,18 @@
                 <div id="styleListContainer" style="flex: 1.3; padding: 8px; overflow-y: auto; background: transparent; min-width:130px;">
                     <div style="display:flex; align-items:center; margin-bottom: 4px;">
                         <span style="color: #ffaa00; font-weight: bold; font-size: 10px;">STYLES</span>
-                        <button id="btn-reset-styles-pos" style="background:none; border:none; color:#ffaa00; cursor:pointer; margin-left:6px; font-size:9px;">⟳</button>
                     </div>
                     <div id="styleItems"></div>
                 </div>
             </div>
             <div id="sub-footer" style="padding:4px 12px; background:rgba(255,255,255,0.03); border-top:1px solid rgba(255,255,255,0.1); display:flex; justify-content:space-between; align-items:center; font-size:9px; color:#888;">
-                <a href="https://github.com/zingky/Kull-Vietsub" target="_blank" style="color:#3ea6ff; text-decoration:none; font-weight:bold;">🔗 github.com/zingky/Kull-Vietsub</a>
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <span id="footer-popup-settings-btn" style="cursor:pointer; font-size:13px; color:#aaa; display:flex; align-items:center;">⚙️</span>
+                    <a href="https://github.com/zingky/Kull-Vietsub" target="_blank" style="color:#3ea6ff; text-decoration:none; font-weight:bold;">🔗 github.com/zingky/Kull-Vietsub</a>
+                </div>
                 <span style="color:#3ea6ff; font-weight:bold; cursor:pointer;">AEGISUB Loader by Gemini x Kull</span>
-            </div>`;
+            </div>
+            <div id="footer-popup-settings-panel" style="display:none; position:absolute; bottom:32px; left:8px; background:rgba(20,20,20,0.98); border:1px solid #444; border-radius:8px; padding:10px; z-index:2147483647; min-width:220px; box-shadow:0 10px 30px rgba(0,0,0,0.8);">Loading...</div>`;
         document.body.appendChild(popup);
         setupUIEvents(popup);
     }
@@ -167,18 +162,6 @@
         };
         document.addEventListener('mousemove', (e) => { if (isDragging) { popup.style.left = (e.clientX + offset[0]) + 'px'; popup.style.top = (e.clientY + offset[1]) + 'px'; } });
         document.addEventListener('mouseup', () => { if (isDragging) __.saveCache(); isDragging = false; });
-
-        document.getElementById('btn-reset-styles-pos').onclick = () => {
-            Object.keys(__.styleSettings).forEach(name => {
-                let s = __.styleSettings[name];
-                s.posX = __.playResX / 2;
-                if (name.toLowerCase().includes('roma')) s.posY = 80;
-                else if (name.toLowerCase().includes('kanji')) s.posY = 135;
-                else s.posY = __.playResY - 80;
-            });
-            if (typeof __.renderStyles === 'function') __.renderStyles();
-            __.saveSubToStorage();
-        };
 
         ['isBold', 'isItalic', 'isUnderline', 'isStrike'].forEach(key => {
             const btn = document.getElementById('btn-' + key);
@@ -222,6 +205,9 @@
                 if (id === 'pop-zoom') {
                     __.globalSettings.popupZoom = parseFloat(val);
                     document.getElementById('sub-pro-popup').style.zoom = val;
+                } else if (id === 'pop-opacity') {
+                    __.globalSettings.popupOpacity = parseFloat(val);
+                    popup.style.background = `rgba(15, 15, 15, ${val})`;
                 } else if (id === 'fontSelect') { __.globalSettings.fontFamily = val; __.saveCache(); }
                 else if (id === 'ts-input') { /* handled separately */ }
                 else {
@@ -229,7 +215,6 @@
                     __.globalSettings[key] = (e.target.type === 'number' || e.target.type === 'range') ? parseFloat(val) : val;
                     const pair = document.getElementById(id.includes('Val') ? id.replace('Val', '') : id + 'Val');
                     if (pair) pair.value = val;
-                    if (id === 'pop-opacity') popup.style.background = `rgba(15, 15, 15, ${val})`;
                 }
             }
             __.saveCache();
@@ -264,6 +249,15 @@
             document.addEventListener('mouseup', () => { if (isResizing) { isResizing = false; document.body.style.cursor = ''; } });
         }
 
+        // Click outside popup to close (persistent listener, never removed)
+        document.addEventListener('mousedown', function __clickOutside(e) {
+            const p = document.getElementById('sub-pro-popup');
+            const btn = document.getElementById('sub-ultra-btn');
+            if (p && p.style.display !== 'none' && !p.contains(e.target) && !(btn && btn.contains(e.target)) && __.globalSettings.closeOnClickOutside) {
+                p.style.display = 'none';
+            }
+        });
+
         document.getElementById('btn-re-auto').onclick = () => { if (typeof __.autoFetchSub === 'function') __.autoFetchSub(__.getVideoId()); };
         document.getElementById('reset-ui').onclick = () => { localStorage.clear(); chrome.storage.local.clear(); location.reload(); };
         document.getElementById('closeSubPopup').onclick = () => popup.style.display = 'none';
@@ -282,6 +276,40 @@
             };
         });
 
+        // Footer settings panel toggle
+        const footerPanel = document.getElementById('footer-popup-settings-panel');
+        const footerBtn = document.getElementById('footer-popup-settings-btn');
+        footerPanel.innerHTML = `
+            <div style="display:flex; align-items:center; gap:4px; margin-bottom:8px;">
+                <input type="checkbox" id="g-closeOnClickOutside" ${__.globalSettings.closeOnClickOutside ? 'checked' : ''}> <b style="font-size:10px;">Close on click outside</b>
+            </div>
+            <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:6px;">
+                <b style="font-size:10px;">📦 Data Management</b>
+                <div style="display:flex; gap:4px; margin-top:4px; flex-wrap:wrap;">
+                    <button id="btn-backup-all" style="background:rgba(255,255,255,0.1); border:1px solid #444; color:#fff; font-size:9px; padding:2px 8px; border-radius:4px; cursor:pointer;">Backup All</button>
+                    <button id="btn-export-current" style="background:rgba(255,255,255,0.1); border:1px solid #444; color:#fff; font-size:9px; padding:2px 8px; border-radius:4px; cursor:pointer;">Export Current</button>
+                    <button id="btn-import-data" style="background:rgba(255,255,255,0.1); border:1px solid #444; color:#fff; font-size:9px; padding:2px 8px; border-radius:4px; cursor:pointer;">Import</button>
+                </div>
+                <input type="file" id="importFile" accept=".json" style="font-size:8px; width:100%; margin-top:4px; display:none;">
+            </div>`;
+        // Close on click outside toggle
+        popup.addEventListener('change', (e) => {
+            if (e.target.id === 'g-closeOnClickOutside') {
+                __.globalSettings.closeOnClickOutside = e.target.checked;
+                __.saveCache();
+            }
+        });
+        footerBtn.onclick = (e) => {
+            e.stopPropagation();
+            const isOpen = footerPanel.style.display !== 'none';
+            footerPanel.style.display = isOpen ? 'none' : 'block';
+        };
+        // Close footer panel when clicking outside it
+        document.addEventListener('mousedown', function __closeFooterPanel(e2) {
+            if (footerPanel.style.display !== 'none' && !footerPanel.contains(e2.target) && e2.target !== footerBtn) {
+                footerPanel.style.display = 'none';
+            }
+        });
         // Backup All
         document.getElementById('btn-backup-all').onclick = () => {
             chrome.storage.local.get(null, (all) => {
@@ -294,7 +322,6 @@
                 URL.revokeObjectURL(a.href);
             });
         };
-
         document.getElementById('btn-export-current').onclick = () => {
             const id = __.getVideoId();
             if (!id) return alert('No video ID detected.');
@@ -308,39 +335,36 @@
                 URL.revokeObjectURL(a.href);
             });
         };
-
-        const importBtn = document.getElementById('btn-import-data');
-        const importFileInput = document.getElementById('importFile');
-        if (importBtn && importFileInput) {
-            importBtn.onclick = () => importFileInput.click();
-            importFileInput.onchange = async (e) => {
-                if (!e.target.files[0]) return;
-                try {
-                    const data = JSON.parse(await e.target.files[0].text());
-                    if (data.globalSettings) { Object.assign(__.globalSettings, data.globalSettings); __.saveCache(); }
-                    if (data.videoConfigs && typeof data.videoConfigs === 'object') {
-                        const videoIds = Object.keys(data.videoConfigs);
-                        chrome.storage.local.get(videoIds, (existing) => {
-                            const merged = {};
-                            videoIds.forEach(vid => { merged[vid] = data.videoConfigs[vid]; });
-                            chrome.storage.local.set(merged, () => {
-                                const curId = __.getVideoId();
-                                if (curId && data.videoConfigs[curId]) {
-                                    const cfg = data.videoConfigs[curId];
-                                    if (cfg.subtitles) __.subtitles = cfg.subtitles;
-                                    if (cfg.playResX) __.playResX = cfg.playResX;
-                                    if (cfg.playResY) __.playResY = cfg.playResY;
-                                    if (cfg.styleSettings) __.styleSettings = cfg.styleSettings;
-                                    if (typeof __.renderStyles === 'function') __.renderStyles();
-                                }
-                                alert(`✅ Imported ${videoIds.length} video(s).`);
-                            });
+        const importBtn2 = document.getElementById('btn-import-data');
+        const importFile2 = document.getElementById('importFile');
+        importBtn2.onclick = () => importFile2.click();
+        importFile2.onchange = async (e) => {
+            if (!e.target.files[0]) return;
+            try {
+                const data = JSON.parse(await e.target.files[0].text());
+                if (data.globalSettings) { Object.assign(__.globalSettings, data.globalSettings); __.saveCache(); }
+                if (data.videoConfigs && typeof data.videoConfigs === 'object') {
+                    const videoIds = Object.keys(data.videoConfigs);
+                    chrome.storage.local.get(videoIds, (existing) => {
+                        const merged = {};
+                        videoIds.forEach(vid => { merged[vid] = data.videoConfigs[vid]; });
+                        chrome.storage.local.set(merged, () => {
+                            const curId = __.getVideoId();
+                            if (curId && data.videoConfigs[curId]) {
+                                const cfg = data.videoConfigs[curId];
+                                if (cfg.subtitles) __.subtitles = cfg.subtitles;
+                                if (cfg.playResX) __.playResX = cfg.playResX;
+                                if (cfg.playResY) __.playResY = cfg.playResY;
+                                if (cfg.styleSettings) __.styleSettings = cfg.styleSettings;
+                                if (typeof __.renderStyles === 'function') __.renderStyles();
+                            }
+                            alert(`✅ Imported ${videoIds.length} video(s).`);
                         });
-                    } else { alert('✅ Global settings restored.'); }
-                } catch (err) { alert('❌ Invalid file: ' + err.message); }
-                importFileInput.value = '';
-            };
-        }
+                    });
+                } else { alert('✅ Global settings restored.'); }
+            } catch (err) { alert('❌ Invalid file: ' + err.message); }
+            importFile2.value = '';
+        };
     }
 
     __.createUI = createUI;

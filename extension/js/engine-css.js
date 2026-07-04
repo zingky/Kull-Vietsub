@@ -23,15 +23,34 @@
             const item = document.createElement('div');
             item.className = 'style-item';
             item.innerHTML = `
-                <div class="style-head"><span>${sName}</span><div style="display:flex;align-items:center;gap:12px;"><span class="eye-btn" style="cursor:pointer;opacity:${s.visible ? 1 : 0.3}">${s.visible ? '👁️' : '🚫'}</span><label><input type="checkbox" data-style="${sName}" data-type="override" ${s.override ? 'checked' : ''}> ⚙️</label><span>▼</span></div></div>
+                <div class="style-head"><span>${sName}</span><div style="display:flex;align-items:center;gap:6px;"><span class="reset-style-btn" style="cursor:pointer;font-size:10px;color:#ffaa00;" data-style="${sName}">⟳</span><span class="eye-btn" style="cursor:pointer;opacity:${s.visible ? 1 : 0.3}">${s.visible ? '👁️' : '🚫'}</span><label style="display:flex;align-items:center;height:16px;"><input type="checkbox" data-style="${sName}" data-type="override" ${s.override ? 'checked' : ''} style="margin:0;height:12px;"> <span style="font-size:12px;display:flex;align-items:center;">⚙️</span></label><span>▼</span></div></div>
                 <div class="style-body" style="display:none;">
                     <div class="g-row" style="margin-bottom:2px;">X <input type="range" data-style="${sName}" data-type="posX" min="0" max="${__.playResX * 2}" value="${s.posX}"> <input type="number" value="${s.posX}" class="num-in" data-style="${sName}" data-type="posX"></div>
                     <div class="g-row" style="margin-bottom:2px;">Y <input type="range" data-style="${sName}" data-type="posY" min="0" max="${__.playResY * 2}" value="${s.posY}"> <input type="number" value="${s.posY}" class="num-in" data-style="${sName}" data-type="posY"></div>
                     <div class="adv-style" style="display:${s.override ? 'block' : 'none'};">
-                        <div class="one-line">S:<input type="number" data-style="${sName}" data-type="fontSize" value="${s.fontSize}" class="num-in"> O:<input type="number" data-style="${sName}" data-type="outlineWidth" value="${s.outlineWidth}" class="num-in" step="0.1"> B:<input type="number" data-style="${sName}" data-type="blur" value="${s.blur}" class="num-in" step="0.1"> 1c:<input type="color" data-style="${sName}" data-type="color1" value="${s.color1}"> 3c:<input type="color" data-style="${sName}" data-type="color3" value="${s.color3}"></div>
+                        <div class="g-row" style="margin-bottom:0px;">
+                            <span style="width:18px;color:#aaa;font-weight:bold;font-size:.75em;">1c</span><input type="color" data-style="${sName}" data-type="color1" value="${s.color1}" style="width:27px;height:23px;">
+                            <span style="width:18px;color:#aaa;font-weight:bold;font-size:.75em;text-align:center;">3c</span><input type="color" data-style="${sName}" data-type="color3" value="${s.color3}" style="width:27px;height:23px;">
+                            <span style="width:10px;color:#aaa;font-weight:bold;font-size:.75em;text-align:center;">S</span><input type="number" data-style="${sName}" data-type="fontSize" value="${s.fontSize}" class="num-in" style="width:35px;max-width:35px;">
+                            <span style="width:10px;color:#aaa;font-weight:bold;font-size:.75em;text-align:center;">O</span><input type="number" data-style="${sName}" data-type="outlineWidth" value="${s.outlineWidth}" class="num-in" style="width:35px;max-width:35px;" step="0.1">
+                            <span style="width:10px;color:#aaa;font-weight:bold;font-size:.75em;text-align:center;">B</span><input type="number" data-style="${sName}" data-type="blur" value="${s.blur}" class="num-in" style="width:35px;max-width:35px;" step="0.1">
+                        </div>
                     </div>
                 </div>`;
+            item.querySelector('.reset-style-btn').onclick = (e) => {
+                e.stopPropagation();
+                s.posX = __.playResX / 2;
+                if (sName.toLowerCase().includes('roma')) s.posY = 80;
+                else if (sName.toLowerCase().includes('kanji')) s.posY = 135;
+                else s.posY = __.playResY - 80;
+                s.fontSize = 23;
+                s.outlineWidth = 1.5;
+                s.blur = 2;
+                __.saveSubToStorage();
+                __.renderStyles();
+            };
             item.querySelector('.eye-btn').onclick = (e) => {
+                e.stopPropagation();
                 s.visible = !s.visible;
                 e.target.innerText = s.visible ? '👁️' : '🚫';
                 e.target.style.opacity = s.visible ? 1 : 0.3;
