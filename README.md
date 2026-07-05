@@ -1,4 +1,3 @@
-@ -0,0 +1,147 @@
 # 🎬 YOUTUBE AEGISUB LOADER by Gemini x Kull
 
 **YouTube Subtitle Engine** is a powerful Chrome Extension designed to render Aegisub subtitles (.ass) directly on YouTube with full karaoke support, per-style overrides, multi-source GitHub fetching, and advanced overlap handling.
