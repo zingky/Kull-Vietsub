@@ -11,7 +11,7 @@
   "action": { "default_title": "Mở Menu Sub" },
   "content_scripts": [{
     "matches": ["https://www.youtube.com/*"],
-    "js": ["content.js"],
+    "js": ["content.js", "js/globals.js", "js/parser.js", "js/engine-css.js", "js/ui.js", "js/main.js"],
     "run_at": "document_idle"
   }],
   "web_accessible_resources": [{
