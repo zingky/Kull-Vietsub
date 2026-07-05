@@ -1,147 +1,89 @@
-# 🎬 YOUTUBE AEGISUB LOADER by Gemini x Kull
+# 🎬 YouTube Aegisub Loader v7.9.9
 
-**YouTube Subtitle Engine** is a powerful Chrome Extension designed to render Aegisub subtitles (.ass) directly on YouTube with full karaoke support, per-style overrides, multi-source GitHub fetching, and advanced overlap handling.
+A simple Chrome Extension to load and display basic Aegisub subtitles (.ass) on YouTube with karaoke support, per-style settings, and GitHub source management.
 
 [Tiếng Việt bên dưới](#tiếng-việt)
+<img width="1220" height="719" alt="image" src="https://github.com/user-attachments/assets/2adebc03-ae65-4f6f-b25e-93d121146922" />
+---
+
+## Features
+
+- **Load .ass files** from your computer or auto-fetch from GitHub repositories based on Video ID
+- **Multi-Source:** Add multiple GitHub repos as subtitle sources; merge results automatically
+- **Smart Search:** Real-time file search with title-based relevance sorting
+- **Basic Karaoke:** Three-state karaoke (Pre/Active/Post) with syllable-level effects using `\k` tags
+- **Style Settings:** Global control over font size, outline, blur, text color, outline color
+- **Per-Style Override:** Customize position (X, Y), size, outline, blur for each style individually
+- **Overlap Prevention:** Auto-stack overlapping subtitle lines (respects `\pos()`)
+- **Constrain to Video Frame:** Keep subtitles inside the actual video area, avoiding letterbox bars
+- **UI Settings:** Draggable/resizable popup, zoom/opacity sliders, pill tabs (Settings ⚙️ / Karaoke 🎤 / Advanced 🛠️)
+- **Footer Panel:** Quick toggles + Sub Sources manager + Data Import/Export/Backup
+- **Local Storage:** Remembers settings, sources, and subtitle cache per Video ID
+- **Fullscreen:** Font automatically adjusts (+10px) in fullscreen mode
+- **YouTube Controls:** Subtitles render behind the controls bar, never blocking playback buttons
 
 ---
 
-## 🌟 Key Features
+## ⚠️ Note
 
-### 📂 Smart Subtitle Loading
-- **Multi-Source GitHub Fetching:** Add, remove, enable/disable multiple GitHub repositories as subtitle sources. Merge results from all enabled sources automatically.
-- **Smart Search Dropdown:** Real-time search with title-based relevance sorting. Shows matching files ranked by video title keywords.
-- **Auto-Fetch by Video ID:** Automatically loads matching `.ass` files from all enabled sources based on the YouTube Video ID.
-- **Local Caching:** Subtitle data is cached per Video ID (chrome.storage.local) for instant reloads.
-- **File List Cache:** GitHub file lists are cached locally, reducing API calls. Refresh manually with the 🔍 button.
-
-### 🎤 Karaoke Engine
-- **Three-state karaoke:** Pre-singing, Active (with configurable Zoom In/Out), Post-singing — each fully customizable.
-- **Syllable-level effects:** Outline, Blur, Zoom, and color transitions per syllable.
-- **Per-syllable K timing:** Precise `\k` tag support with millisecond accuracy.
-
-### 🎨 Advanced Styling
-- **Global Settings:** Font Size, Outline Width, Blur, Text Color (1c), Outline Color (3c), Fade In/Out.
-- **Per-Style Override (⚙️):** Enable override for individual styles to customize Size(S), Outline(O), Blur(B) and position (X, Y) independently.
-- **Per-Style Reset (⟳):** Reset X, Y, S, O, B to defaults for each style individually.
-- **Per-Style Visibility:** Hide/unhide any subtitle style with the 👁️ toggle.
-- **Text Formatting:** **Bold**, *Italic*, <u>Underline</u>, ~~Strikethrough~~, with multiple font options including built-in **VNF-Comic Sans**.
-- **Karaoke Tab:** Dedicated tab for Pre, Active, Post karaoke state customization.
-- **Deep Glow:** Enhanced neon glow effect (Advanced tab).
-
-### 📐 Positioning & Overlap
-- **Automatic Overlap Prevention:** When multiple subtitle lines occupy the same Y position without explicit `\pos()`, they are automatically stacked vertically (like Aegisub) with `fontSize + 10px` spacing.
-- **Explicit Positioning Respect:** Lines with `\pos()` in the ASS file are never moved — manual placement is preserved.
-- **Constrain to Video Frame:** Prevents subtitles from spilling into black letterbox bars on 16:10/ultrawide monitors during fullscreen. Toggle ON/OFF in the footer settings.
-
-### ✨ UI & Convenience
-- **Glassmorphism Design:** Clean, semi-transparent dark interface with blur backdrop.
-- **Draggable & Resizable:** Drag the title bar to reposition, drag the center divider to resize panels.
-- **Zoom & Opacity:** Adjust the entire UI scale (1.0–1.3) and background opacity via header sliders.
-- **Pill Tabs:** Switch between Settings ⚙️, Karaoke 🎤, and Advanced 🛠️ tabs.
-- **Pill Tabs:** Settings (⚙️), Karaoke (🎤), Advanced (🛠️).
-- **Header Info:** Shows current Video ID, auto-sub status indicator.
-- **Footer Settings Panel (⚙️):** Quick access to:
-  - Close-on-click-outside toggle
-  - Constrain to Video Frame toggle
-  - Sub Sources manager (add/remove/enable GitHub repos)
-  - Data Management: Backup All (*.json), Export Current Video, Import (*.json)
-- **Local Storage Persistence:** All settings, style overrides, and sources are saved automatically.
-
-### 🖥️ Fullscreen & Responsive
-- **Fullscreen Detection:** Subtitles and engine adapt to fullscreen mode automatically (font +10px).
-- **Active Video Rect Calculation:** Subtitles stay within the actual video area, avoiding black bars.
-- **YouTube Controls Compatible:** Subtitles render behind the YouTube controls bar (`.ytp-chrome-bottom`), never obstructing playback controls.
+This extension uses **HTML/CSS rendering**, so it supports basic to intermediate Aegisub features. Complex effects (vector drawings, advanced \t transforms, layered overlaps) may not display identically to dedicated players like VLC or MPC-HC.
 
 ---
 
-## ⚠️ Important Note
-This extension uses **HTML/CSS rendering**, which means it supports **most basic to intermediate Aegisub features**. Complex effects like vector drawings, advanced transformations (\t), or layered overlapping may not display identically to professional players like VLC or MPC-HC.
+## Installation (Developer Mode)
 
----
-
-## 🛠 Installation (Developer Mode)
-
-1. **Download** this repository and extract the files.
-2. Ensure `vnf-comic-sans.ttf` is present in the folder.
-3. Open Chrome and go to `chrome://extensions/`.
+1. **Download** or clone this repository.
+2. Ensure `vnf-comic-sans.ttf` is in the `extension/` folder.
+3. Open Chrome → `chrome://extensions/`.
 4. Enable **Developer mode** (top right).
-5. Click **Load unpacked** and select your extension folder.
-6. **Pin** the extension for easy access.
+5. Click **Load unpacked** and select the `extension/` folder.
+6. Visit any YouTube video → **SUB** button appears in the player controls.
 
 ---
 
 <a name="tiếng-việt"></a>
-# 🎬 YOUTUBE AEGISUB LOADER by Gemini x Kull (Bản Tiếng Việt)
+# 🎬 YouTube Aegisub Loader v7.9.9 (Bản Tiếng Việt)
 
-**YouTube Subtitle Engine** là tiện ích mở rộng Chrome mạnh mẽ, giúp hiển thị phụ đề Aegisub (.ass) trực tiếp trên YouTube với hỗ trợ karaoke đầy đủ, tùy chỉnh từng style, lấy file sub từ nhiều nguồn GitHub, và xử lý chồng chéo dòng sub thông minh.
-
----
-
-## 🌟 Tính năng chính
-
-### 📂 Tải Sub Thông Minh
-- **Đa nguồn GitHub:** Thêm, xoá, bật/tắt nhiều kho GitHub làm nguồn sub. Kết quả từ tất cả nguồn đang bật được tự động gộp vào danh sách.
-- **Tìm kiếm thông minh:** Ô tìm kiếm có gợi ý drop-down sắp xếp theo độ liên quan tới tiêu đề video.
-- **Tự động tải theo Video ID:** Tự động tìm và tải file `.ass` phù hợp từ tất cả nguồn dựa trên ID video YouTube.
-- **Lưu cache cục bộ:** Nội dung sub được lưu theo từng Video ID (chrome.storage.local) để tải lại siêu tốc.
-- **Cache danh sách file:** Danh sách file từ GitHub được cache lại, giảm số lần gọi API. Nhấn nút 🔍 để làm mới thủ công.
-
-### 🎤 Engine Karaoke
-- **Ba trạng thái karaoke:** Pre (chờ hát), Active (đang hát - có Zoom In/Out), Post (hát xong) — mỗi trạng thái có thể tuỳ chỉnh riêng.
-- **Hiệu ứng từng âm tiết:** Outline, Blur, Zoom và chuyển màu theo từng syllable.
-- **Định thời K chính xác:** Hỗ trợ tag `\k` với độ chính xác mili giây.
-
-### 🎨 Tùy Chỉnh Style Nâng Cao
-- **Cài đặt toàn cục:** Cỡ chữ (Size), Độ dày viền (Outline), Độ mờ viền (Blur), Màu chữ (1c), Màu viền (3c), Fade In/Out.
-- **Ghi đè từng Style (⚙️):** Bật chế độ ghi đè cho từng style riêng lẻ để tuỳ chỉnh Size(S), Outline(O), Blur(B) và toạ độ (X, Y) độc lập.
-- **Reset từng Style (⟳):** Đặt lại X, Y, S, O, B về mặc định cho từng style.
-- **Ẩn/Hiện Style:** Dùng nút 👁️ để ẩn hoặc hiện bất kỳ style sub nào.
-- **Định dạng chữ:** **Đậm (B)**, *Nghiêng (I)*, <u>Gạch chân (U)</u>, ~~Gạch ngang (S)~~, nhiều font chữ lựa chọn kèm font **VNF-Comic Sans** tích hợp sẵn.
-- **Tab Karaoke riêng:** Giao diện riêng cho chỉnh Pre, Active, Post.
-- **Deep Glow:** Hiệu ứng phát sáng neon tăng cường (tab Advanced).
-
-### 📐 Định Vị & Chống Chồng Chéo
-- **Tự động dãn dòng khi trùng Y:** Khi nhiều dòng sub có cùng vị trí Y mà không có `\pos()`, chúng được tự động xếp dọc với khoảng cách `fontSize + 10px` (giống Aegisub).
-- **Tôn trọng vị trí đã đặt:** Các dòng có `\pos()` trong file ASS sẽ giữ nguyên vị trí, không bị dời đi.
-- **Giới hạn trong khung hình video (Constrain to Video Frame):** Ngăn sub tràn ra viền đen khi xem fullscreen trên màn hình 16:10 hoặc ultrawide. Bật/tắt trong footer settings.
-
-### ✨ Giao Diện & Tiện Lợi
-- **Glassmorphism:** Giao diện tối trong suốt với hiệu ứng mờ.
-- **Kéo & Thay đổi kích thước:** Kéo thanh tiêu đề để di chuyển, kéo thanh phân cách giữa để thay đổi kích thước bảng điều khiển.
-- **Zoom & Opacity:** Điều chỉnh tỷ lệ giao diện (1.0–1.3) và độ mờ nền qua thanh trượt ở header.
-- **Pill Tabs:** Chuyển đổi giữa các tab Settings ⚙️, Karaoke 🎤, Advanced 🛠️.
-- **Thông tin Header:** Hiển thị Video ID, trạng thái sub.
-- **Footer Settings Panel (⚙️):** Truy cập nhanh:
-  - Bật/tắt đóng popup khi click ra ngoài
-  - Bật/tắt Constrain to Video Frame
-  - Quản lý nguồn Sub (thêm/xoá/bật GitHub repos)
-  - Quản lý dữ liệu: Backup All (*.json), Export Video hiện tại, Import (*.json)
-- **Lưu trữ tự động:** Tất cả cài đặt, ghi đè style, danh sách nguồn được tự động lưu vào localStorage.
-
-### 🖥️ Fullscreen & Tương Thích
-- **Phát hiện Fullscreen:** Sub và engine tự động thích ứng khi vào fullscreen (tăng font +10px).
-- **Tính toán vùng video thực tế:** Sub luôn nằm trong khung hình video, tránh viền đen.
-- **Tương thích nút điều khiển:** Sub hiển thị bên dưới thanh controls YouTube (`.ytp-chrome-bottom`), không che nút điều khiển.
+Một tiện ích Chrome đơn giản để tải và hiển thị phụ đề Aegisub (.ass) cơ bản trên YouTube, hỗ trợ karaoke, tùy chỉnh từng style, và quản lý nhiều nguồn GitHub.
 
 ---
 
-## ⚠️ Lưu ý quan trọng
-Vì tiện ích này hiển thị phụ đề bằng **HTML/CSS**, nó hỗ trợ **hầu hết các hiệu ứng Aegisub cơ bản đến trung cấp**. Các hiệu ứng phức tạp (vẽ hình vector, chuyển động \t phức tạp, xếp lớp chồng chéo) có thể không hiển thị giống hệt như trên VLC hay MPC-HC.
+## Tính năng
+
+- **Tải file .ass** từ máy tính hoặc tự động lấy từ GitHub dựa trên ID video
+- **Đa nguồn:** Thêm nhiều kho GitHub làm nguồn sub; tự động gộp kết quả
+- **Tìm kiếm thông minh:** Tìm file realtime, sắp xếp theo độ liên quan với tiêu đề video
+- **Karaoke cơ bản:** Ba trạng thái (Pre/Active/Post) với hiệu ứng từng âm tiết qua tag `\k`
+- **Chỉnh style:** Cỡ chữ, viền, blur, màu chữ (1c), màu viền (3c)
+- **Ghi đè từng Style:** Tùy chỉnh vị trí (X, Y), cỡ chữ, viền, blur riêng cho từng style
+- **Chống chồng chéo:** Tự động dãn các dòng sub trùng vị trí (tôn trọng `\pos()`)
+- **Giới hạn khung hình:** Giữ sub trong vùng video thực tế, tránh tràn ra viền đen
+- **Giao diện:** Popup kéo/thả được, thanh trượt zoom/độ mờ, pill tab (Settings ⚙️ / Karaoke 🎤 / Advanced 🛠️)
+- **Footer Panel:** Bật/tắt nhanh + quản lý nguồn Sub + sao lưu/xuất/nhập dữ liệu
+- **Lưu trữ:** Ghi nhớ cài đặt, nguồn, cache sub theo từng Video ID
+- **Fullscreen:** Tự động tăng cỡ chữ (+10px)
+- **Nút điều khiển:** Sub hiển thị bên dưới thanh controls, không che nút bấm
 
 ---
 
-## 🛠 Hướng dẫn cài đặt
+## ⚠️ Lưu ý
 
-1. **Tải về** và giải nén thư mục extension.
-2. Đảm bảo file font `vnf-comic-sans.ttf` nằm trong thư mục.
-3. Mở Chrome, truy cập: `chrome://extensions/`.
-4. Bật **Chế độ dành cho nhà phát triển** (góc trên bên phải).
-5. Nhấn **Tải tiện ích đã giải nén** và chọn thư mục chứa extension.
-6. **Ghim (Pin)** tiện ích lên thanh công cụ để sử dụng.
+Tiện ích dùng **HTML/CSS** để render phụ đề, nên chỉ hỗ trợ các hiệu ứng Aegisub từ cơ bản đến trung cấp. Các hiệu ứng phức tạp (vẽ vector, \t nâng cao, chồng lớp) có thể không hiển thị giống hệt như trên VLC hay MPC-HC.
 
 ---
 
-## 🤝 Credits
-- Developed by **Gemini** & **Kull**.
+## Cài đặt (Chế độ nhà phát triển)
+
+1. **Tải về** hoặc clone repository này.
+2. Đảm bảo file `vnf-comic-sans.ttf` nằm trong thư mục `extension/`.
+3. Mở Chrome → `chrome://extensions/`.
+4. Bật **Chế độ nhà phát triển** (góc trên phải).
+5. Nhấn **Tải tiện ích đã giải nén** và chọn thư mục `extension/`.
+6. Vào YouTube → nút **SUB** xuất hiện trên thanh điều khiển player.
+
+---
+
+## Credits
+
+- Developed by **Gemini** & **Kull**
 - Repository: [https://github.com/zingky/Kull-Vietsub](https://github.com/zingky/Kull-Vietsub)
