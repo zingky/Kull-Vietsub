@@ -201,6 +201,25 @@
                         <div style="display:flex; align-items:center; gap:4px;">
                             <input type="checkbox" id="g-deepGlow" ${__.globalSettings.deepGlow ? 'checked' : ''}> <b style="font-size:10px;">Deep Glow</b>
                         </div>
+                        <div style="display:flex; flex-direction:column; gap:4px; margin-top:4px; border-top:1px dashed rgba(255,255,255,0.15); padding-top:4px;">
+                            <b style="font-size:10px;">Special Effect</b>
+                            <select id="g-specialEffect" style="width:100%; background:#222; border:1px solid #444; color:#ccc; font-size:9px; border-radius:3px; padding:1px 3px;">
+                                <option value="none" ${__.globalSettings.specialEffect === 'none' ? 'selected' : ''}>None</option>
+                                <option value="rainbow_outline" ${__.globalSettings.specialEffect === 'rainbow_outline' ? 'selected' : ''}>Rainbow Outline</option>
+                                <option value="rainbow_text" ${__.globalSettings.specialEffect === 'rainbow_text' ? 'selected' : ''}>Rainbow Text</option>
+                                <option value="sine_wave" ${__.globalSettings.specialEffect === 'sine_wave' ? 'selected' : ''}>Sine Wave</option>
+                            </select>
+                            <div class="g-row" style="margin:0;">
+                                <label style="font-size:9px;">Speed</label>
+                                <input type="range" id="g-effectSpeed" min="1" max="10" step="1" value="${__.globalSettings.effectSpeed || 5}" style="flex:1;">
+                                <input type="number" id="g-effectSpeedVal" value="${__.globalSettings.effectSpeed || 5}" class="num-in" step="1" style="width:30px;">
+                            </div>
+                            <div class="g-row" style="margin:0; display:${__.globalSettings.specialEffect === 'sine_wave' ? 'flex' : 'none'};" id="sine-amp-row">
+                                <label style="font-size:9px;">Amplitude</label>
+                                <input type="range" id="g-sineWaveAmplitude" min="2" max="30" step="1" value="${__.globalSettings.sineWaveAmplitude || 10}" style="flex:1;">
+                                <input type="number" id="g-sineWaveAmplitudeVal" value="${__.globalSettings.sineWaveAmplitude || 10}" class="num-in" step="1" style="width:30px;">
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div id="divider" style="width:4px; cursor:col-resize; background:rgba(255,255,255,0.05); flex-shrink:0; border-left:1px solid rgba(255,255,255,0.12); border-right:1px solid rgba(255,255,255,0.05); user-select:none;"></div>
@@ -379,6 +398,15 @@
         document.getElementById('closeSubPopup').onclick = () => popup.style.display = 'none';
         document.getElementById('assFile').onchange = async (e) => { if (typeof __.parseASS === 'function') __.parseASS(await e.target.files[0].text()); };
         document.getElementById('btn-download-sub').onclick = __.downloadCurrentSub;
+
+        // Special Effect dropdown: show/hide amplitude row
+        const effSelect = document.getElementById('g-specialEffect');
+        const ampRow = document.getElementById('sine-amp-row');
+        if (effSelect && ampRow) {
+            effSelect.addEventListener('change', () => {
+                ampRow.style.display = effSelect.value === 'sine_wave' ? 'flex' : 'none';
+            });
+        }
 
         // Pill Tab switching
         popup.querySelectorAll('.pill-tab').forEach(tab => {

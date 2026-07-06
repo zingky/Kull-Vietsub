@@ -3,6 +3,24 @@
 
     const __ = window.__SUB;
 
+    // ============ INJECT SPECIAL EFFECTS KEYFRAMES ============
+    (function injectEffectKeyframes() {
+        if (document.getElementById('eff-keyframes')) return;
+        const style = document.createElement('style');
+        style.id = 'eff-keyframes';
+        style.textContent = `
+            @keyframes eff-sine-wave {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-15px); }
+            }
+            .eff-sine-char {
+                display: inline-block;
+                white-space: pre;
+            }
+        `;
+        document.head.appendChild(style);
+    })();
+
     __.saveSubToStorage = function () {
         const id = __.getVideoId();
         if (id && __.subtitles.length) {
@@ -67,9 +85,6 @@
         });
     };
 
-    // ============ RESIZE LAYER TO COVER FULL PLAYER ============
-    // Subtitles always span the full player height (including controls area)
-    // so they can appear near the bottom, under the YouTube controls overlay.
     function resizeLayer() {
         const layer = document.getElementById('sub-ultra-layer');
         const video = document.querySelector('video');
@@ -84,7 +99,6 @@
             if (__.globalSettings.constrainToVideo && typeof __.getActiveVideoRect === 'function') {
                 const vr = __.getActiveVideoRect();
                 if (vr) {
-                    // Keep subtitles inside the active video area (no overflow into controls)
                     layer.style.left = vr.left + 'px';
                     layer.style.top = vr.top + 'px';
                     layer.style.width = vr.width + 'px';
@@ -94,7 +108,6 @@
                     return;
                 }
             }
-            // Cover full player area (extends into controls area at bottom)
             layer.style.left = '0';
             layer.style.top = '0';
             layer.style.width = '100%';
@@ -103,26 +116,27 @@
             layer.style.bottom = 'auto';
             return;
         }
-        // Fallback
         layer.style.left = '0';
         layer.style.top = '0';
         layer.style.width = '100%';
         layer.style.height = '100%';
     }
 
+    // ============ ANIMATION STATE (JS-driven, survives DOM recreation) ============
+    let _animFrameCount = 0;
+
     // ============ UPDATE SUBTITLES ============
-    function updateSubtitle() {
+    function updateSubtitle(now) {
+        _animFrameCount++;
         const video = document.querySelector('video');
         const layer = document.getElementById('sub-ultra-layer');
         if (video && layer && __.subtitles.length) {
-            // Resize layer to active video area each frame (handles fullscreen transitions)
             resizeLayer();
             layer.innerHTML = '';
             const time = video.currentTime;
             const shifted = __.getShiftedSubs();
             const active = shifted.filter(s => time >= s.start && time <= s.end);
 
-            // ============ FIRST PASS: compute line data & detect explicit ============
             const lines = [];
             active.forEach(sub => {
                 const s = __.styleSettings[sub.style] || { visible: true };
@@ -138,25 +152,20 @@
                 const bo = __.globalSettings.boxOpacity;
                 let posX = sub.filePos ? sub.filePos.x : (s.posX || __.playResX / 2);
                 let posY = sub.filePos ? sub.filePos.y : (s.posY || __.playResY - 35);
-                // Explicit positioning: has \pos() in ASS, or style's pos differs from parser default
                 const isExplicit = !!sub.filePos;
 
                 lines.push({ sub, s, isO, fs, ow, bl, oc, c1, ub, bc, bo, posX, posY, isExplicit });
             });
 
-            // ============ RESOLVE OVERLAP for AUTO-positioned lines ============
-            // Only auto-positioned lines (no \pos() in ASS) get auto-stacked
             const autoLines = lines.filter(l => !l.isExplicit).sort((a, b) => a.posY - b.posY);
             let idx = 0;
             while (idx < autoLines.length) {
                 let end = idx;
-                // Group lines whose Y positions are within 40px of each other
                 while (end + 1 < autoLines.length && autoLines[end + 1].posY - autoLines[idx].posY < 40) {
                     end++;
                 }
                 const group = autoLines.slice(idx, end + 1);
                 if (group.length > 1) {
-                    // Offset each subsequent line downward by (fontSize + 10px) spacing
                     const baseY = group[0].posY;
                     group.forEach((line, i) => {
                         line.posY = baseY + i * (line.fs + 10);
@@ -165,7 +174,6 @@
                 idx = end + 1;
             }
 
-            // ============ SECOND PASS: render all lines ============
             lines.forEach(({ sub, s, isO, fs, ow, bl, oc, c1, ub, bc, bo, posX, posY }) => {
                 let opacity = 1;
                 const fadIn = __.globalSettings.fadIn / 1000;
@@ -173,8 +181,6 @@
                 if (time - sub.start < fadIn) opacity = (time - sub.start) / fadIn;
                 else if (sub.end - time < fadOut) opacity = (sub.end - time) / fadOut;
 
-                // Always use percentage-based positioning within the layer
-                // (the layer is already sized to active video rect via resizeLayer())
                 const div = document.createElement('div');
                 div.style.cssText = `position:absolute; left:${(posX / __.playResX * 100)}%; top:${(posY / __.playResY * 100)}%; transform:translate(-50%, -50%); font-size:${fs}px; font-family:'${__.globalSettings.fontFamily}'; font-weight:${__.globalSettings.isBold ? 'bold' : 'normal'}; font-style:${__.globalSettings.isItalic ? 'italic' : 'normal'}; text-decoration:${__.globalSettings.isUnderline ? 'underline' : ''} ${__.globalSettings.isStrike ? 'line-through' : ''}; text-align:center; white-space:nowrap; pointer-events:none; width:calc(100% - 20px); z-index:99; opacity:${Math.max(0, opacity)};`;
                 const spanWrap = document.createElement('span');
@@ -212,22 +218,97 @@
                         Object.assign(span.style, {
                             color: ks.c1,
                             transform: `scale(${zoom})`,
-                            textShadow: oSize > 0 || sylBlur > 0 ? `0 0 ${sylBlur}px ${ks.c3}` : 'none',
-                            webkitTextStroke: oSize > 0 ? `${oSize}px ${ks.c3}` : 'none',
-                            paintOrder: 'stroke fill'
+                            textShadow: __.buildShadow(oSize, sylBlur, ks.c3),
+                            webkitTextStroke: 'none'
                         });
                         spanWrap.appendChild(span);
                     });
                 } else {
-                    const outlineSize = isO ? s.outlineWidth : __.globalSettings.outlineWidth;
-                    const outlineColor = isO ? (s.color3 || __.globalSettings.color3) : __.globalSettings.color3;
-                    if (outlineSize > 0) {
-                        spanWrap.style.webkitTextStroke = `${outlineSize}px ${outlineColor}`;
-                        spanWrap.style.paintOrder = 'stroke fill';
+                    const eff = __.globalSettings.specialEffect;
+                    // Clear inherited styles
+                    spanWrap.style.color = '';
+                    spanWrap.style.textShadow = '';
+                    spanWrap.style.webkitTextStroke = '';
+                    spanWrap.style.paintOrder = '';
+                    spanWrap.style.background = '';
+                    spanWrap.style.backgroundSize = '';
+                    spanWrap.style.webkitBackgroundClip = '';
+                    spanWrap.style.webkitTextFillColor = '';
+                    spanWrap.style.filter = '';
+                    spanWrap.style.whiteSpace = '';
+                    div.style.whiteSpace = '';
+
+                    if (eff === 'rainbow_outline') {
+                        const speedMul = (__.globalSettings.effectSpeed || 5) * 0.8;
+                        const hueDeg = (_animFrameCount * speedMul) % 360;
+                        const oSize = isO ? s.outlineWidth : __.globalSettings.outlineWidth;
+                        spanWrap.style.color = '#ffffff';
+                        // 8-direction shadow ring with hue-rotate, no blur
+                        spanWrap.style.textShadow = __.buildShadow(oSize, 0, '#ff0000');
+                        spanWrap.style.webkitTextStroke = 'none';
+                        spanWrap.style.filter = `hue-rotate(${hueDeg}deg)`;
+                        spanWrap.innerText = sub.text;
+                    } else if (eff === 'rainbow_text') {
+                        const speedMul = (__.globalSettings.effectSpeed || 5) * 1.2;
+                        const bgShift = (_animFrameCount * speedMul) % 200;
+                        // Two-layer approach: outer span for outline shadow, inner span for rainbow gradient
+                        // Outer: text-shadow with outline (renders BEHIND inner span)
+                        const outlineSize = isO ? s.outlineWidth : __.globalSettings.outlineWidth;
+                        const outlineColor = isO ? (s.color3 || __.globalSettings.color3) : __.globalSettings.color3;
+                        if (outlineSize > 0) {
+                            const o = outlineSize;
+                            const oc = outlineColor;
+                            spanWrap.style.textShadow = [
+                                `${o}px 0px 0 ${oc}`, `-${o}px 0px 0 ${oc}`,
+                                `0px ${o}px 0 ${oc}`, `0px -${o}px 0 ${oc}`,
+                                `${o}px ${o}px 0 ${oc}`, `-${o}px ${o}px 0 ${oc}`,
+                                `${o}px -${o}px 0 ${oc}`, `-${o}px -${o}px 0 ${oc}`
+                            ].join(',');
+                        } else {
+                            spanWrap.style.textShadow = 'none';
+                        }
+                        // Inner span for rainbow gradient fill
+                        const inner = document.createElement('span');
+                        inner.style.cssText = [
+                            'background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3, #ff0000)',
+                            'background-size: 200% auto',
+                            `background-position: ${bgShift}% 50%`,
+                            '-webkit-background-clip: text',
+                            'background-clip: text',
+                            'color: transparent',
+                            '-webkit-text-fill-color: transparent',
+                            'font-weight: 900',
+                            '-webkit-text-stroke: none',
+                            'text-shadow: none'
+                        ].join(';');
+                        inner.textContent = sub.text;
+                        spanWrap.appendChild(inner);
+                    } else if (eff === 'sine_wave') {
+                        const amplitude = __.globalSettings.sineWaveAmplitude || 10;
+                        spanWrap.style.whiteSpace = 'pre';
+                        div.style.whiteSpace = 'pre';
+                        spanWrap.style.color = c1;
+                        spanWrap.style.webkitTextStroke = 'none';
+                        spanWrap.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
+                        const chars = sub.text.split('');
+                        const tSec = _animFrameCount * 0.016;
+                        const speed = (__.globalSettings.effectSpeed || 5) * 0.5;
+                        chars.forEach((ch, idx) => {
+                            const cSpan = document.createElement('span');
+                            cSpan.style.display = 'inline-block';
+                            cSpan.style.whiteSpace = 'pre';
+                            const yOff = Math.sin(tSec * speed + idx * 0.5) * -amplitude;
+                            cSpan.style.transform = `translateY(${yOff}px)`;
+                            cSpan.textContent = ch === ' ' ? '\u00A0' : ch;
+                            spanWrap.appendChild(cSpan);
+                        });
+                    } else {
+                        // No special effect - original rendering with user's 1c/3c
+                        spanWrap.style.color = c1;
+                        spanWrap.style.webkitTextStroke = 'none';
+                        spanWrap.innerText = sub.text;
+                        spanWrap.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
                     }
-                    spanWrap.innerText = sub.text;
-                    spanWrap.style.color = c1;
-                    spanWrap.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
                 }
                 div.appendChild(spanWrap);
                 layer.appendChild(div);
@@ -247,10 +328,8 @@
 
     document.addEventListener('fullscreenchange', () => { __.isFullscreen = !!document.fullscreenElement; });
     document.addEventListener('webkitfullscreenchange', () => { __.isFullscreen = !!document.webkitFullscreenElement; });
-    // YouTube fires transitionend when switching to/from fullscreen
     document.addEventListener('transitionend', (e) => {
         if (e.target.closest && e.target.closest('.html5-video-player')) {
-            // invalidate rect cache, next frame will recalculate
         }
     });
 
