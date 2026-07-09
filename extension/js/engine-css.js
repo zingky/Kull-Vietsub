@@ -3,6 +3,45 @@
 
     const __ = window.__SUB;
 
+    // Known available fonts check
+    function isFontAvailable(fontName) {
+        if (!fontName) return false;
+        const testStr = 'abcdefghijklmnopqrstuvwxyz';
+        const canvas = document.createElement('canvas');
+        canvas.width = 100;
+        canvas.height = 30;
+        const ctx = canvas.getContext('2d');
+        ctx.font = '20px ' + fontName;
+        const refW = ctx.measureText(testStr).width;
+        ctx.font = '20px VNF-Comic Sans';
+        const altW = ctx.measureText(testStr).width;
+        // If the widths match, the font probably doesn't exist and we got fallback
+        // Actually more reliable: check with Arial as default
+        ctx.font = '20px "' + fontName + '", monospace';
+        const mw = ctx.measureText(testStr).width;
+        ctx.font = '20px monospace';
+        const fw = ctx.measureText(testStr).width;
+        return Math.abs(mw - fw) > 2;
+    }
+
+    __.availableFontsCache = {};
+
+    __.getStyleFontFamily = function (styleName) {
+        const s = __.styleSettings[styleName];
+        if (!s || !s.fontName) return __.globalSettings.fontFamily;
+        if (s.fontName.toLowerCase() === 'arial' || s.fontName.toLowerCase() === 'tahoma' || s.fontName.toLowerCase() === 'verdana' || s.fontName.toLowerCase() === 'segoe ui' || s.fontName.toLowerCase() === 'times new roman' || s.fontName.toLowerCase() === 'vnf-comic sans') {
+            return s.fontName;
+        }
+        // Unknown font - check if installed
+        if (__.availableFontsCache[s.fontName] === undefined) {
+            __.availableFontsCache[s.fontName] = isFontAvailable(s.fontName);
+        }
+        if (__.availableFontsCache[s.fontName]) {
+            return s.fontName;
+        }
+        return __.globalSettings.fontFamily;
+    };
+
     // ============ INJECT SPECIAL EFFECTS KEYFRAMES ============
     (function injectEffectKeyframes() {
         if (document.getElementById('eff-keyframes')) return;
@@ -34,10 +73,12 @@
         };
         Object.keys(__.styleSettings).sort((a, b) => priority(a) - priority(b)).forEach(sName => {
             const s = __.styleSettings[sName];
+            const fontAvailable = __.getStyleFontFamily(sName);
+            const fontWarn = (s.fontName && fontAvailable !== s.fontName) ? ' ⚠️' : '';
             const item = document.createElement('div');
             item.className = 'style-item';
             item.innerHTML = `
-                <div class="style-head"><span>${sName}</span><div style="display:flex;align-items:center;gap:6px;"><span class="reset-style-btn" style="cursor:pointer;font-size:10px;color:#ffaa00;" data-style="${sName}">⟳</span><span class="eye-btn" style="cursor:pointer;opacity:${s.visible ? 1 : 0.3}">${s.visible ? '👁️' : '🚫'}</span><label style="display:flex;align-items:center;height:16px;"><input type="checkbox" data-style="${sName}" data-type="override" ${s.override ? 'checked' : ''} style="margin:0;height:12px;"> <span style="font-size:12px;display:flex;align-items:center;">⚙️</span></label><span>▼</span></div></div>
+                <div class="style-head"><span title="Font: ${s.fontName || 'default'}">${sName}${fontWarn}</span><div style="display:flex;align-items:center;gap:6px;"><span class="reset-style-btn" style="cursor:pointer;font-size:10px;color:#ffaa00;" data-style="${sName}">⟳</span><span class="eye-btn" style="cursor:pointer;opacity:${s.visible ? 1 : 0.3}">${s.visible ? '👁️' : '🚫'}</span><label style="display:flex;align-items:center;height:16px;"><input type="checkbox" data-style="${sName}" data-type="override" ${s.override ? 'checked' : ''} style="margin:0;height:12px;"> <span style="font-size:12px;display:flex;align-items:center;">⚙️</span></label><span>▼</span></div></div>
                 <div class="style-body" style="display:none;">
                     <div class="g-row" style="margin-bottom:2px;">X <input type="range" data-style="${sName}" data-type="posX" min="0" max="${__.playResX * 2}" value="${s.posX}"> <input type="number" value="${s.posX}" class="num-in" data-style="${sName}" data-type="posX"></div>
                     <div class="g-row" style="margin-bottom:2px;">Y <input type="range" data-style="${sName}" data-type="posY" min="0" max="${__.playResY * 2}" value="${s.posY}"> <input type="number" value="${s.posY}" class="num-in" data-style="${sName}" data-type="posY"></div>
@@ -57,8 +98,10 @@
                 if (sName.toLowerCase().includes('roma')) s.posY = 80;
                 else if (sName.toLowerCase().includes('kanji')) s.posY = 155;
                 else s.posY = __.playResY - 80;
+                s.color1 = s.origColor1 || '#ffffff';
+                s.color3 = s.origColor3 || '#000000';
                 s.fontSize = 23;
-                s.outlineWidth = 1.5;
+                s.outlineWidth = 2;
                 s.blur = 2;
                 __.saveSubToStorage();
                 __.renderStyles();
@@ -238,7 +281,6 @@
         spanWrap.appendChild(inner);
     }
 
-    // Force box background onto spanWrap (needs display:inline-block)
     function applyBoxStyle(spanWrap, ub, bc, bo) {
         if (ub) {
             spanWrap.style.backgroundColor = __.hexToRgba(bc, bo);
@@ -253,17 +295,23 @@
     }
 
     // ============ RENDER A SINGLE SUB LINE ============
-    function renderSubLine(sub, lineText, li, totalLines, sylArray, fs, posX, posY, ow, bl, oc, c1, ub, bc, bo, opacity, isO) {
+    function renderSubLine(sub, lineText, li, totalLines, sylArray, fs, posX, posY, ow, bl, oc, c1, ub, bc, bo, opacity, isO, styleName) {
         const lineSpacing = fs * 1.4;
         const startY = posY - ((totalLines - 1) * lineSpacing) / 2;
         const lineY = startY + li * lineSpacing;
 
         const div = document.createElement('div');
-        div.style.cssText = `position:absolute; left:${(posX / __.playResX * 100)}%; top:${(lineY / __.playResY * 100)}%; transform:translate(-50%, -50%); font-size:${fs}px; font-family:'${__.globalSettings.fontFamily}'; font-weight:${__.globalSettings.isBold ? 'bold' : 'normal'}; font-style:${__.globalSettings.isItalic ? 'italic' : 'normal'}; text-decoration:${__.globalSettings.isUnderline ? 'underline' : ''} ${__.globalSettings.isStrike ? 'line-through' : ''}; text-align:center; white-space:nowrap; pointer-events:none; width:calc(100% - 20px); z-index:99; opacity:${Math.max(0, opacity)};`;
+
+        // Determine font: if per-style on, use style's fontName; else use global fontFamily
+        let useFont = __.globalSettings.fontFamily;
+        if (isO && styleName && __.styleSettings[styleName] && __.styleSettings[styleName].fontName) {
+            const styleFont = __.getStyleFontFamily(styleName);
+            useFont = styleFont;
+        }
+
+        div.style.cssText = `position:absolute; left:${(posX / __.playResX * 100)}%; top:${(lineY / __.playResY * 100)}%; transform:translate(-50%, -50%); font-size:${fs}px; font-family:'${useFont}'; font-weight:${__.globalSettings.isBold ? 'bold' : 'normal'}; font-style:${__.globalSettings.isItalic ? 'italic' : 'normal'}; text-decoration:${__.globalSettings.isUnderline ? 'underline' : ''} ${__.globalSettings.isStrike ? 'line-through' : ''}; text-align:center; white-space:nowrap; pointer-events:none; width:calc(100% - 20px); z-index:99; opacity:${Math.max(0, opacity)};`;
         const spanWrap = document.createElement('span');
 
-        // Box: ALWAYS active globally regardless of per-style
-        // Set initial display — will be refined at end.
         if (ub) {
             spanWrap.style.display = 'inline-block';
         }
@@ -299,28 +347,23 @@
                 let useSylBlur = sylBlur;
                 let sylZoom = zoom;
 
-                // Active karaoke: always use kActive tab colors (user-editable)
-                // regardless of per-style override, colors come from kActive's c1/c3
                 if (lineElapsed >= syl.timeStart && lineElapsed < syl.timeEnd) {
                     useC1 = ks.c1;
                     useC3 = ks.c3;
                     useOutl = Number(ks.outl) || 0;
                     useSylBlur = sylBlur;
-                    // If per-style on, outline/blur come from style settings
                     if (isO) {
                         const s = __.styleSettings[sub.style];
                         useOutl = s ? s.outlineWidth : __.globalSettings.outlineWidth;
                         useSylBlur = s ? s.blur : __.globalSettings.blur;
                     }
                 } else if (isO) {
-                    // Pre/Post with per-style: use style colors + style outline/blur
                     const s = __.styleSettings[sub.style];
                     useC1 = s ? s.color1 : '#ffffff';
                     useC3 = s ? s.color3 : '#000000';
                     useOutl = s ? s.outlineWidth : __.globalSettings.outlineWidth;
                     useSylBlur = s ? s.blur : __.globalSettings.blur;
                 } else {
-                    // Pre/Post without per-style: use kPre/kPost tab colors
                     useC1 = ks.c1;
                     useC3 = ks.c3;
                 }
@@ -333,10 +376,8 @@
                 });
                 spanWrap.appendChild(span);
             });
-            // After adding all syllable spans, apply box background
             applyBoxStyle(spanWrap, ub, bc, bo);
         } else {
-            // Non-karaoke text rendering
             const eff = __.globalSettings.specialEffect;
             spanWrap.style.color = '';
             spanWrap.style.textShadow = '';
@@ -383,7 +424,6 @@
                 applyBoxStyle(spanWrap, ub, bc, bo);
             }
         }
-        // Final safety: if box is on, ensure display:inline-block
         if (ub) {
             spanWrap.style.display = 'inline-block';
         }
@@ -459,7 +499,7 @@
                 groups.forEach((group, li) => {
                     const lineText = group.text || '';
                     const sylArray = group.syllables || [];
-                    const div = renderSubLine(sub, lineText, li, totalLines, sylArray, fs, posX, posY, ow, bl, oc, c1, ub, bc, bo, opacity, isO);
+                    const div = renderSubLine(sub, lineText, li, totalLines, sylArray, fs, posX, posY, ow, bl, oc, c1, ub, bc, bo, opacity, isO, sub.style);
                     layer.appendChild(div);
                 });
             });

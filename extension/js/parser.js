@@ -32,11 +32,10 @@
                 const p = line.substring(6).split(',');
                 const name = p[0].trim();
                 const c1 = __.assToHex(p[3]);     // PrimaryColour
-                const c2 = __.assToHex(p[4]);     // SecondaryColour
                 const c3 = __.assToHex(p[5]);     // OutlineColour
+                const fontName = p[1].trim();      // Fontname from Aegisub
                 let defX = __.playResX / 2, defY = (name.toLowerCase().includes('roma')) ? 80 : (name.toLowerCase().includes('kanji') ? 155 : __.playResY - 80);
-                // style color1 = PrimaryColour, color3 = OutlineColour (like original file)
-                __.styleSettings[name] = { color1: c1, color3: c3, posX: defX, posY: defY, fontSize: 23, outlineWidth: 1.5, blur: 2, override: !__.globalSettings.useGlobalStyles, visible: true };
+                __.styleSettings[name] = { color1: c1, color3: c3, origColor1: c1, origColor3: c3, posX: defX, posY: defY, fontSize: 23, outlineWidth: 2, blur: 2, fontName: fontName, override: !__.globalSettings.useGlobalStyles, visible: true };
             }
             if (section.includes('events') && (line.startsWith('Dialogue:') || line.startsWith('Comment:'))) {
                 if (line.startsWith('Comment:')) continue;

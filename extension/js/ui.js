@@ -228,7 +228,7 @@
                     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 4px;">
                         <span style="color: #ffaa00; font-weight: bold; font-size: 10px;">STYLES</span>
                         <label style="display:flex; align-items:center; gap:3px; font-size:9px; color:#aaa; cursor:pointer;">
-                            <input type="checkbox" id="use-global-settings" ${__.globalSettings.useGlobalStyles ? 'checked' : ''}> All
+                            <input type="checkbox" id="use-global-settings" ${__.globalSettings.useGlobalStyles ? 'checked' : ''}> Use Global Setting
                         </label>
                     </div>
                     <div id="styleItems"></div>
