@@ -33,22 +33,18 @@
             dropdown.innerHTML = '<div style="padding:6px;color:#888;font-size:8px;">No files. Click ? to load list.</div>';
             return;
         }
-        const titleWords = (async () => {
-            try {
-                const t = await __.getVideoTitle();
-                return t ? t.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/).filter(w => w.length > 1) : [];
-            } catch(e) { return []; }
-        })();
-        // Score function: how well a filename matches
+        const title = document.querySelector('h1.ytd-watch-metadata yt-formatted-string');
+        const titleText = title ? title.textContent.trim() : document.title.replace(' - YouTube', '').trim();
+        const titleWordsArr = titleText.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/).filter(w => w.length > 1);
+        const q = (query || '').toLowerCase().trim();
+
         const scoreFile = (fname, words, q) => {
             const fn = fname.toLowerCase().replace(/[^\w\s]/g, '');
             let s = 0;
-            // Search query match
             if (q && q.length > 0) {
                 const ql = q.toLowerCase();
                 if (fn.includes(ql)) s += 100;
             }
-            // Title word matches
             if (words && words.length) {
                 words.forEach(w => {
                     if (fn.includes(w)) s += 10;
@@ -56,15 +52,9 @@
             }
             return s;
         };
-        // Use sync approach with current title state
-        const title = document.querySelector('h1.ytd-watch-metadata yt-formatted-string');
-        const titleText = title ? title.textContent.trim() : document.title.replace(' - YouTube', '').trim();
-        const titleWordsArr = titleText.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/).filter(w => w.length > 1);
-        const q = (query || '').toLowerCase().trim();
-        // Score and sort
+
         const scored = files.map(f => ({ name: f, score: scoreFile(f, titleWordsArr, q) }));
         scored.sort((a, b) => b.score - a.score);
-        // Filter: if query, show all; else show top 20
         const show = q ? scored : scored.slice(0, 20);
         if (!show.length) {
             dropdown.innerHTML = '<div style="padding:6px;color:#888;font-size:8px;">No matching files.</div>';
@@ -75,7 +65,6 @@
             div.className = 'sub-file-item';
             div.dataset.filename = item.name;
             div.style.cssText = 'padding:4px 8px; cursor:pointer; font-size:8px; color:#ccc; border-bottom:1px solid rgba(255,255,255,0.05); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;';
-            // Highlight matching parts
             if (item.score > 0) {
                 div.style.color = '#3ea6ff';
                 div.style.background = 'rgba(62,166,255,0.05)';
@@ -85,7 +74,6 @@
             div.onmouseleave = () => div.style.background = item.score > 0 ? 'rgba(62,166,255,0.05)' : 'transparent';
             dropdown.appendChild(div);
         });
-        // Count
         const info = document.createElement('div');
         info.style.cssText = 'padding:3px 8px; font-size:7px; color:#666; border-top:1px solid rgba(255,255,255,0.1);';
         info.textContent = q ? `${show.length} results` : `${files.length} files (showing top 20)`;
@@ -99,6 +87,18 @@
             if (p.style.display === 'flex' && typeof __.renderStyles === 'function') __.renderStyles();
         }
     };
+
+    // ============ RESET FUNCTION (preserves sources) ============
+    function handleReset() {
+        const sourcesJson = localStorage.getItem(__.STORAGE_KEY_SOURCES);
+        localStorage.clear();
+        chrome.storage.local.clear();
+        if (sourcesJson) {
+            localStorage.setItem(__.STORAGE_KEY_SOURCES, sourcesJson);
+            __.subSources = JSON.parse(sourcesJson);
+        }
+        location.reload();
+    }
 
     function createUI() {
         if (document.getElementById('sub-pro-popup')) return;
@@ -206,26 +206,30 @@
                             <select id="g-specialEffect" style="width:100%; background:#222; border:1px solid #444; color:#ccc; font-size:9px; border-radius:3px; padding:1px 3px;">
                                 <option value="none" ${__.globalSettings.specialEffect === 'none' ? 'selected' : ''}>None</option>
                                 <option value="rainbow_outline" ${__.globalSettings.specialEffect === 'rainbow_outline' ? 'selected' : ''}>Rainbow Outline</option>
+                                <option value="rainbow_outline_rgb" ${__.globalSettings.specialEffect === 'rainbow_outline_rgb' ? 'selected' : ''}>Rainbow Outline RGB</option>
                                 <option value="rainbow_text" ${__.globalSettings.specialEffect === 'rainbow_text' ? 'selected' : ''}>Rainbow Text</option>
                                 <option value="sine_wave" ${__.globalSettings.specialEffect === 'sine_wave' ? 'selected' : ''}>Sine Wave</option>
                             </select>
                             <div class="g-row" style="margin:0;">
                                 <label style="font-size:9px;">Speed</label>
-                                <input type="range" id="g-effectSpeed" min="1" max="10" step="1" value="${__.globalSettings.effectSpeed || 5}" style="flex:1;">
+                                <input type="range" id="g-effectSpeed" min="1" max="20" step="1" value="${__.globalSettings.effectSpeed || 5}" style="flex:1;">
                                 <input type="number" id="g-effectSpeedVal" value="${__.globalSettings.effectSpeed || 5}" class="num-in" step="1" style="width:30px;">
                             </div>
                             <div class="g-row" style="margin:0; display:${__.globalSettings.specialEffect === 'sine_wave' ? 'flex' : 'none'};" id="sine-amp-row">
                                 <label style="font-size:9px;">Amplitude</label>
-                                <input type="range" id="g-sineWaveAmplitude" min="2" max="30" step="1" value="${__.globalSettings.sineWaveAmplitude || 10}" style="flex:1;">
-                                <input type="number" id="g-sineWaveAmplitudeVal" value="${__.globalSettings.sineWaveAmplitude || 10}" class="num-in" step="1" style="width:30px;">
+                                <input type="range" id="g-sineWaveAmplitude" min="2" max="30" step="1" value="${__.globalSettings.sineWaveAmplitude || 2}" style="flex:1;">
+                                <input type="number" id="g-sineWaveAmplitudeVal" value="${__.globalSettings.sineWaveAmplitude || 2}" class="num-in" step="1" style="width:30px;">
                             </div>
                         </div>
                     </div>
                 </div>
                 <div id="divider" style="width:4px; cursor:col-resize; background:rgba(255,255,255,0.05); flex-shrink:0; border-left:1px solid rgba(255,255,255,0.12); border-right:1px solid rgba(255,255,255,0.05); user-select:none;"></div>
                 <div id="styleListContainer" style="flex: 1.3; padding: 8px; overflow-y: auto; background: transparent; min-width:130px;">
-                    <div style="display:flex; align-items:center; margin-bottom: 4px;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 4px;">
                         <span style="color: #ffaa00; font-weight: bold; font-size: 10px;">STYLES</span>
+                        <label style="display:flex; align-items:center; gap:3px; font-size:9px; color:#aaa; cursor:pointer;">
+                            <input type="checkbox" id="use-global-settings" ${__.globalSettings.useGlobalStyles ? 'checked' : ''}> All
+                        </label>
                     </div>
                     <div id="styleItems"></div>
                 </div>
@@ -299,7 +303,6 @@
                     __.globalSettings.popupOpacity = parseFloat(val);
                     popup.style.background = `rgba(15, 15, 15, ${val})`;
                 } else if (id === 'fontSelect') { __.globalSettings.fontFamily = val; __.saveCache(); }
-                else if (id === 'ts-input') { /* handled separately */ }
                 else {
                     const key = id.replace('g-', '').replace('Val', '').replace('Hex', '');
                     __.globalSettings[key] = (e.target.type === 'number' || e.target.type === 'range') ? parseFloat(val) : val;
@@ -339,7 +342,7 @@
             document.addEventListener('mouseup', () => { if (isResizing) { isResizing = false; document.body.style.cursor = ''; } });
         }
 
-        // Click outside popup to close (persistent listener, never removed)
+        // Click outside popup to close
         document.addEventListener('mousedown', function __clickOutside(e) {
             const p = document.getElementById('sub-pro-popup');
             const btn = document.getElementById('sub-ultra-btn');
@@ -352,12 +355,11 @@
         const searchInput = document.getElementById('sub-search-input');
         const dropdown = document.getElementById('sub-file-dropdown');
 
-        // Fetch file list button - Explicit Refresh
         document.getElementById('btn-fetch-list').onclick = async () => {
             const btnFetch = document.getElementById('btn-fetch-list');
             btnFetch.innerText = '...';
             btnFetch.disabled = true;
-            await __.fetchFileList(true); // force refresh from server
+            await __.fetchFileList(true);
             btnFetch.innerText = '🔍';
             btnFetch.disabled = false;
             __.renderFileDropdown(dropdown, searchInput.value);
@@ -365,25 +367,23 @@
         };
 
         searchInput.addEventListener('focus', async () => {
-            await __.fetchFileList(false); // load cache if exists
+            await __.fetchFileList(false);
             __.renderFileDropdown(dropdown, searchInput.value);
             dropdown.style.display = 'block';
         });
 
         searchInput.addEventListener('input', async () => {
-            await __.fetchFileList(false); // load cache if exists
+            await __.fetchFileList(false);
             __.renderFileDropdown(dropdown, searchInput.value);
             dropdown.style.display = 'block';
         });
 
-        // Close dropdown when clicking outside
         document.addEventListener('mousedown', function __closeSearchDropdown(e) {
             if (!dropdown.contains(e.target) && e.target !== searchInput) {
                 dropdown.style.display = 'none';
             }
         });
 
-        // When user selects a file from dropdown
         dropdown.addEventListener('click', async (e) => {
             const item = e.target.closest('.sub-file-item');
             if (item && item.dataset.filename) {
@@ -394,7 +394,10 @@
                 await __.loadAssFromGitHub(item.dataset.filename);
             }
         });
-        document.getElementById('reset-ui').onclick = () => { localStorage.clear(); chrome.storage.local.clear(); location.reload(); };
+
+        // Reset button - preserve sources
+        document.getElementById('reset-ui').onclick = handleReset;
+
         document.getElementById('closeSubPopup').onclick = () => popup.style.display = 'none';
         document.getElementById('assFile').onchange = async (e) => { if (typeof __.parseASS === 'function') __.parseASS(await e.target.files[0].text()); };
         document.getElementById('btn-download-sub').onclick = __.downloadCurrentSub;
@@ -405,6 +408,21 @@
         if (effSelect && ampRow) {
             effSelect.addEventListener('change', () => {
                 ampRow.style.display = effSelect.value === 'sine_wave' ? 'flex' : 'none';
+            });
+        }
+
+        // Master "Dùng cài đặt chung" checkbox
+        const globalStylesCheckbox = document.getElementById('use-global-settings');
+        if (globalStylesCheckbox) {
+            globalStylesCheckbox.addEventListener('change', () => {
+                const val = globalStylesCheckbox.checked;
+                __.globalSettings.useGlobalStyles = val;
+                Object.keys(__.styleSettings).forEach(name => {
+                    __.styleSettings[name].override = !val;
+                });
+                __.saveCache();
+                __.saveSubToStorage();
+                if (typeof __.renderStyles === 'function') __.renderStyles();
             });
         }
 
@@ -460,7 +478,7 @@
                 </div>
                 <input type="file" id="importFile" accept=".json" style="font-size:8px; width:100%; margin-top:4px; display:none;">
             </div>`;
-        // Close on click outside toggle
+
         popup.addEventListener('change', (e) => {
             if (e.target.id === 'g-closeOnClickOutside') {
                 __.globalSettings.closeOnClickOutside = e.target.checked;
@@ -484,7 +502,6 @@
                 alert('Invalid GitHub URL. Expected format: https://github.com/user/repo/tree/branch/path');
             }
         };
-        // Allow Enter key to add source
         document.getElementById('new-source-url').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') document.getElementById('btn-add-source').click();
         });
@@ -510,7 +527,6 @@
             const isOpen = footerPanel.style.display !== 'none';
             footerPanel.style.display = isOpen ? 'none' : 'block';
         };
-        // Close footer panel when clicking outside it
         document.addEventListener('mousedown', function __closeFooterPanel(e2) {
             if (footerPanel.style.display !== 'none' && !footerPanel.contains(e2.target) && e2.target !== footerBtn) {
                 footerPanel.style.display = 'none';
@@ -603,7 +619,19 @@
             const styleName = sub.style;
             let text = '';
             const origSub = __.subtitles[idx];
-            if (origSub && origSub.syllables && origSub.syllables.length > 0) {
+            if (origSub && origSub.syllableGroups && origSub.syllableGroups.length > 0) {
+                origSub.syllableGroups.forEach((group, gIdx) => {
+                    if (gIdx > 0) text += '\\N';
+                    if (group.syllables && group.syllables.length > 0) {
+                        group.syllables.forEach(syl => {
+                            const durCs = Math.round((syl.timeEnd - syl.timeStart) / 10);
+                            text += `{\\k${durCs}}${syl.text}`;
+                        });
+                    } else {
+                        text += group.text || '';
+                    }
+                });
+            } else if (origSub && origSub.syllables && origSub.syllables.length > 0) {
                 origSub.syllables.forEach(syl => {
                     const durCs = Math.round((syl.timeEnd - syl.timeStart) / 10);
                     text += `{\\k${durCs}}${syl.text}`;

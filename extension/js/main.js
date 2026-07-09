@@ -3,6 +3,25 @@
 
     const __ = window.__SUB;
 
+    // ============ MIGRATE OLD CACHED SUBS TO NEW FORMAT ============
+    function migrateSubs(subs) {
+        if (!Array.isArray(subs)) return subs;
+        subs.forEach(sub => {
+            if (!sub.syllableGroups || sub.syllableGroups.length === 0) {
+                const text = sub.text || '';
+                const lines = text.split('\n');
+                sub.syllableGroups = lines.map(l => ({
+                    syllables: sub.syllables || [],
+                    text: l
+                }));
+                if (sub.syllableGroups.length === 0) {
+                    sub.syllableGroups = [{ syllables: sub.syllables || [], text: '' }];
+                }
+            }
+        });
+        return subs;
+    }
+
     // ============ FETCH FILE LIST FROM ALL ENABLED SOURCES ============
     __.fetchFileList = async function (forceFetch = false) {
         if (!forceFetch && __.assFileCache && __.assFileCache.length > 0) {
@@ -18,7 +37,7 @@
                     const sources = __.getEnabledSources();
                     for (const src of sources) {
                         try {
-                            const apiUrl = `https://api.github.com/repos/${src.repo}/contents/${src.path}`;
+                            const apiUrl = `https://api.github.com/repos/${src.repo}/contents/${src.path}?ref=${src.branch}`;
                             const files = await (await fetch(apiUrl)).json();
                             if (Array.isArray(files)) {
                                 const assFiles = files.filter(f => f.name.endsWith('.ass')).map(f => f.name);
@@ -36,18 +55,38 @@
         });
     };
 
+    // Flag to prevent autoFetchSub from overwriting user-initiated loads
+    __.userInitiatedLoad = false;
+
     // ============ LOAD ASS FROM GITHUB BY NAME (try all sources) ============
     __.loadAssFromGitHub = async function (filename) {
+        __.userInitiatedLoad = true; // prevent autoFetchSub from overwriting
         const sources = __.getEnabledSources();
         for (const src of sources) {
             try {
-                const text = await (await fetch(`https://cdn.jsdelivr.net/gh/${src.repo}@main/${src.path}/${filename}`)).text();
+                const url = `https://raw.githubusercontent.com/${src.repo}/${src.branch}/${src.path}/${filename}`;
+                console.log('Trying to load:', url);
+                const resp = await fetch(url);
+                if (!resp.ok) {
+                    console.log('HTTP error:', resp.status, 'for source:', src.repo, src.path);
+                    throw new Error('HTTP ' + resp.status);
+                }
+                const text = await resp.text();
+                if (!text || text.length < 50 || text.includes('<!DOCTYPE') || text.includes('<html')) {
+                    console.log('Invalid content from source:', src.repo, src.path);
+                    throw new Error('Not valid ASS content');
+                }
                 __.parseASS(text);
+                // Save to cache so subsequent auto checks don't re-fetch
+                const id = __.getVideoId();
+                if (id && __.subtitles.length) {
+                    chrome.storage.local.set({ [id]: { subtitles: __.subtitles, playResX: __.playResX, playResY: __.playResY, styleSettings: __.styleSettings } });
+                }
                 const status = document.getElementById('auto-sub-status');
                 if (status) { status.className = "status-tag status-ok"; status.innerText = "Loaded ✅"; }
                 return true;
             } catch (e) {
-                // try next source
+                console.log('Failed source:', src.repo, e.message);
             }
         }
         const status = document.getElementById('auto-sub-status');
@@ -58,15 +97,28 @@
     // ============ AUTO FETCH (by video ID - try all sources) ============
     __.autoFetchSub = async function (id) {
         if (!id) return;
+        // Wait a bit for user to possibly initiate a manual load first
+        await new Promise(r => setTimeout(r, 800));
+        // If user already loaded manually, skip
+        if (__.userInitiatedLoad) {
+            console.log('autoFetchSub: user initiated load, skipping');
+            return;
+        }
         const sources = __.getEnabledSources();
         for (const src of sources) {
             try {
-                const apiUrl = `https://api.github.com/repos/${src.repo}/contents/${src.path}`;
+                const apiUrl = `https://api.github.com/repos/${src.repo}/contents/${src.path}?ref=${src.branch}`;
                 const files = await (await fetch(apiUrl)).json();
                 if (!Array.isArray(files)) continue;
                 const found = files.find(f => f.name.startsWith(id) && f.name.endsWith('.ass'));
                 if (found) {
-                    const text = await (await fetch(`https://cdn.jsdelivr.net/gh/${src.repo}@main/${src.path}/${found.name}`)).text();
+                    const url = `https://raw.githubusercontent.com/${src.repo}/${src.branch}/${src.path}/${found.name}`;
+                    const resp = await fetch(url);
+                    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+                    const text = await resp.text();
+                    if (!text || text.length < 50 || text.includes('<!DOCTYPE') || text.includes('<html')) {
+                        throw new Error('Invalid content');
+                    }
                     __.parseASS(text);
                     document.getElementById('auto-sub-status').className = "status-tag status-ok";
                     document.getElementById('auto-sub-status').innerText = "Auto-Synced ✅";
@@ -94,10 +146,14 @@
         if (idDisp) idDisp.innerText = id;
         chrome.storage.local.get([id], (result) => {
             if (result[id]) {
-                __.subtitles = result[id].subtitles;
-                __.playResX = result[id].playResX;
-                __.playResY = result[id].playResY;
-                __.styleSettings = result[id].styleSettings;
+                const data = result[id];
+                if (Array.isArray(data.subtitles)) {
+                    migrateSubs(data.subtitles);
+                }
+                __.subtitles = data.subtitles;
+                __.playResX = data.playResX;
+                __.playResY = data.playResY;
+                __.styleSettings = data.styleSettings;
                 if (typeof __.renderStyles === 'function') __.renderStyles();
                 document.getElementById('auto-sub-status').innerText = "Cached 💾";
             } else {
@@ -131,12 +187,10 @@
         __.checkAndLoadVideoSub();
     }
 
-    // Listen for popup toggle from background
     chrome.runtime.onMessage.addListener((req) => {
         if (req.action === "toggle_popup" && typeof __.togglePopup === 'function') __.togglePopup();
     });
 
-    // Listen for SUB button mousedown
     document.addEventListener('mousedown', function (e) {
         if (e.target.closest('#sub-ultra-btn')) {
             e.preventDefault();
@@ -145,9 +199,7 @@
         }
     }, true);
 
-    // Start engine loop
     if (typeof __.startEngine === 'function') __.startEngine();
 
-    // Monitor for YouTube player changes
     setInterval(maintainUI, 1000);
 })();

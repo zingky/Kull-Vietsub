@@ -9,10 +9,6 @@
         const style = document.createElement('style');
         style.id = 'eff-keyframes';
         style.textContent = `
-            @keyframes eff-sine-wave {
-                0%, 100% { transform: translateY(0px); }
-                50% { transform: translateY(-15px); }
-            }
             .eff-sine-char {
                 display: inline-block;
                 white-space: pre;
@@ -83,6 +79,18 @@
             };
             container.appendChild(item);
         });
+        // Auto-height: disable if more than 4 styles (user scrolls manually)
+        const listContainer = container.closest('#styleListContainer');
+        if (listContainer) {
+            const count = Object.keys(__.styleSettings).length;
+            if (count > 4) {
+                listContainer.style.overflowY = 'auto';
+                listContainer.style.maxHeight = 'none';
+            } else {
+                listContainer.style.overflowY = 'auto';
+                listContainer.style.maxHeight = 'none';
+            }
+        }
     };
 
     function resizeLayer() {
@@ -122,8 +130,266 @@
         layer.style.height = '100%';
     }
 
-    // ============ ANIMATION STATE (JS-driven, survives DOM recreation) ============
+    // ============ ANIMATION STATE ============
     let _animFrameCount = 0;
+
+    // ============ RAINBOW OUTLINE WITH SEPARATE STROKE ============
+    function renderRainbowOutline(spanWrap, lineText, ow, oc) {
+        spanWrap.style.color = '#ffffff';
+        spanWrap.style.webkitTextStroke = 'none';
+        spanWrap.style.textShadow = 'none';
+        spanWrap.style.filter = '';
+        spanWrap.style.position = 'relative';
+        const textSpan = document.createElement('span');
+        textSpan.textContent = lineText;
+        textSpan.style.color = '#ffffff';
+        textSpan.style.position = 'relative';
+        textSpan.style.zIndex = '2';
+        const shadowLayer = document.createElement('span');
+        shadowLayer.textContent = lineText;
+        shadowLayer.style.position = 'absolute';
+        shadowLayer.style.left = '0';
+        shadowLayer.style.top = '0';
+        shadowLayer.style.color = 'transparent';
+        shadowLayer.style.zIndex = '1';
+        const speedMul = (__.globalSettings.effectSpeed || 1) * 0.8;
+        const hueDeg = (_animFrameCount * speedMul) % 360;
+        if (ow > 0) {
+            shadowLayer.style.textShadow = __.buildShadow(ow, 0, '#ff0000');
+            shadowLayer.style.filter = `hue-rotate(${hueDeg}deg)`;
+        }
+        shadowLayer.style.pointerEvents = 'none';
+        spanWrap.style.display = 'inline-block';
+        spanWrap.style.position = 'relative';
+        spanWrap.appendChild(textSpan);
+        spanWrap.appendChild(shadowLayer);
+    }
+
+    function renderRainbowOutlineRgb(spanWrap, lineText, ow, oc) {
+        spanWrap.style.color = '#ffffff';
+        spanWrap.style.webkitTextStroke = 'none';
+        spanWrap.style.textShadow = 'none';
+        spanWrap.style.filter = '';
+        spanWrap.style.position = 'relative';
+        const speedMul = (__.globalSettings.effectSpeed || 1) * 1.2;
+        const bgShift = (_animFrameCount * speedMul) % 200;
+        const textSpan = document.createElement('span');
+        textSpan.textContent = lineText;
+        textSpan.style.color = '#ffffff';
+        textSpan.style.position = 'relative';
+        textSpan.style.zIndex = '2';
+        const shadowLayer = document.createElement('span');
+        shadowLayer.textContent = lineText;
+        shadowLayer.style.position = 'absolute';
+        shadowLayer.style.left = '0';
+        shadowLayer.style.top = '0';
+        shadowLayer.style.zIndex = '1';
+        shadowLayer.style.color = 'transparent';
+        shadowLayer.style.webkitTextStroke = 'none';
+        shadowLayer.style.pointerEvents = 'none';
+        if (ow > 0) {
+            shadowLayer.style.background = `linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3, #ff0000)`;
+            shadowLayer.style.backgroundSize = '200% auto';
+            shadowLayer.style.backgroundPosition = `${bgShift}% 50%`;
+            shadowLayer.style.webkitBackgroundClip = 'text';
+            shadowLayer.style.backgroundClip = 'text';
+            shadowLayer.style.color = 'transparent';
+            shadowLayer.style.webkitTextStroke = `${ow * 2}px transparent`;
+            shadowLayer.style.paintOrder = 'stroke fill';
+        }
+        spanWrap.style.display = 'inline-block';
+        spanWrap.style.position = 'relative';
+        spanWrap.appendChild(textSpan);
+        spanWrap.appendChild(shadowLayer);
+    }
+
+    function renderRainbowText(spanWrap, lineText, ow, oc) {
+        const speedMul = (__.globalSettings.effectSpeed || 1) * 1.2;
+        const bgShift = (_animFrameCount * speedMul) % 200;
+        const gradientColors = '#ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3, #ff0000';
+        spanWrap.innerHTML = '';
+        spanWrap.style.display = 'inline-block';
+        spanWrap.style.position = 'relative';
+        if (ow > 0) {
+            spanWrap.style.textShadow = [
+                `${ow}px 0px 0 ${oc}`, `-${ow}px 0px 0 ${oc}`,
+                `0px ${ow}px 0 ${oc}`, `0px -${ow}px 0 ${oc}`,
+                `${ow}px ${ow}px 0 ${oc}`, `-${ow}px ${ow}px 0 ${oc}`,
+                `${ow}px -${ow}px 0 ${oc}`, `-${ow}px -${ow}px 0 ${oc}`
+            ].join(',');
+        } else {
+            spanWrap.style.textShadow = 'none';
+        }
+        const inner = document.createElement('span');
+        inner.style.cssText = [
+            `background: linear-gradient(90deg, ${gradientColors})`,
+            'background-size: 200% auto',
+            `background-position: ${bgShift}% 50%`,
+            '-webkit-background-clip: text',
+            'background-clip: text',
+            'color: transparent',
+            '-webkit-text-fill-color: transparent',
+            'text-shadow: none',
+            '-webkit-text-stroke: none',
+            'position: relative',
+            'z-index: 2'
+        ].join(';');
+        inner.textContent = lineText;
+        spanWrap.appendChild(inner);
+    }
+
+    // Force box background onto spanWrap (needs display:inline-block)
+    function applyBoxStyle(spanWrap, ub, bc, bo) {
+        if (ub) {
+            spanWrap.style.backgroundColor = __.hexToRgba(bc, bo);
+            spanWrap.style.padding = '4px 10px';
+            spanWrap.style.borderRadius = '6px';
+            spanWrap.style.display = 'inline-block';
+        } else {
+            spanWrap.style.backgroundColor = 'transparent';
+            spanWrap.style.padding = '0';
+            spanWrap.style.borderRadius = '0';
+        }
+    }
+
+    // ============ RENDER A SINGLE SUB LINE ============
+    function renderSubLine(sub, lineText, li, totalLines, sylArray, fs, posX, posY, ow, bl, oc, c1, ub, bc, bo, opacity, isO) {
+        const lineSpacing = fs * 1.4;
+        const startY = posY - ((totalLines - 1) * lineSpacing) / 2;
+        const lineY = startY + li * lineSpacing;
+
+        const div = document.createElement('div');
+        div.style.cssText = `position:absolute; left:${(posX / __.playResX * 100)}%; top:${(lineY / __.playResY * 100)}%; transform:translate(-50%, -50%); font-size:${fs}px; font-family:'${__.globalSettings.fontFamily}'; font-weight:${__.globalSettings.isBold ? 'bold' : 'normal'}; font-style:${__.globalSettings.isItalic ? 'italic' : 'normal'}; text-decoration:${__.globalSettings.isUnderline ? 'underline' : ''} ${__.globalSettings.isStrike ? 'line-through' : ''}; text-align:center; white-space:nowrap; pointer-events:none; width:calc(100% - 20px); z-index:99; opacity:${Math.max(0, opacity)};`;
+        const spanWrap = document.createElement('span');
+
+        // Box: ALWAYS active globally regardless of per-style
+        // Set initial display — will be refined at end.
+        if (ub) {
+            spanWrap.style.display = 'inline-block';
+        }
+
+        if (sylArray && sylArray.length > 0) {
+            const lineElapsed = (__.globalSettings._lastRenderTime - sub.start) * 1000;
+            sylArray.forEach(syl => {
+                const span = document.createElement('span');
+                span.innerText = syl.text;
+                span.className = 'syllable';
+                let ks, zoom = 1;
+                let sylBlur = 0;
+                if (lineElapsed < syl.timeStart) {
+                    ks = __.globalSettings.kPre;
+                    sylBlur = ks.blur;
+                } else if (lineElapsed >= syl.timeStart && lineElapsed < syl.timeEnd) {
+                    ks = __.globalSettings.kActive;
+                    sylBlur = ks.blur;
+                    const sEl = lineElapsed - syl.timeStart;
+                    const sRem = syl.timeEnd - lineElapsed;
+                    const zIn = ks.zIn || 100;
+                    const zOut = ks.zOut || 100;
+                    if (sEl < zIn) zoom = 1 + (ks.zoom - 1) * (sEl / zIn);
+                    else if (sRem < zOut) zoom = 1 + (ks.zoom - 1) * (sRem / zOut);
+                    else zoom = ks.zoom;
+                } else {
+                    ks = __.globalSettings.kPost;
+                    sylBlur = ks.blur;
+                }
+
+                let useC1, useC3;
+                let useOutl = Number(ks.outl) || 0;
+                let useSylBlur = sylBlur;
+                let sylZoom = zoom;
+
+                // Active karaoke: always use kActive tab colors (user-editable)
+                // regardless of per-style override, colors come from kActive's c1/c3
+                if (lineElapsed >= syl.timeStart && lineElapsed < syl.timeEnd) {
+                    useC1 = ks.c1;
+                    useC3 = ks.c3;
+                    useOutl = Number(ks.outl) || 0;
+                    useSylBlur = sylBlur;
+                    // If per-style on, outline/blur come from style settings
+                    if (isO) {
+                        const s = __.styleSettings[sub.style];
+                        useOutl = s ? s.outlineWidth : __.globalSettings.outlineWidth;
+                        useSylBlur = s ? s.blur : __.globalSettings.blur;
+                    }
+                } else if (isO) {
+                    // Pre/Post with per-style: use style colors + style outline/blur
+                    const s = __.styleSettings[sub.style];
+                    useC1 = s ? s.color1 : '#ffffff';
+                    useC3 = s ? s.color3 : '#000000';
+                    useOutl = s ? s.outlineWidth : __.globalSettings.outlineWidth;
+                    useSylBlur = s ? s.blur : __.globalSettings.blur;
+                } else {
+                    // Pre/Post without per-style: use kPre/kPost tab colors
+                    useC1 = ks.c1;
+                    useC3 = ks.c3;
+                }
+
+                Object.assign(span.style, {
+                    color: useC1,
+                    transform: `scale(${sylZoom})`,
+                    textShadow: __.buildShadow(useOutl, useSylBlur, useC3),
+                    webkitTextStroke: 'none'
+                });
+                spanWrap.appendChild(span);
+            });
+            // After adding all syllable spans, apply box background
+            applyBoxStyle(spanWrap, ub, bc, bo);
+        } else {
+            // Non-karaoke text rendering
+            const eff = __.globalSettings.specialEffect;
+            spanWrap.style.color = '';
+            spanWrap.style.textShadow = '';
+            spanWrap.style.webkitTextStroke = '';
+            spanWrap.style.paintOrder = '';
+            spanWrap.style.background = '';
+            spanWrap.style.backgroundSize = '';
+            spanWrap.style.webkitBackgroundClip = '';
+            spanWrap.style.webkitTextFillColor = '';
+            spanWrap.style.filter = '';
+            spanWrap.innerHTML = '';
+
+            if (eff === 'rainbow_outline') {
+                renderRainbowOutline(spanWrap, lineText, ow, oc);
+            } else if (eff === 'rainbow_outline_rgb') {
+                renderRainbowOutlineRgb(spanWrap, lineText, ow, oc);
+            } else if (eff === 'rainbow_text') {
+                renderRainbowText(spanWrap, lineText, ow, oc);
+            } else if (eff === 'sine_wave') {
+                const amplitude = __.globalSettings.sineWaveAmplitude || 2;
+                spanWrap.style.whiteSpace = 'pre';
+                div.style.whiteSpace = 'pre';
+                spanWrap.style.color = c1;
+                spanWrap.style.webkitTextStroke = 'none';
+                spanWrap.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
+                const chars = lineText.split('');
+                const tSec = _animFrameCount * 0.016;
+                const speed = (__.globalSettings.effectSpeed || 8) * 0.3;
+                chars.forEach((ch, chIdx) => {
+                    const cSpan = document.createElement('span');
+                    cSpan.style.display = 'inline-block';
+                    cSpan.style.whiteSpace = 'pre';
+                    const yOff = Math.sin(tSec * speed + chIdx * 0.5) * -amplitude;
+                    cSpan.style.transform = `translateY(${yOff}px)`;
+                    cSpan.textContent = ch === ' ' ? '\u00A0' : ch;
+                    spanWrap.appendChild(cSpan);
+                });
+                applyBoxStyle(spanWrap, ub, bc, bo);
+            } else {
+                spanWrap.style.color = c1;
+                spanWrap.style.webkitTextStroke = 'none';
+                spanWrap.innerText = lineText;
+                spanWrap.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
+                applyBoxStyle(spanWrap, ub, bc, bo);
+            }
+        }
+        // Final safety: if box is on, ensure display:inline-block
+        if (ub) {
+            spanWrap.style.display = 'inline-block';
+        }
+        div.appendChild(spanWrap);
+        return div;
+    }
 
     // ============ UPDATE SUBTITLES ============
     function updateSubtitle(now) {
@@ -134,10 +400,11 @@
             resizeLayer();
             layer.innerHTML = '';
             const time = video.currentTime;
+            __.globalSettings._lastRenderTime = time;
             const shifted = __.getShiftedSubs();
-            const active = shifted.filter(s => time >= s.start && time <= s.end);
+            const active = shifted.filter(sub => time >= sub.start && time <= sub.end);
 
-            const lines = [];
+            const lineInfos = [];
             active.forEach(sub => {
                 const s = __.styleSettings[sub.style] || { visible: true };
                 if (!s.visible) return;
@@ -147,17 +414,14 @@
                 const bl = isO ? s.blur : __.globalSettings.blur;
                 const oc = isO ? (s.color3 || __.globalSettings.color3) : __.globalSettings.color3;
                 const c1 = isO ? s.color1 : __.globalSettings.color1;
-                const ub = __.globalSettings.useBox;
-                const bc = __.globalSettings.boxColor;
-                const bo = __.globalSettings.boxOpacity;
                 let posX = sub.filePos ? sub.filePos.x : (s.posX || __.playResX / 2);
                 let posY = sub.filePos ? sub.filePos.y : (s.posY || __.playResY - 35);
                 const isExplicit = !!sub.filePos;
-
-                lines.push({ sub, s, isO, fs, ow, bl, oc, c1, ub, bc, bo, posX, posY, isExplicit });
+                lineInfos.push({ sub, isO, fs, ow, bl, oc, c1, posX, posY, isExplicit });
             });
 
-            const autoLines = lines.filter(l => !l.isExplicit).sort((a, b) => a.posY - b.posY);
+            // Spacing overlap prevention
+            const autoLines = lineInfos.filter(l => !l.isExplicit).sort((a, b) => a.posY - b.posY);
             let idx = 0;
             while (idx < autoLines.length) {
                 let end = idx;
@@ -168,150 +432,36 @@
                 if (group.length > 1) {
                     const baseY = group[0].posY;
                     group.forEach((line, i) => {
-                        line.posY = baseY + i * (line.fs + 10);
+                        line.posY = baseY + i * (line.fs * 1.4);
                     });
                 }
                 idx = end + 1;
             }
 
-            lines.forEach(({ sub, s, isO, fs, ow, bl, oc, c1, ub, bc, bo, posX, posY }) => {
+            const ub = __.globalSettings.useBox;
+            const bc = __.globalSettings.boxColor;
+            const bo = __.globalSettings.boxOpacity;
+
+            lineInfos.forEach(({ sub, isO, fs, ow, bl, oc, c1, posX, posY }) => {
                 let opacity = 1;
                 const fadIn = __.globalSettings.fadIn / 1000;
                 const fadOut = __.globalSettings.fadOut / 1000;
                 if (time - sub.start < fadIn) opacity = (time - sub.start) / fadIn;
                 else if (sub.end - time < fadOut) opacity = (sub.end - time) / fadOut;
 
-                const div = document.createElement('div');
-                div.style.cssText = `position:absolute; left:${(posX / __.playResX * 100)}%; top:${(posY / __.playResY * 100)}%; transform:translate(-50%, -50%); font-size:${fs}px; font-family:'${__.globalSettings.fontFamily}'; font-weight:${__.globalSettings.isBold ? 'bold' : 'normal'}; font-style:${__.globalSettings.isItalic ? 'italic' : 'normal'}; text-decoration:${__.globalSettings.isUnderline ? 'underline' : ''} ${__.globalSettings.isStrike ? 'line-through' : ''}; text-align:center; white-space:nowrap; pointer-events:none; width:calc(100% - 20px); z-index:99; opacity:${Math.max(0, opacity)};`;
-                const spanWrap = document.createElement('span');
-                if (ub) {
-                    spanWrap.style.backgroundColor = __.hexToRgba(bc, bo);
-                    spanWrap.style.padding = '4px 10px';
-                    spanWrap.style.borderRadius = '6px';
+                let groups = sub.syllableGroups;
+                if (!groups || groups.length === 0) {
+                    const lines = (sub.text || '').split('\n');
+                    groups = lines.map(l => ({ syllables: sub.syllables || [], text: l }));
                 }
-                if (sub.syllables.length > 0) {
-                    const lineElapsed = (time - sub.start) * 1000;
-                    sub.syllables.forEach(syl => {
-                        const span = document.createElement('span');
-                        span.innerText = syl.text;
-                        span.className = 'syllable';
-                        let ks, zoom = 1;
-                        let sylBlur = 0;
-                        if (lineElapsed < syl.timeStart) {
-                            ks = __.globalSettings.kPre;
-                            sylBlur = ks.blur;
-                        } else if (lineElapsed >= syl.timeStart && lineElapsed < syl.timeEnd) {
-                            ks = __.globalSettings.kActive;
-                            sylBlur = ks.blur;
-                            const sEl = lineElapsed - syl.timeStart;
-                            const sRem = syl.timeEnd - lineElapsed;
-                            const zIn = ks.zIn || 100;
-                            const zOut = ks.zOut || 100;
-                            if (sEl < zIn) zoom = 1 + (ks.zoom - 1) * (sEl / zIn);
-                            else if (sRem < zOut) zoom = 1 + (ks.zoom - 1) * (sRem / zOut);
-                            else zoom = ks.zoom;
-                        } else {
-                            ks = __.globalSettings.kPost;
-                            sylBlur = ks.blur;
-                        }
-                        const oSize = Number(ks.outl) || 0;
-                        Object.assign(span.style, {
-                            color: ks.c1,
-                            transform: `scale(${zoom})`,
-                            textShadow: __.buildShadow(oSize, sylBlur, ks.c3),
-                            webkitTextStroke: 'none'
-                        });
-                        spanWrap.appendChild(span);
-                    });
-                } else {
-                    const eff = __.globalSettings.specialEffect;
-                    // Clear inherited styles
-                    spanWrap.style.color = '';
-                    spanWrap.style.textShadow = '';
-                    spanWrap.style.webkitTextStroke = '';
-                    spanWrap.style.paintOrder = '';
-                    spanWrap.style.background = '';
-                    spanWrap.style.backgroundSize = '';
-                    spanWrap.style.webkitBackgroundClip = '';
-                    spanWrap.style.webkitTextFillColor = '';
-                    spanWrap.style.filter = '';
-                    spanWrap.style.whiteSpace = '';
-                    div.style.whiteSpace = '';
 
-                    if (eff === 'rainbow_outline') {
-                        const speedMul = (__.globalSettings.effectSpeed || 5) * 0.8;
-                        const hueDeg = (_animFrameCount * speedMul) % 360;
-                        const oSize = isO ? s.outlineWidth : __.globalSettings.outlineWidth;
-                        spanWrap.style.color = '#ffffff';
-                        // 8-direction shadow ring with hue-rotate, no blur
-                        spanWrap.style.textShadow = __.buildShadow(oSize, 0, '#ff0000');
-                        spanWrap.style.webkitTextStroke = 'none';
-                        spanWrap.style.filter = `hue-rotate(${hueDeg}deg)`;
-                        spanWrap.innerText = sub.text;
-                    } else if (eff === 'rainbow_text') {
-                        const speedMul = (__.globalSettings.effectSpeed || 5) * 1.2;
-                        const bgShift = (_animFrameCount * speedMul) % 200;
-                        // Two-layer approach: outer span for outline shadow, inner span for rainbow gradient
-                        // Outer: text-shadow with outline (renders BEHIND inner span)
-                        const outlineSize = isO ? s.outlineWidth : __.globalSettings.outlineWidth;
-                        const outlineColor = isO ? (s.color3 || __.globalSettings.color3) : __.globalSettings.color3;
-                        if (outlineSize > 0) {
-                            const o = outlineSize;
-                            const oc = outlineColor;
-                            spanWrap.style.textShadow = [
-                                `${o}px 0px 0 ${oc}`, `-${o}px 0px 0 ${oc}`,
-                                `0px ${o}px 0 ${oc}`, `0px -${o}px 0 ${oc}`,
-                                `${o}px ${o}px 0 ${oc}`, `-${o}px ${o}px 0 ${oc}`,
-                                `${o}px -${o}px 0 ${oc}`, `-${o}px -${o}px 0 ${oc}`
-                            ].join(',');
-                        } else {
-                            spanWrap.style.textShadow = 'none';
-                        }
-                        // Inner span for rainbow gradient fill
-                        const inner = document.createElement('span');
-                        inner.style.cssText = [
-                            'background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3, #ff0000)',
-                            'background-size: 200% auto',
-                            `background-position: ${bgShift}% 50%`,
-                            '-webkit-background-clip: text',
-                            'background-clip: text',
-                            'color: transparent',
-                            '-webkit-text-fill-color: transparent',
-                            'font-weight: 900',
-                            '-webkit-text-stroke: none',
-                            'text-shadow: none'
-                        ].join(';');
-                        inner.textContent = sub.text;
-                        spanWrap.appendChild(inner);
-                    } else if (eff === 'sine_wave') {
-                        const amplitude = __.globalSettings.sineWaveAmplitude || 10;
-                        spanWrap.style.whiteSpace = 'pre';
-                        div.style.whiteSpace = 'pre';
-                        spanWrap.style.color = c1;
-                        spanWrap.style.webkitTextStroke = 'none';
-                        spanWrap.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
-                        const chars = sub.text.split('');
-                        const tSec = _animFrameCount * 0.016;
-                        const speed = (__.globalSettings.effectSpeed || 5) * 0.5;
-                        chars.forEach((ch, idx) => {
-                            const cSpan = document.createElement('span');
-                            cSpan.style.display = 'inline-block';
-                            cSpan.style.whiteSpace = 'pre';
-                            const yOff = Math.sin(tSec * speed + idx * 0.5) * -amplitude;
-                            cSpan.style.transform = `translateY(${yOff}px)`;
-                            cSpan.textContent = ch === ' ' ? '\u00A0' : ch;
-                            spanWrap.appendChild(cSpan);
-                        });
-                    } else {
-                        // No special effect - original rendering with user's 1c/3c
-                        spanWrap.style.color = c1;
-                        spanWrap.style.webkitTextStroke = 'none';
-                        spanWrap.innerText = sub.text;
-                        spanWrap.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
-                    }
-                }
-                div.appendChild(spanWrap);
-                layer.appendChild(div);
+                const totalLines = groups.length;
+                groups.forEach((group, li) => {
+                    const lineText = group.text || '';
+                    const sylArray = group.syllables || [];
+                    const div = renderSubLine(sub, lineText, li, totalLines, sylArray, fs, posX, posY, ow, bl, oc, c1, ub, bc, bo, opacity, isO);
+                    layer.appendChild(div);
+                });
             });
         }
         requestAnimationFrame(updateSubtitle);
@@ -328,10 +478,6 @@
 
     document.addEventListener('fullscreenchange', () => { __.isFullscreen = !!document.fullscreenElement; });
     document.addEventListener('webkitfullscreenchange', () => { __.isFullscreen = !!document.webkitFullscreenElement; });
-    document.addEventListener('transitionend', (e) => {
-        if (e.target.closest && e.target.closest('.html5-video-player')) {
-        }
-    });
 
     __.startEngine = function () {
         requestAnimationFrame(updateSubtitle);
