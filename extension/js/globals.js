@@ -21,7 +21,12 @@
         closeOnClickOutside: true,
         constrainToVideo: true,
         specialEffect: 'none',
-        effectSpeed: { rainbow_outline: 1, rainbow_outline_rgb: 1, rainbow_text: 1, sine_wave: 20 },
+        effectSpeed: {
+            rainbow_outline: 1, rainbow_outline_rgb: 1, rainbow_text: 1, sine_wave: 20,
+            shine_sweep: 1, split_color: 1, retro_80s: 1, golden: 1, float_hover: 1,
+            breathe: 1, jello: 1, typewriter: 1, pulse: 1, shake: 1, glitch: 1,
+            ghosting: 1, water_reflection: 1, d3d_block: 1, glow_pulse: 1
+        },
         sineWaveAmplitude: 2,
         useGlobalStyles: false
     };

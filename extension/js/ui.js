@@ -209,6 +209,21 @@
                                 <option value="rainbow_outline_rgb" ${__.globalSettings.specialEffect === 'rainbow_outline_rgb' ? 'selected' : ''}>RGB Outline</option>
                                 <option value="rainbow_text" ${__.globalSettings.specialEffect === 'rainbow_text' ? 'selected' : ''}>RGB Text</option>
                                 <option value="sine_wave" ${__.globalSettings.specialEffect === 'sine_wave' ? 'selected' : ''}>Sine Wave</option>
+                                <option value="shine_sweep" ${__.globalSettings.specialEffect === 'shine_sweep' ? 'selected' : ''}>✨ Shine / Sweep</option>
+                                <option value="split_color" ${__.globalSettings.specialEffect === 'split_color' ? 'selected' : ''}>🔲 Split Color</option>
+                                <option value="retro_80s" ${__.globalSettings.specialEffect === 'retro_80s' ? 'selected' : ''}>🌴 80s Retro</option>
+                                <option value="golden" ${__.globalSettings.specialEffect === 'golden' ? 'selected' : ''}>🏆 Golden Text</option>
+                                <option value="float_hover" ${__.globalSettings.specialEffect === 'float_hover' ? 'selected' : ''}>🎈 Float / Hover</option>
+                                <option value="breathe" ${__.globalSettings.specialEffect === 'breathe' ? 'selected' : ''}>🌬️ Breathe</option>
+                                <option value="jello" ${__.globalSettings.specialEffect === 'jello' ? 'selected' : ''}>🍮 Jello</option>
+                                <option value="typewriter" ${__.globalSettings.specialEffect === 'typewriter' ? 'selected' : ''}>⌨️ Typewriter</option>
+                                <option value="pulse" ${__.globalSettings.specialEffect === 'pulse' ? 'selected' : ''}>💓 Pulse / Heartbeat</option>
+                                <option value="shake" ${__.globalSettings.specialEffect === 'shake' ? 'selected' : ''}>🌊 Shake</option>
+                                <option value="glitch" ${__.globalSettings.specialEffect === 'glitch' ? 'selected' : ''}>👾 Glitch</option>
+                                <option value="ghosting" ${__.globalSettings.specialEffect === 'ghosting' ? 'selected' : ''}>👻 Ghosting</option>
+                                <option value="water_reflection" ${__.globalSettings.specialEffect === 'water_reflection' ? 'selected' : ''}>🪞 Water Reflection</option>
+                                <option value="d3d_block" ${__.globalSettings.specialEffect === 'd3d_block' ? 'selected' : ''}>🧊 3D Block</option>
+                                <option value="glow_pulse" ${__.globalSettings.specialEffect === 'glow_pulse' ? 'selected' : ''}>💫 Glow Pulse</option>
                             </select>
                             <div class="g-row" style="margin:0;">
                                 <label style="font-size:9px;">Speed</label>

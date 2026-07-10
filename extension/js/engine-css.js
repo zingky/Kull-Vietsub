@@ -15,8 +15,6 @@
         const refW = ctx.measureText(testStr).width;
         ctx.font = '20px VNF-Comic Sans';
         const altW = ctx.measureText(testStr).width;
-        // If the widths match, the font probably doesn't exist and we got fallback
-        // Actually more reliable: check with Arial as default
         ctx.font = '20px "' + fontName + '", monospace';
         const mw = ctx.measureText(testStr).width;
         ctx.font = '20px monospace';
@@ -32,7 +30,6 @@
         if (s.fontName.toLowerCase() === 'arial' || s.fontName.toLowerCase() === 'tahoma' || s.fontName.toLowerCase() === 'verdana' || s.fontName.toLowerCase() === 'segoe ui' || s.fontName.toLowerCase() === 'times new roman' || s.fontName.toLowerCase() === 'vnf-comic sans') {
             return s.fontName;
         }
-        // Unknown font - check if installed
         if (__.availableFontsCache[s.fontName] === undefined) {
             __.availableFontsCache[s.fontName] = isFontAvailable(s.fontName);
         }
@@ -122,7 +119,6 @@
             };
             container.appendChild(item);
         });
-        // Auto-height: disable if more than 4 styles (user scrolls manually)
         const listContainer = container.closest('#styleListContainer');
         if (listContainer) {
             const count = Object.keys(__.styleSettings).length;
@@ -255,7 +251,6 @@
         spanWrap.style.display = 'inline-block';
         spanWrap.style.position = 'relative';
         spanWrap.style.textShadow = 'none';
-        // Layer 1: outline shadow with solid color
         if (ow > 0) {
             const shadowLayer = document.createElement('span');
             shadowLayer.textContent = lineText;
@@ -269,7 +264,6 @@
             ].join(';');
             spanWrap.appendChild(shadowLayer);
         }
-        // Layer 2: gradient text
         const inner = document.createElement('span');
         inner.style.cssText = [
             `background: linear-gradient(90deg, ${gradientColors})`,
@@ -301,6 +295,548 @@
         }
     }
 
+    // ============ NEW EFFECT: Shine/Sweep ============
+    function renderShineSweep(spanWrap, lineText, ow, bl, oc, c1) {
+        spanWrap.innerHTML = '';
+        spanWrap.style.display = 'inline-block';
+        spanWrap.style.position = 'relative';
+        spanWrap.style.color = c1;
+        spanWrap.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
+        spanWrap.style.background = `linear-gradient(90deg, ${c1} 40%, rgba(255,255,255,0.9) 50%, ${c1} 60%)`;
+        spanWrap.style.backgroundSize = '200% auto';
+        const speed = (__.globalSettings.effectSpeed && __.globalSettings.effectSpeed.shine_sweep || 4) * 0.08;
+        const pos = ((_animFrameCount * speed * 100) % 200) - 50;
+        spanWrap.style.backgroundPosition = `${pos}% 50%`;
+        spanWrap.style.webkitBackgroundClip = 'text';
+        spanWrap.style.backgroundClip = 'text';
+        spanWrap.style.color = 'transparent';
+        spanWrap.style.webkitTextFillColor = c1;
+        spanWrap.innerText = lineText;
+    }
+
+    // ============ NEW EFFECT: Split Color ============
+    function renderSplitColor(spanWrap, lineText, ow, bl, oc, c1) {
+        spanWrap.innerHTML = '';
+        spanWrap.style.display = 'inline-block';
+        spanWrap.style.position = 'relative';
+        spanWrap.style.color = c1;
+        spanWrap.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
+        // Top half white, bottom half #4488ff (blue)
+        spanWrap.style.background = 'linear-gradient(180deg, #ffffff 0%, #ffffff 50%, #4488ff 50%, #4488ff 100%)';
+        spanWrap.style.webkitBackgroundClip = 'text';
+        spanWrap.style.backgroundClip = 'text';
+        spanWrap.style.color = 'transparent';
+        spanWrap.style.webkitTextFillColor = 'transparent';
+        spanWrap.innerText = lineText;
+    }
+
+    // ============ NEW EFFECT: 80s Retro Synthwave ============
+    function renderRetro80s(spanWrap, lineText, ow, bl, oc, c1) {
+        spanWrap.innerHTML = '';
+        spanWrap.style.display = 'inline-block';
+        spanWrap.style.position = 'relative';
+        spanWrap.style.color = '#ff44ff'; // neon pink
+        spanWrap.style.textShadow = [
+            '4px 4px 0 #00ffff',  // cyan
+            '8px 8px 0 #00ffff',
+            '12px 12px 0 #00ffff',
+            '16px 16px 0 #00ffff',
+            '20px 20px 0 #00ffff',
+            `0 0 ${bl + 4}px #ff44ff`
+        ].join(',');
+        spanWrap.innerText = lineText;
+    }
+
+    // ============ NEW EFFECT: Golden Text ============
+    function renderGolden(spanWrap, lineText, ow, bl, oc, c1) {
+        spanWrap.innerHTML = '';
+        spanWrap.style.display = 'inline-block';
+        spanWrap.style.position = 'relative';
+        // gold gradient
+        spanWrap.style.background = 'linear-gradient(180deg, #d4a017 0%, #fff8dc 30%, #d4a017 50%, #b8860b 70%, #d4a017 100%)';
+        spanWrap.style.webkitBackgroundClip = 'text';
+        spanWrap.style.backgroundClip = 'text';
+        spanWrap.style.color = 'transparent';
+        spanWrap.style.webkitTextFillColor = 'transparent';
+        spanWrap.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, '#8b6914') : __.buildShadow(ow, bl, '#8b6914');
+        spanWrap.innerText = lineText;
+    }
+
+    // ============ NEW EFFECT: Float/Hover ============
+    function renderFloatHover(spanWrap, lineText, ow, bl, oc, c1) {
+        spanWrap.style.display = 'inline-block';
+        spanWrap.style.position = 'relative';
+        spanWrap.style.color = c1;
+        spanWrap.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
+        const speed = (__.globalSettings.effectSpeed && __.globalSettings.effectSpeed.float_hover || 5) * 0.1;
+        const yOff = Math.sin(_animFrameCount * 0.016 * speed) * 8;
+        spanWrap.style.transform = `translateY(${yOff}px)`;
+        spanWrap.innerText = lineText;
+    }
+
+    // ============ NEW EFFECT: Breathe / Zoom Pulse ============
+    function renderBreathe(spanWrap, lineText, ow, bl, oc, c1) {
+        spanWrap.style.display = 'inline-block';
+        spanWrap.style.position = 'relative';
+        spanWrap.style.color = c1;
+        spanWrap.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
+        const speed = (__.globalSettings.effectSpeed && __.globalSettings.effectSpeed.breathe || 3) * 0.06;
+        const scale = 1 + Math.sin(_animFrameCount * 0.016 * speed) * 0.05;
+        spanWrap.style.transform = `scale(${scale})`;
+        spanWrap.innerText = lineText;
+    }
+
+    // ============ NEW EFFECT: Jello ============
+    function renderJello(spanWrap, lineText, ow, bl, oc, c1) {
+        spanWrap.style.display = 'inline-block';
+        spanWrap.style.position = 'relative';
+        spanWrap.style.color = c1;
+        spanWrap.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
+        // squish then bounce: quick damped oscillation on line entry
+        const speed = (__.globalSettings.effectSpeed && __.globalSettings.effectSpeed.jello || 6) * 0.2;
+        // Use a decreasing bounce over ~30 frames
+        const age = _animFrameCount % 60;
+        let scaleX = 1, scaleY = 1;
+        if (age < 12) {
+            const t = age / 12;
+            // squish then stretch then recover with overshoot
+            scaleX = 1 - Math.sin(t * Math.PI * 2) * 0.15 * (1 - t);
+            scaleY = 1 + Math.sin(t * Math.PI * 2) * 0.1 * (1 - t);
+        } else {
+            // subtle ongoing jiggle
+            const t = _animFrameCount * 0.016 * speed;
+            scaleX = 1 + Math.sin(t * 2) * 0.01;
+            scaleY = 1 - Math.sin(t * 2) * 0.005;
+        }
+        spanWrap.style.transform = `scale(${scaleX}, ${scaleY})`;
+        spanWrap.innerText = lineText;
+    }
+
+    // ============ NEW EFFECT: Typewriter ============
+    function renderTypewriter(spanWrap, lineText, ow, bl, oc, c1) {
+        spanWrap.style.display = 'inline-block';
+        spanWrap.style.position = 'relative';
+        spanWrap.style.color = c1;
+        spanWrap.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
+        spanWrap.style.overflow = 'hidden';
+        spanWrap.style.whiteSpace = 'nowrap';
+        const speed = (__.globalSettings.effectSpeed && __.globalSettings.effectSpeed.typewriter || 10) * 0.03;
+        const charCount = Math.floor((_animFrameCount % 200) * speed);
+        const visible = lineText.slice(0, Math.min(charCount, lineText.length));
+        spanWrap.innerText = visible;
+    }
+
+    // ============ NEW EFFECT: Pulse / Heartbeat ============
+    function renderPulse(spanWrap, lineText, ow, bl, oc, c1) {
+        spanWrap.style.display = 'inline-block';
+        spanWrap.style.position = 'relative';
+        spanWrap.style.color = c1;
+        spanWrap.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
+        const speed = (__.globalSettings.effectSpeed && __.globalSettings.effectSpeed.pulse || 6) * 0.15;
+        // heartbeat: double thump pattern
+        const t = (_animFrameCount * 0.016) * speed;
+        const phase = t % (Math.PI * 2);
+        let scale = 1;
+        if (phase < 0.15) scale = 1 + 0.08;
+        else if (phase < 0.3) scale = 1 - 0.02;
+        else if (phase < 0.45) scale = 1 + 0.05;
+        else scale = 1;
+        spanWrap.style.transform = `scale(${scale})`;
+        spanWrap.innerText = lineText;
+    }
+
+    // ============ NEW EFFECT: Shake / Quake ============
+    function renderShake(spanWrap, lineText, ow, bl, oc, c1) {
+        spanWrap.style.display = 'inline-block';
+        spanWrap.style.position = 'relative';
+        spanWrap.style.color = c1;
+        spanWrap.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
+        const intensity = (__.globalSettings.effectSpeed && __.globalSettings.effectSpeed.shake || 8) * 0.15;
+        const dx = (Math.random() - 0.5) * intensity * 2;
+        const dy = (Math.random() - 0.5) * intensity * 2;
+        spanWrap.style.transform = `translate(${dx}px, ${dy}px)`;
+        spanWrap.innerText = lineText;
+    }
+
+    // ============ NEW EFFECT: Glitch ============
+    function renderGlitch(spanWrap, lineText, ow, bl, oc, c1) {
+        spanWrap.innerHTML = '';
+        spanWrap.style.display = 'inline-block';
+        spanWrap.style.position = 'relative';
+        const speed = (__.globalSettings.effectSpeed && __.globalSettings.effectSpeed.glitch || 5) * 0.05;
+        const glitchFrame = Math.sin(_animFrameCount * 0.016 * speed);
+        const isGlitch = Math.abs(glitchFrame) > 0.85;
+        // Main text
+        const mainSpan = document.createElement('span');
+        mainSpan.textContent = lineText;
+        mainSpan.style.cssText = `color:${c1};text-shadow:${__.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc)};position:relative;z-index:2;`;
+        spanWrap.appendChild(mainSpan);
+        if (isGlitch) {
+            const glitchRange = glitchFrame * 6;
+            // Red offset layer
+            const red = document.createElement('span');
+            red.textContent = lineText;
+            red.style.cssText = `position:absolute;left:${glitchRange}px;top:0;color:#ff0000;opacity:0.7;z-index:1;text-shadow:none;`;
+            spanWrap.appendChild(red);
+            // Green offset layer
+            const green = document.createElement('span');
+            green.textContent = lineText;
+            green.style.cssText = `position:absolute;left:${-glitchRange}px;top:0;color:#00ff00;opacity:0.7;z-index:1;text-shadow:none;`;
+            spanWrap.appendChild(green);
+        }
+    }
+
+    // ============ NEW EFFECT: Ghosting / Drunk ============
+    function renderGhosting(spanWrap, lineText, ow, bl, oc, c1) {
+        spanWrap.innerHTML = '';
+        spanWrap.style.display = 'inline-block';
+        spanWrap.style.position = 'relative';
+        const mainSpan = document.createElement('span');
+        mainSpan.textContent = lineText;
+        mainSpan.style.cssText = `color:${c1};text-shadow:${__.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc)};position:relative;z-index:3;`;
+        spanWrap.appendChild(mainSpan);
+        const speed = (__.globalSettings.effectSpeed && __.globalSettings.effectSpeed.ghosting || 3) * 0.08;
+        const t = _animFrameCount * 0.016 * speed;
+        const offX = Math.sin(t) * 15;
+        const offY = Math.cos(t * 0.7) * 8;
+        // Ghost 1
+        const g1 = document.createElement('span');
+        g1.textContent = lineText;
+        g1.style.cssText = `position:absolute;left:${offX}px;top:${offY}px;color:${c1};opacity:0.2;z-index:1;text-shadow:none;filter:blur(3px);`;
+        spanWrap.appendChild(g1);
+        // Ghost 2
+        const g2 = document.createElement('span');
+        g2.textContent = lineText;
+        g2.style.cssText = `position:absolute;left:${-offX * 0.6}px;top:${-offY * 0.6}px;color:${c1};opacity:0.15;z-index:2;text-shadow:none;filter:blur(5px);`;
+        spanWrap.appendChild(g2);
+    }
+
+    // ============ NEW EFFECT: Water Reflection ============
+    function renderWaterReflection(spanWrap, lineText, ow, bl, oc, c1) {
+        spanWrap.innerHTML = '';
+        spanWrap.style.display = 'inline-block';
+        spanWrap.style.position = 'relative';
+        const mainSpan = document.createElement('span');
+        mainSpan.textContent = lineText;
+        mainSpan.style.cssText = `color:${c1};text-shadow:${__.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc)};display:block;`;
+        spanWrap.appendChild(mainSpan);
+        // Reflection (flipped + fade)
+        const ref = document.createElement('span');
+        ref.textContent = lineText;
+        ref.style.cssText = `display:block;color:${c1};text-shadow:${__.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc)};transform:scaleY(-1);opacity:0.35;filter:blur(2px);margin-top:4px;`;
+        spanWrap.appendChild(ref);
+    }
+
+    // ============ NEW EFFECT: 3D Block ============
+    function render3DBlock(spanWrap, lineText, ow, bl, oc, c1) {
+        spanWrap.innerHTML = '';
+        spanWrap.style.display = 'inline-block';
+        spanWrap.style.position = 'relative';
+        spanWrap.style.color = c1;
+        // Hard block shadows (no blur)
+        const shadows = [];
+        for (let i = 1; i <= 8; i++) {
+            shadows.push(`${i}px ${i}px 0 ${oc}`);
+        }
+        spanWrap.style.textShadow = shadows.join(',');
+        spanWrap.innerText = lineText;
+    }
+
+    // ============ NEW EFFECT: Glow Pulse ============
+    function renderGlowPulse(spanWrap, lineText, ow, bl, oc, c1) {
+        spanWrap.style.display = 'inline-block';
+        spanWrap.style.position = 'relative';
+        spanWrap.style.color = c1;
+        const speed = (__.globalSettings.effectSpeed && __.globalSettings.effectSpeed.glow_pulse || 5) * 0.08;
+        const breathe = 0.5 + Math.sin(_animFrameCount * 0.016 * speed) * 0.5;
+        const pulseBlur = Math.max(0, bl * breathe);
+        const pulseOw = Math.max(0, ow * (0.5 + breathe * 0.5));
+        spanWrap.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(pulseOw, pulseBlur, oc) : __.buildShadow(pulseOw, pulseBlur, oc);
+        spanWrap.innerText = lineText;
+    }
+
+    // ============ EFFECT DISPATCH FOR KARAOKE ============
+    // For karaoke with sine_wave: per-char sine + per-syllable zoom
+    function renderKaraokeSineWave(spanWrap, sub, lineText, sylArray, ow, bl, oc, c1, ub, bc, bo, fs) {
+        const lineElapsed = (__.globalSettings._lastRenderTime - sub.start) * 1000;
+        const amp = __.globalSettings.sineWaveAmplitude || 2;
+        const tSec = _animFrameCount * 0.016;
+        const speed = (__.globalSettings.effectSpeed && __.globalSettings.effectSpeed.sine_wave || 8) * 0.3;
+        const shadowStr = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
+        let charIdxGlobal = 0;
+        sylArray.forEach(syl => {
+            let sylZoom = 1;
+            if (lineElapsed >= syl.timeStart && lineElapsed < syl.timeEnd) {
+                const kAct = __.globalSettings.kActive;
+                const sEl = lineElapsed - syl.timeStart;
+                const sRem = syl.timeEnd - lineElapsed;
+                const zIn = kAct.zIn || 100; const zOut = kAct.zOut || 100;
+                if (sEl < zIn) sylZoom = 1 + (kAct.zoom - 1) * (sEl / zIn);
+                else if (sRem < zOut) sylZoom = 1 + (kAct.zoom - 1) * (sRem / zOut);
+                else sylZoom = kAct.zoom;
+            }
+            (syl.text || '').split('').forEach(ch => {
+                const cSpan = document.createElement('span');
+                cSpan.style.cssText = `display:inline-block;white-space:pre;color:${c1};text-shadow:${shadowStr};`;
+                const yOff = Math.sin(tSec * speed + charIdxGlobal * 0.5) * -amp;
+                cSpan.style.transform = `translateY(${yOff}px) scale(${sylZoom})`;
+                cSpan.textContent = ch === ' ' ? '\u00A0' : ch;
+                spanWrap.appendChild(cSpan);
+                charIdxGlobal++;
+            });
+        });
+        applyBoxStyle(spanWrap, ub, bc, bo);
+    }
+
+    // For karaoke with rainbow effects + new effects: full line gradient/effect, per-syllable zoom
+    function renderKaraokeFullLineGradient(spanWrap, sub, lineText, sylArray, ow, bl, oc, c1, ub, bc, bo, eff) {
+        const lineElapsed = (__.globalSettings._lastRenderTime - sub.start) * 1000;
+        let charIdxGlobal = 0;
+        const totalChars = lineText.replace(/\u00A0/g, ' ').length;
+        const renderChar = (txt, sylZoom, chIdx) => {
+            const cSpan = document.createElement('span');
+            cSpan.style.cssText = 'display:inline-block;white-space:pre;position:relative;';
+            cSpan.style.transform = `scale(${sylZoom})`;
+
+            if (eff === 'shine_sweep') {
+                // Shine per char - each char gets the gradient clip
+                cSpan.style.color = c1;
+                cSpan.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
+                cSpan.textContent = txt;
+                // Shine sweep is handled at full-line level, not per char
+            } else if (eff === 'split_color') {
+                cSpan.style.background = 'linear-gradient(180deg, #ffffff 0%, #ffffff 50%, #4488ff 50%, #4488ff 100%)';
+                cSpan.style.webkitBackgroundClip = 'text'; cSpan.style.backgroundClip = 'text';
+                cSpan.style.color = 'transparent';
+                cSpan.style.webkitTextFillColor = 'transparent';
+                cSpan.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
+                cSpan.textContent = txt;
+            } else if (eff === 'retro_80s') {
+                cSpan.style.color = '#ff44ff';
+                cSpan.style.textShadow = [
+                    '4px 4px 0 #00ffff', '8px 8px 0 #00ffff',
+                    '12px 12px 0 #00ffff', '16px 16px 0 #00ffff',
+                    `0 0 ${bl + 4}px #ff44ff`
+                ].join(',');
+                cSpan.textContent = txt;
+            } else if (eff === 'golden') {
+                cSpan.style.background = 'linear-gradient(180deg, #d4a017 0%, #fff8dc 30%, #d4a017 50%, #b8860b 70%, #d4a017 100%)';
+                cSpan.style.webkitBackgroundClip = 'text'; cSpan.style.backgroundClip = 'text';
+                cSpan.style.color = 'transparent'; cSpan.style.webkitTextFillColor = 'transparent';
+                cSpan.style.textShadow = __.buildShadow(ow, bl, '#8b6914');
+                cSpan.textContent = txt;
+            } else if (eff === 'd3d_block') {
+                const shadows = [];
+                for (let i = 1; i <= 6; i++) shadows.push(`${i}px ${i}px 0 ${oc}`);
+                cSpan.style.color = c1;
+                cSpan.style.textShadow = shadows.join(',');
+                cSpan.textContent = txt;
+            } else if (eff === 'water_reflection') {
+                cSpan.style.color = c1;
+                cSpan.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
+                cSpan.textContent = txt;
+                // water reflection handled at parent level
+            } else {
+                // fallback: normal
+                cSpan.style.color = c1;
+                cSpan.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
+                cSpan.textContent = txt;
+            }
+
+            spanWrap.appendChild(cSpan);
+            return cSpan;
+        };
+
+        sylArray.forEach(syl => {
+            let sylZoom = 1;
+            if (lineElapsed >= syl.timeStart && lineElapsed < syl.timeEnd) {
+                const kAct = __.globalSettings.kActive;
+                const sEl = lineElapsed - syl.timeStart;
+                const sRem = syl.timeEnd - lineElapsed;
+                const zIn = kAct.zIn || 100; const zOut = kAct.zOut || 100;
+                if (sEl < zIn) sylZoom = 1 + (kAct.zoom - 1) * (sEl / zIn);
+                else if (sRem < zOut) sylZoom = 1 + (kAct.zoom - 1) * (sRem / zOut);
+                else sylZoom = kAct.zoom;
+            }
+            (syl.text || '').split('').forEach(ch => {
+                const txt = ch === ' ' ? '\u00A0' : ch;
+                renderChar(txt, sylZoom, charIdxGlobal++);
+            });
+        });
+
+        // For shine_sweep, apply a wrapper with sweep gradient
+        if (eff === 'shine_sweep') {
+            const wrapper = document.createElement('span');
+            wrapper.style.cssText = 'display:inline-block;position:relative;white-space:pre;';
+            while (spanWrap.firstChild) wrapper.appendChild(spanWrap.firstChild);
+            spanWrap.appendChild(wrapper);
+            // Apply background clip to wrapper
+            wrapper.style.color = c1;
+            wrapper.style.textShadow = __.buildShadow(ow, bl, oc);
+            const speed = (__.globalSettings.effectSpeed && __.globalSettings.effectSpeed.shine_sweep || 4) * 0.08;
+            const pos = ((_animFrameCount * speed * 100) % 200) - 50;
+            // overlay shine gradient
+            const shine = document.createElement('span');
+            shine.style.cssText = `position:absolute;left:0;top:0;width:100%;height:100%;color:transparent;background:linear-gradient(90deg, transparent 40%, rgba(255,255,255,0.85) 50%, transparent 60%);background-size:200% auto;background-position:${pos}% 50%;-webkit-background-clip:text;background-clip:text;pointer-events:none;`;
+            shine.textContent = lineText;
+            wrapper.appendChild(shine);
+        }
+
+        // For water_reflection, add reflection below
+        if (eff === 'water_reflection') {
+            const ref = document.createElement('div');
+            ref.style.cssText = `color:${c1};position:relative;`;
+            const refInner = ref.cloneNode(false);
+            spanWrap.appendChild(refInner);
+        }
+
+        applyBoxStyle(spanWrap, ub, bc, bo);
+    }
+
+    // For karaoke with full-line effects (float, breathe, jello, typewriter, pulse, shake, glitch, ghosting, glow_pulse)
+    // we apply the effect at the parent level; per-syllable zoom still applies
+    function renderKaraokeLineEffect(spanWrap, sub, lineText, sylArray, ow, bl, oc, c1, ub, bc, bo, eff) {
+        const lineElapsed = (__.globalSettings._lastRenderTime - sub.start) * 1000;
+        // First build syllable content with zoom
+        sylArray.forEach(syl => {
+            let sylZoom = 1;
+            if (lineElapsed >= syl.timeStart && lineElapsed < syl.timeEnd) {
+                const kAct = __.globalSettings.kActive;
+                const sEl = lineElapsed - syl.timeStart;
+                const sRem = syl.timeEnd - lineElapsed;
+                const zIn = kAct.zIn || 100; const zOut = kAct.zOut || 100;
+                if (sEl < zIn) sylZoom = 1 + (kAct.zoom - 1) * (sEl / zIn);
+                else if (sRem < zOut) sylZoom = 1 + (kAct.zoom - 1) * (sRem / zOut);
+                else sylZoom = kAct.zoom;
+            }
+            const span = document.createElement('span');
+            span.className = 'syllable';
+            span.innerText = syl.text;
+            span.style.cssText = `color:${c1};display:inline-block;transform:scale(${sylZoom});`;
+            spanWrap.appendChild(span);
+        });
+
+        // Now apply the line-level effect
+        if (eff === 'float_hover') {
+            const speed = (__.globalSettings.effectSpeed && __.globalSettings.effectSpeed.float_hover || 5) * 0.1;
+            const yOff = Math.sin(_animFrameCount * 0.016 * speed) * 8;
+            spanWrap.style.transform = `translateY(${yOff}px)`;
+            spanWrap.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
+        } else if (eff === 'breathe') {
+            const speed = (__.globalSettings.effectSpeed && __.globalSettings.effectSpeed.breathe || 3) * 0.06;
+            const scale = 1 + Math.sin(_animFrameCount * 0.016 * speed) * 0.05;
+            spanWrap.style.transform = `scale(${scale})`;
+            spanWrap.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
+        } else if (eff === 'jello') {
+            const age = _animFrameCount % 60;
+            let scaleX = 1, scaleY = 1;
+            if (age < 12) {
+                const t = age / 12;
+                scaleX = 1 - Math.sin(t * Math.PI * 2) * 0.15 * (1 - t);
+                scaleY = 1 + Math.sin(t * Math.PI * 2) * 0.1 * (1 - t);
+            } else {
+                const t = _animFrameCount * 0.016;
+                scaleX = 1 + Math.sin(t * 2) * 0.01;
+                scaleY = 1 - Math.sin(t * 2) * 0.005;
+            }
+            spanWrap.style.transform = `scale(${scaleX}, ${scaleY})`;
+            spanWrap.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
+        } else if (eff === 'pulse') {
+            const t = _animFrameCount * 0.016;
+            const phase = t % (Math.PI * 2);
+            let scale = 1;
+            if (phase < 0.15) scale = 1 + 0.08;
+            else if (phase < 0.3) scale = 1 - 0.02;
+            else if (phase < 0.45) scale = 1 + 0.05;
+            else scale = 1;
+            spanWrap.style.transform = `scale(${scale})`;
+            spanWrap.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
+        } else if (eff === 'shake') {
+            const intensity = (__.globalSettings.effectSpeed && __.globalSettings.effectSpeed.shake || 8) * 0.15;
+            const dx = (Math.random() - 0.5) * intensity * 2;
+            const dy = (Math.random() - 0.5) * intensity * 2;
+            spanWrap.style.transform = `translate(${dx}px, ${dy}px)`;
+            spanWrap.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
+        } else if (eff === 'glitch') {
+            const speed = (__.globalSettings.effectSpeed && __.globalSettings.effectSpeed.glitch || 5) * 0.05;
+            const glitchFrame = Math.sin(_animFrameCount * 0.016 * speed);
+            const isGlitch = Math.abs(glitchFrame) > 0.85;
+            spanWrap.style.color = c1;
+            // Do per-syllable but if glitch, add colored offset ghosts
+            if (isGlitch) {
+                const glitchRange = glitchFrame * 6;
+                // Add red clone
+                const rDiv = document.createElement('div');
+                rDiv.style.cssText = `position:absolute;left:${glitchRange}px;top:0;color:#ff0000;opacity:0.6;z-index:1;`;
+                rDiv.textContent = lineText;
+                spanWrap.appendChild(rDiv);
+                // Add green clone
+                const gDiv = document.createElement('div');
+                gDiv.style.cssText = `position:absolute;left:${-glitchRange}px;top:0;color:#00ff00;opacity:0.6;z-index:1;`;
+                gDiv.textContent = lineText;
+                spanWrap.appendChild(gDiv);
+            }
+            spanWrap.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
+        } else if (eff === 'ghosting') {
+            spanWrap.style.position = 'relative';
+            spanWrap.style.color = c1;
+            const speed = (__.globalSettings.effectSpeed && __.globalSettings.effectSpeed.ghosting || 3) * 0.08;
+            const t = _animFrameCount * 0.016 * speed;
+            const offX = Math.sin(t) * 15;
+            const offY = Math.cos(t * 0.7) * 8;
+            const ghost1 = document.createElement('div');
+            ghost1.style.cssText = `position:absolute;left:${offX}px;top:${offY}px;color:${c1};opacity:0.2;z-index:0;filter:blur(3px);pointer-events:none;white-space:pre;`;
+            ghost1.textContent = lineText;
+            spanWrap.appendChild(ghost1);
+            const ghost2 = document.createElement('div');
+            ghost2.style.cssText = `position:absolute;left:${-offX * 0.6}px;top:${-offY * 0.6}px;color:${c1};opacity:0.15;z-index:0;filter:blur(5px);pointer-events:none;white-space:pre;`;
+            ghost2.textContent = lineText;
+            spanWrap.appendChild(ghost2);
+            spanWrap.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
+        } else if (eff === 'glow_pulse') {
+            const speed = (__.globalSettings.effectSpeed && __.globalSettings.effectSpeed.glow_pulse || 5) * 0.08;
+            const breathe = 0.5 + Math.sin(_animFrameCount * 0.016 * speed) * 0.5;
+            const pulseBlur = Math.max(0, bl * breathe);
+            const pulseOw = Math.max(0, ow * (0.5 + breathe * 0.5));
+            spanWrap.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(pulseOw, pulseBlur, oc) : __.buildShadow(pulseOw, pulseBlur, oc);
+            spanWrap.style.color = c1;
+        } else if (eff === 'typewriter') {
+            // typewriter: reveal char by char (overwrite children)
+            spanWrap.innerHTML = '';
+            const speed = (__.globalSettings.effectSpeed && __.globalSettings.effectSpeed.typewriter || 10) * 0.03;
+            const charCount = Math.floor((_animFrameCount % 200) * speed);
+            // Build syllables but clip
+            let shown = 0;
+            sylArray.forEach(syl => {
+                let sylZoom = 1;
+                if (lineElapsed >= syl.timeStart && lineElapsed < syl.timeEnd) {
+                    const kAct = __.globalSettings.kActive;
+                    const sEl = lineElapsed - syl.timeStart;
+                    const sRem = syl.timeEnd - lineElapsed;
+                    const zIn = kAct.zIn || 100; const zOut = kAct.zOut || 100;
+                    if (sEl < zIn) sylZoom = 1 + (kAct.zoom - 1) * (sEl / zIn);
+                    else if (sRem < zOut) sylZoom = 1 + (kAct.zoom - 1) * (sRem / zOut);
+                    else sylZoom = kAct.zoom;
+                }
+                if (shown >= charCount) return;
+                let remaining = charCount - shown;
+                const text = syl.text || '';
+                const take = Math.min(text.length, remaining);
+                const part = text.slice(0, take);
+                if (part) {
+                    const span = document.createElement('span');
+                    span.style.cssText = `display:inline-block;color:${c1};text-shadow:${__.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc)};transform:scale(${sylZoom});`;
+                    span.textContent = part;
+                    spanWrap.appendChild(span);
+                }
+                shown += take;
+            });
+            return; // skip applyBox
+        }
+
+        applyBoxStyle(spanWrap, ub, bc, bo);
+    }
+
     // ============ RENDER A SINGLE SUB LINE ============
     function renderSubLine(sub, lineText, li, totalLines, sylArray, fs, posX, posY, ow, bl, oc, c1, ub, bc, bo, opacity, isO, styleName) {
         const lineSpacing = fs * 1.4;
@@ -309,7 +845,6 @@
 
         const div = document.createElement('div');
 
-        // Determine font: if per-style on, use style's fontName; else use global fontFamily
         let useFont = __.globalSettings.fontFamily;
         if (isO && styleName && __.styleSettings[styleName] && __.styleSettings[styleName].fontName) {
             const styleFont = __.getStyleFontFamily(styleName);
@@ -323,7 +858,157 @@
             spanWrap.style.display = 'inline-block';
         }
 
-        if (sylArray && sylArray.length > 0) {
+        const eff = __.globalSettings.specialEffect;
+        const hasEffect = eff && eff !== 'none' && !(sylArray && sylArray.length > 0);
+        // Effects that apply at the line level (non-per-char) and work with karaoke
+        const lineLevelEffects = ['float_hover', 'breathe', 'jello', 'typewriter', 'pulse', 'shake', 'glitch', 'ghosting', 'glow_pulse'];
+
+        if (sylArray && sylArray.length > 0 && eff && eff !== 'none') {
+            // ===== KARAOKE WITH EFFECT =====
+            spanWrap.style.display = 'inline-block';
+            spanWrap.style.whiteSpace = 'pre';
+            div.style.whiteSpace = 'pre';
+
+            if (lineLevelEffects.includes(eff)) {
+                renderKaraokeLineEffect(spanWrap, sub, lineText, sylArray, ow, bl, oc, c1, ub, bc, bo, eff);
+            } else if (eff === 'sine_wave') {
+                renderKaraokeSineWave(spanWrap, sub, lineText, sylArray, ow, bl, oc, c1, ub, bc, bo, fs);
+            } else if (['shine_sweep', 'split_color', 'retro_80s', 'golden', 'd3d_block', 'water_reflection'].includes(eff)) {
+                renderKaraokeFullLineGradient(spanWrap, sub, lineText, sylArray, ow, bl, oc, c1, ub, bc, bo, eff);
+            } else if (eff === 'rainbow_outline') {
+                // Rainbow outline per-char continuous
+                const lineElapsed = (__.globalSettings._lastRenderTime - sub.start) * 1000;
+                let charIdxGlobal = 0;
+                const totalChars = lineText.replace(/\u00A0/g, ' ').length;
+                const speedMul = (__.globalSettings.effectSpeed && __.globalSettings.effectSpeed.rainbow_outline || 1) * 0.8;
+                const baseHue = (_animFrameCount * speedMul) % 360;
+                sylArray.forEach(syl => {
+                    let sylZoom = 1;
+                    if (lineElapsed >= syl.timeStart && lineElapsed < syl.timeEnd) {
+                        const kAct = __.globalSettings.kActive;
+                        const sEl = lineElapsed - syl.timeStart; const sRem = syl.timeEnd - lineElapsed;
+                        const zIn = kAct.zIn || 100; const zOut = kAct.zOut || 100;
+                        if (sEl < zIn) sylZoom = 1 + (kAct.zoom - 1) * (sEl / zIn);
+                        else if (sRem < zOut) sylZoom = 1 + (kAct.zoom - 1) * (sRem / zOut);
+                        else sylZoom = kAct.zoom;
+                    }
+                    (syl.text || '').split('').forEach(ch => {
+                        const txt = ch === ' ' ? '\u00A0' : ch;
+                        const cSpan = document.createElement('span');
+                        cSpan.style.cssText = 'display:inline-block;white-space:pre;position:relative;color:#ffffff;';
+                        cSpan.style.transform = `scale(${sylZoom})`;
+                        const textSpan = document.createElement('span');
+                        textSpan.textContent = txt;
+                        textSpan.style.cssText = 'position:relative;z-index:2;';
+                        const shSpan = document.createElement('span');
+                        shSpan.textContent = txt;
+                        shSpan.style.cssText = 'position:absolute;left:0;top:0;color:transparent;pointer-events:none;';
+                        if (ow > 0) {
+                            const hue = (baseHue + (charIdxGlobal / Math.max(1, totalChars)) * 360) % 360;
+                            shSpan.style.textShadow = __.buildShadow(ow, bl, '#ff0000');
+                            shSpan.style.filter = `hue-rotate(${hue}deg)`;
+                        }
+                        cSpan.appendChild(shSpan);
+                        cSpan.appendChild(textSpan);
+                        spanWrap.appendChild(cSpan);
+                        charIdxGlobal++;
+                    });
+                });
+                applyBoxStyle(spanWrap, ub, bc, bo);
+            } else if (eff === 'rainbow_outline_rgb') {
+                const speedMul = (__.globalSettings.effectSpeed && __.globalSettings.effectSpeed.rainbow_outline_rgb || 1) * 1.2;
+                const baseBgShift = 200 - ((_animFrameCount * speedMul) % 200);
+                let charIdxGlobal = 0;
+                const totalChars = lineText.replace(/\u00A0/g, ' ').length;
+                const lineElapsed = (__.globalSettings._lastRenderTime - sub.start) * 1000;
+                sylArray.forEach(syl => {
+                    let sylZoom = 1;
+                    if (lineElapsed >= syl.timeStart && lineElapsed < syl.timeEnd) {
+                        const kAct = __.globalSettings.kActive;
+                        const sEl = lineElapsed - syl.timeStart; const sRem = syl.timeEnd - lineElapsed;
+                        const zIn = kAct.zIn || 100; const zOut = kAct.zOut || 100;
+                        if (sEl < zIn) sylZoom = 1 + (kAct.zoom - 1) * (sEl / zIn);
+                        else if (sRem < zOut) sylZoom = 1 + (kAct.zoom - 1) * (sRem / zOut);
+                        else sylZoom = kAct.zoom;
+                    }
+                    (syl.text || '').split('').forEach(ch => {
+                        const txt = ch === ' ' ? '\u00A0' : ch;
+                        const cSpan = document.createElement('span');
+                        cSpan.style.cssText = 'display:inline-block;white-space:pre;position:relative;color:#ffffff;';
+                        cSpan.style.transform = `scale(${sylZoom})`;
+                        const textSpan = document.createElement('span');
+                        textSpan.textContent = txt;
+                        textSpan.style.cssText = 'position:relative;z-index:2;';
+                        if (ow > 0) {
+                            const charShift = (baseBgShift + (charIdxGlobal / Math.max(1, totalChars)) * 50) % 200;
+                            const shSpan = document.createElement('span');
+                            shSpan.textContent = txt;
+                            shSpan.style.cssText = 'position:absolute;left:0;top:0;color:transparent;pointer-events:none;';
+                            shSpan.style.background = 'linear-gradient(90deg,#ff0000,#ff7f00,#ffff00,#00ff00,#0000ff,#4b0082,#9400d3,#ff0000)';
+                            shSpan.style.backgroundSize = '200% auto';
+                            shSpan.style.backgroundPosition = `${charShift}% 50%`;
+                            shSpan.style.webkitBackgroundClip = 'text'; shSpan.style.backgroundClip = 'text';
+                            shSpan.style.textShadow = __.buildShadow(ow, bl, 'transparent');
+                            shSpan.style.webkitTextStroke = `${ow * 2}px transparent`;
+                            shSpan.style.paintOrder = 'stroke fill';
+                            cSpan.appendChild(shSpan);
+                        }
+                        cSpan.appendChild(textSpan);
+                        spanWrap.appendChild(cSpan);
+                        charIdxGlobal++;
+                    });
+                });
+                applyBoxStyle(spanWrap, ub, bc, bo);
+            } else if (eff === 'rainbow_text') {
+                const speedMul = (__.globalSettings.effectSpeed && __.globalSettings.effectSpeed.rainbow_text || 1) * 1.2;
+                const baseBgShift = 200 - ((_animFrameCount * speedMul) % 200);
+                const gradColors = '#ff0000,#ff7f00,#ffff00,#00ff00,#0000ff,#4b0082,#9400d3,#ff0000';
+                let charIdxGlobal = 0;
+                const totalChars = lineText.replace(/\u00A0/g, ' ').length;
+                const lineElapsed = (__.globalSettings._lastRenderTime - sub.start) * 1000;
+                sylArray.forEach(syl => {
+                    let sylZoom = 1;
+                    if (lineElapsed >= syl.timeStart && lineElapsed < syl.timeEnd) {
+                        const kAct = __.globalSettings.kActive;
+                        const sEl = lineElapsed - syl.timeStart; const sRem = syl.timeEnd - lineElapsed;
+                        const zIn = kAct.zIn || 100; const zOut = kAct.zOut || 100;
+                        if (sEl < zIn) sylZoom = 1 + (kAct.zoom - 1) * (sEl / zIn);
+                        else if (sRem < zOut) sylZoom = 1 + (kAct.zoom - 1) * (sRem / zOut);
+                        else sylZoom = kAct.zoom;
+                    }
+                    (syl.text || '').split('').forEach(ch => {
+                        const txt = ch === ' ' ? '\u00A0' : ch;
+                        const cSpan = document.createElement('span');
+                        cSpan.style.cssText = 'display:inline-block;white-space:pre;position:relative;';
+                        cSpan.style.transform = `scale(${sylZoom})`;
+                        if (ow > 0) {
+                            const shSpan = document.createElement('span');
+                            shSpan.textContent = txt;
+                            shSpan.style.cssText = 'position:absolute;left:0;top:0;color:transparent;pointer-events:none;';
+                            shSpan.style.textShadow = __.buildShadow(ow, bl, oc);
+                            cSpan.appendChild(shSpan);
+                        }
+                        const charShift = (baseBgShift + (charIdxGlobal / Math.max(1, totalChars)) * 50) % 200;
+                        const inner = document.createElement('span');
+                        inner.style.cssText = [
+                            `background:linear-gradient(90deg,${gradColors})`,
+                            'background-size:200% auto',
+                            `background-position:${charShift}% 50%`,
+                            '-webkit-background-clip:text;background-clip:text;',
+                            'color:transparent;-webkit-text-fill-color:transparent;',
+                            'text-shadow:none;-webkit-text-stroke:none;',
+                            'position:relative;z-index:2;'
+                        ].join('');
+                        inner.textContent = txt;
+                        cSpan.appendChild(inner);
+                        spanWrap.appendChild(cSpan);
+                        charIdxGlobal++;
+                    });
+                });
+                applyBoxStyle(spanWrap, ub, bc, bo);
+            }
+        } else if (sylArray && sylArray.length > 0) {
+            // ===== KARAOKE WITHOUT EFFECT: per-syllable styling =====
             const lineElapsed = (__.globalSettings._lastRenderTime - sub.start) * 1000;
             sylArray.forEach(syl => {
                 const span = document.createElement('span');
@@ -385,7 +1070,7 @@
             });
             applyBoxStyle(spanWrap, ub, bc, bo);
         } else {
-            const eff = __.globalSettings.specialEffect;
+            // ===== NON-KARAOKE: full line rendering =====
             spanWrap.style.color = '';
             spanWrap.style.textShadow = '';
             spanWrap.style.webkitTextStroke = '';
@@ -395,6 +1080,10 @@
             spanWrap.style.webkitBackgroundClip = '';
             spanWrap.style.webkitTextFillColor = '';
             spanWrap.style.filter = '';
+            spanWrap.style.transform = '';
+            spanWrap.style.position = '';
+            spanWrap.style.overflow = '';
+            spanWrap.style.whiteSpace = '';
             spanWrap.innerHTML = '';
 
             if (eff === 'rainbow_outline') {
@@ -423,6 +1112,36 @@
                     spanWrap.appendChild(cSpan);
                 });
                 applyBoxStyle(spanWrap, ub, bc, bo);
+            } else if (eff === 'shine_sweep') {
+                renderShineSweep(spanWrap, lineText, ow, bl, oc, c1);
+            } else if (eff === 'split_color') {
+                renderSplitColor(spanWrap, lineText, ow, bl, oc, c1);
+            } else if (eff === 'retro_80s') {
+                renderRetro80s(spanWrap, lineText, ow, bl, oc, c1);
+            } else if (eff === 'golden') {
+                renderGolden(spanWrap, lineText, ow, bl, oc, c1);
+            } else if (eff === 'float_hover') {
+                renderFloatHover(spanWrap, lineText, ow, bl, oc, c1);
+            } else if (eff === 'breathe') {
+                renderBreathe(spanWrap, lineText, ow, bl, oc, c1);
+            } else if (eff === 'jello') {
+                renderJello(spanWrap, lineText, ow, bl, oc, c1);
+            } else if (eff === 'typewriter') {
+                renderTypewriter(spanWrap, lineText, ow, bl, oc, c1);
+            } else if (eff === 'pulse') {
+                renderPulse(spanWrap, lineText, ow, bl, oc, c1);
+            } else if (eff === 'shake') {
+                renderShake(spanWrap, lineText, ow, bl, oc, c1);
+            } else if (eff === 'glitch') {
+                renderGlitch(spanWrap, lineText, ow, bl, oc, c1);
+            } else if (eff === 'ghosting') {
+                renderGhosting(spanWrap, lineText, ow, bl, oc, c1);
+            } else if (eff === 'water_reflection') {
+                renderWaterReflection(spanWrap, lineText, ow, bl, oc, c1);
+            } else if (eff === 'd3d_block') {
+                render3DBlock(spanWrap, lineText, ow, bl, oc, c1);
+            } else if (eff === 'glow_pulse') {
+                renderGlowPulse(spanWrap, lineText, ow, bl, oc, c1);
             } else {
                 spanWrap.style.color = c1;
                 spanWrap.style.webkitTextStroke = 'none';
@@ -431,6 +1150,7 @@
                 applyBoxStyle(spanWrap, ub, bc, bo);
             }
         }
+
         if (ub) {
             spanWrap.style.display = 'inline-block';
         }
@@ -467,7 +1187,6 @@
                 lineInfos.push({ sub, isO, fs, ow, bl, oc, c1, posX, posY, isExplicit });
             });
 
-            // Spacing overlap prevention
             const autoLines = lineInfos.filter(l => !l.isExplicit).sort((a, b) => a.posY - b.posY);
             let idx = 0;
             while (idx < autoLines.length) {
@@ -514,7 +1233,6 @@
         requestAnimationFrame(updateSubtitle);
     }
 
-    // ============ FULLSCREEN / RESIZE MONITORING ============
     const origRequestFullscreen = HTMLVideoElement.prototype.requestFullscreen || HTMLVideoElement.prototype.webkitRequestFullscreen;
     if (origRequestFullscreen) {
         HTMLVideoElement.prototype.requestFullscreen = HTMLVideoElement.prototype.webkitRequestFullscreen = function () {
