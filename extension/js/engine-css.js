@@ -177,7 +177,7 @@
     let _animFrameCount = 0;
 
     // ============ RAINBOW OUTLINE WITH SEPARATE STROKE ============
-    function renderRainbowOutline(spanWrap, lineText, ow, oc) {
+    function renderRainbowOutline(spanWrap, lineText, ow, bl, oc) {
         spanWrap.style.color = '#ffffff';
         spanWrap.style.webkitTextStroke = 'none';
         spanWrap.style.textShadow = 'none';
@@ -195,10 +195,10 @@
         shadowLayer.style.top = '0';
         shadowLayer.style.color = 'transparent';
         shadowLayer.style.zIndex = '1';
-        const speedMul = (__.globalSettings.effectSpeed || 1) * 0.8;
+        const speedMul = (__.globalSettings.effectSpeed && __.globalSettings.effectSpeed.rainbow_outline || 1) * 0.8;
         const hueDeg = (_animFrameCount * speedMul) % 360;
         if (ow > 0) {
-            shadowLayer.style.textShadow = __.buildShadow(ow, 0, '#ff0000');
+            shadowLayer.style.textShadow = __.buildShadow(ow, bl, '#ff0000');
             shadowLayer.style.filter = `hue-rotate(${hueDeg}deg)`;
         }
         shadowLayer.style.pointerEvents = 'none';
@@ -208,14 +208,14 @@
         spanWrap.appendChild(shadowLayer);
     }
 
-    function renderRainbowOutlineRgb(spanWrap, lineText, ow, oc) {
+    function renderRainbowOutlineRgb(spanWrap, lineText, ow, bl, oc) {
         spanWrap.style.color = '#ffffff';
         spanWrap.style.webkitTextStroke = 'none';
         spanWrap.style.textShadow = 'none';
         spanWrap.style.filter = '';
         spanWrap.style.position = 'relative';
-        const speedMul = (__.globalSettings.effectSpeed || 1) * 1.2;
-        const bgShift = (_animFrameCount * speedMul) % 200;
+        const speedMul = (__.globalSettings.effectSpeed && __.globalSettings.effectSpeed.rainbow_outline_rgb || 1) * 1.2;
+        const bgShift = 200 - ((_animFrameCount * speedMul) % 200);
         const textSpan = document.createElement('span');
         textSpan.textContent = lineText;
         textSpan.style.color = '#ffffff';
@@ -237,6 +237,7 @@
             shadowLayer.style.webkitBackgroundClip = 'text';
             shadowLayer.style.backgroundClip = 'text';
             shadowLayer.style.color = 'transparent';
+            shadowLayer.style.textShadow = __.buildShadow(ow, bl, 'transparent');
             shadowLayer.style.webkitTextStroke = `${ow * 2}px transparent`;
             shadowLayer.style.paintOrder = 'stroke fill';
         }
@@ -246,23 +247,29 @@
         spanWrap.appendChild(shadowLayer);
     }
 
-    function renderRainbowText(spanWrap, lineText, ow, oc) {
-        const speedMul = (__.globalSettings.effectSpeed || 1) * 1.2;
-        const bgShift = (_animFrameCount * speedMul) % 200;
+    function renderRainbowText(spanWrap, lineText, ow, bl, oc) {
+        const speedMul = (__.globalSettings.effectSpeed && __.globalSettings.effectSpeed.rainbow_text || 1) * 1.2;
+        const bgShift = 200 - ((_animFrameCount * speedMul) % 200);
         const gradientColors = '#ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3, #ff0000';
         spanWrap.innerHTML = '';
         spanWrap.style.display = 'inline-block';
         spanWrap.style.position = 'relative';
+        spanWrap.style.textShadow = 'none';
+        // Layer 1: outline shadow with solid color
         if (ow > 0) {
-            spanWrap.style.textShadow = [
-                `${ow}px 0px 0 ${oc}`, `-${ow}px 0px 0 ${oc}`,
-                `0px ${ow}px 0 ${oc}`, `0px -${ow}px 0 ${oc}`,
-                `${ow}px ${ow}px 0 ${oc}`, `-${ow}px ${ow}px 0 ${oc}`,
-                `${ow}px -${ow}px 0 ${oc}`, `-${ow}px -${ow}px 0 ${oc}`
-            ].join(',');
-        } else {
-            spanWrap.style.textShadow = 'none';
+            const shadowLayer = document.createElement('span');
+            shadowLayer.textContent = lineText;
+            shadowLayer.style.cssText = [
+                'position: absolute',
+                'left: 0', 'top: 0',
+                'color: transparent',
+                'z-index: 1',
+                'pointer-events: none',
+                `text-shadow: ${__.buildShadow(ow, bl, oc)}`
+            ].join(';');
+            spanWrap.appendChild(shadowLayer);
         }
+        // Layer 2: gradient text
         const inner = document.createElement('span');
         inner.style.cssText = [
             `background: linear-gradient(90deg, ${gradientColors})`,
@@ -391,11 +398,11 @@
             spanWrap.innerHTML = '';
 
             if (eff === 'rainbow_outline') {
-                renderRainbowOutline(spanWrap, lineText, ow, oc);
+                renderRainbowOutline(spanWrap, lineText, ow, bl, oc);
             } else if (eff === 'rainbow_outline_rgb') {
-                renderRainbowOutlineRgb(spanWrap, lineText, ow, oc);
+                renderRainbowOutlineRgb(spanWrap, lineText, ow, bl, oc);
             } else if (eff === 'rainbow_text') {
-                renderRainbowText(spanWrap, lineText, ow, oc);
+                renderRainbowText(spanWrap, lineText, ow, bl, oc);
             } else if (eff === 'sine_wave') {
                 const amplitude = __.globalSettings.sineWaveAmplitude || 2;
                 spanWrap.style.whiteSpace = 'pre';
@@ -405,7 +412,7 @@
                 spanWrap.style.textShadow = __.globalSettings.deepGlow ? __.buildDeepGlow(ow, bl, oc) : __.buildShadow(ow, bl, oc);
                 const chars = lineText.split('');
                 const tSec = _animFrameCount * 0.016;
-                const speed = (__.globalSettings.effectSpeed || 8) * 0.3;
+                const speed = (__.globalSettings.effectSpeed && __.globalSettings.effectSpeed.sine_wave || 8) * 0.3;
                 chars.forEach((ch, chIdx) => {
                     const cSpan = document.createElement('span');
                     cSpan.style.display = 'inline-block';

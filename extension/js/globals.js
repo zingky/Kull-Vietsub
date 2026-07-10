@@ -21,7 +21,7 @@
         closeOnClickOutside: true,
         constrainToVideo: true,
         specialEffect: 'none',
-        effectSpeed: 5,
+        effectSpeed: { rainbow_outline: 1, rainbow_outline_rgb: 1, rainbow_text: 1, sine_wave: 20 },
         sineWaveAmplitude: 2,
         useGlobalStyles: false
     };
@@ -77,6 +77,18 @@
     __.getVideoId = function () {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get('v');
+    };
+
+    __.getEffectSpeed = function () {
+        const eff = __.globalSettings.specialEffect || 'none';
+        const speeds = __.globalSettings.effectSpeed || {};
+        return speeds[eff] || 1;
+    };
+
+    __.setEffectSpeed = function (val) {
+        const eff = __.globalSettings.specialEffect || 'none';
+        if (!__.globalSettings.effectSpeed) __.globalSettings.effectSpeed = {};
+        __.globalSettings.effectSpeed[eff] = parseFloat(val) || 1;
     };
 
     __.saveCache = function () {

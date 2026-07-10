@@ -206,14 +206,14 @@
                             <select id="g-specialEffect" style="width:100%; background:#222; border:1px solid #444; color:#ccc; font-size:9px; border-radius:3px; padding:1px 3px;">
                                 <option value="none" ${__.globalSettings.specialEffect === 'none' ? 'selected' : ''}>None</option>
                                 <option value="rainbow_outline" ${__.globalSettings.specialEffect === 'rainbow_outline' ? 'selected' : ''}>Rainbow Outline</option>
-                                <option value="rainbow_outline_rgb" ${__.globalSettings.specialEffect === 'rainbow_outline_rgb' ? 'selected' : ''}>Rainbow Outline RGB</option>
-                                <option value="rainbow_text" ${__.globalSettings.specialEffect === 'rainbow_text' ? 'selected' : ''}>Rainbow Text</option>
+                                <option value="rainbow_outline_rgb" ${__.globalSettings.specialEffect === 'rainbow_outline_rgb' ? 'selected' : ''}>RGB Outline</option>
+                                <option value="rainbow_text" ${__.globalSettings.specialEffect === 'rainbow_text' ? 'selected' : ''}>RGB Text</option>
                                 <option value="sine_wave" ${__.globalSettings.specialEffect === 'sine_wave' ? 'selected' : ''}>Sine Wave</option>
                             </select>
                             <div class="g-row" style="margin:0;">
                                 <label style="font-size:9px;">Speed</label>
-                                <input type="range" id="g-effectSpeed" min="1" max="20" step="1" value="${__.globalSettings.effectSpeed || 5}" style="flex:1;">
-                                <input type="number" id="g-effectSpeedVal" value="${__.globalSettings.effectSpeed || 5}" class="num-in" step="1" style="width:30px;">
+                                <input type="range" id="g-effectSpeed" min="1" max="40" step="1" value="${__.getEffectSpeed()}" style="flex:1;">
+                                <input type="number" id="g-effectSpeedVal" value="${__.getEffectSpeed()}" class="num-in" step="1" style="width:30px;">
                             </div>
                             <div class="g-row" style="margin:0; display:${__.globalSettings.specialEffect === 'sine_wave' ? 'flex' : 'none'};" id="sine-amp-row">
                                 <label style="font-size:9px;">Amplitude</label>
@@ -303,8 +303,15 @@
                     __.globalSettings.popupOpacity = parseFloat(val);
                     popup.style.background = `rgba(15, 15, 15, ${val})`;
                 } else if (id === 'fontSelect') { __.globalSettings.fontFamily = val; __.saveCache(); }
-                else {
+                else if (id === 'g-effectSpeed' || id === 'g-effectSpeedVal') {
+                    __.setEffectSpeed(val);
+                    const pair = document.getElementById(id.includes('Val') ? id.replace('Val', '') : id + 'Val');
+                    if (pair) pair.value = val;
+                    __.saveCache();
+                    return;
+                } else {
                     const key = id.replace('g-', '').replace('Val', '').replace('Hex', '');
+                    if (key === 'effectSpeed' || key === 'effectSpeedVal') return;
                     __.globalSettings[key] = (e.target.type === 'number' || e.target.type === 'range') ? parseFloat(val) : val;
                     const pair = document.getElementById(id.includes('Val') ? id.replace('Val', '') : id + 'Val');
                     if (pair) pair.value = val;
@@ -402,12 +409,18 @@
         document.getElementById('assFile').onchange = async (e) => { if (typeof __.parseASS === 'function') __.parseASS(await e.target.files[0].text()); };
         document.getElementById('btn-download-sub').onclick = __.downloadCurrentSub;
 
-        // Special Effect dropdown: show/hide amplitude row
+        // Special Effect dropdown: show/hide amplitude row + update speed slider
         const effSelect = document.getElementById('g-specialEffect');
         const ampRow = document.getElementById('sine-amp-row');
-        if (effSelect && ampRow) {
+        const speedSlider = document.getElementById('g-effectSpeed');
+        const speedVal = document.getElementById('g-effectSpeedVal');
+        if (effSelect) {
             effSelect.addEventListener('change', () => {
-                ampRow.style.display = effSelect.value === 'sine_wave' ? 'flex' : 'none';
+                if (ampRow) ampRow.style.display = effSelect.value === 'sine_wave' ? 'flex' : 'none';
+                // Update speed slider to current effect's value
+                const newSpeed = __.getEffectSpeed();
+                if (speedSlider) { speedSlider.value = newSpeed; }
+                if (speedVal) { speedVal.value = newSpeed; }
             });
         }
 
