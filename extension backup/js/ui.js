@@ -117,6 +117,14 @@
         popup.innerHTML = `
             <div id="sub-header" style="padding: 4px 10px; background: rgba(255,255,255,0.05); cursor: move; display: flex; align-items: center; border-bottom:1px solid rgba(255,255,255,0.1); gap:4px;">
                 <button id="reset-ui" style="border:1px solid #555; color:#ccc; cursor:pointer; background:rgba(255,255,255,0.1); font-size:9px; padding:1px 6px; border-radius:4px;">Reset 🔄</button>
+                <div id="libass-toggle-group" style="display:inline-flex; align-items:center; gap:2px; margin-left:4px; border-left:1px solid #444; padding-left:4px;">
+                    <button id="libass-off-btn" class="libass-toggle-btn ${!__.globalSettings.libassMode ? 'active' : ''}" data-mode="false" style="border:1px solid #555; color:#ccc; cursor:pointer; background:rgba(255,255,255,0.1); font-size:8px; padding:1px 5px; border-radius:3px 0 0 3px;">CSS</button>
+                    <button id="libass-on-btn" class="libass-toggle-btn ${__.globalSettings.libassMode ? 'active' : ''}" data-mode="true" style="border:1px solid #555; color:#ccc; cursor:pointer; background:rgba(255,255,255,0.1); font-size:8px; padding:1px 5px; border-radius:0 3px 3px 0;">ASS.js</button>
+                </div>
+                <style>
+                    .libass-toggle-btn.active { background: #3ea6ff !important; color: #fff !important; border-color: #3ea6ff !important; }
+                    .libass-toggle-btn:hover { background: rgba(62,166,255,0.2) !important; }
+                </style>
                 <div style="display:flex; align-items:center; gap:2px; font-size:9px; color:#aaa; flex:1;">
                     <span id="yt-id-display" style="color:#3ea6ff; font-weight:bold; font-size:9px;">${__.getVideoId() || 'N/A'}</span>
                     <span id="auto-sub-status" class="status-tag status-none" style="font-size:8px;">Searching...</span>
@@ -242,9 +250,12 @@
                 <div id="styleListContainer" style="flex: 1.3; padding: 8px; overflow-y: auto; background: transparent; min-width:130px;">
                     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 4px;">
                         <span style="color: #ffaa00; font-weight: bold; font-size: 10px;">STYLES</span>
-                        <label style="display:flex; align-items:center; gap:3px; font-size:9px; color:#aaa; cursor:pointer;">
-                            <input type="checkbox" id="use-global-settings" ${__.globalSettings.useGlobalStyles ? 'checked' : ''}> Use Global Setting
-                        </label>
+                        <div style="display:flex; align-items:center; gap:4px;">
+                            <span id="reset-all-styles-btn" style="cursor:pointer; font-size:11px; color:#ffaa00; font-weight:bold; opacity:0.7;" title="Reset all styles to default">⟳ ALL</span>
+                            <label style="display:flex; align-items:center; gap:3px; font-size:9px; color:#aaa; cursor:pointer;">
+                                <input type="checkbox" id="use-global-settings" ${__.globalSettings.useGlobalStyles ? 'checked' : ''}> Use Global Setting
+                            </label>
+                        </div>
                     </div>
                     <div id="styleItems"></div>
                 </div>
@@ -420,6 +431,20 @@
         // Reset button - preserve sources
         document.getElementById('reset-ui').onclick = handleReset;
 
+        // Libass toggle buttons
+        document.getElementById('libass-off-btn').onclick = () => {
+            if (__.globalSettings.libassMode === false) return;
+            __.globalSettings.libassMode = false;
+            __.saveCache();
+            location.reload();
+        };
+        document.getElementById('libass-on-btn').onclick = () => {
+            if (__.globalSettings.libassMode === true) return;
+            __.globalSettings.libassMode = true;
+            __.saveCache();
+            location.reload();
+        };
+
         document.getElementById('closeSubPopup').onclick = () => popup.style.display = 'none';
         document.getElementById('assFile').onchange = async (e) => { if (typeof __.parseASS === 'function') __.parseASS(await e.target.files[0].text()); };
         document.getElementById('btn-download-sub').onclick = __.downloadCurrentSub;
@@ -437,6 +462,37 @@
                 if (speedSlider) { speedSlider.value = newSpeed; }
                 if (speedVal) { speedVal.value = newSpeed; }
             });
+        }
+
+        // Reset all styles button
+        const resetAllBtn = document.getElementById('reset-all-styles-btn');
+        if (resetAllBtn) {
+            resetAllBtn.onclick = () => {
+                Object.keys(__.styleSettings).forEach(sName => {
+                    const s = __.styleSettings[sName];
+                    const a = s.origAlign || s.align || 2;
+                    const mL = (s.origMarginL !== undefined && s.origMarginL !== null) ? s.origMarginL : (s.marginL || 10);
+                    const mR = (s.origMarginR !== undefined && s.origMarginR !== null) ? s.origMarginR : (s.marginR || 10);
+                    const mV = (s.origMarginV !== undefined && s.origMarginV !== null) ? s.origMarginV : (s.marginV || 10);
+                    switch (a) {
+                        case 1: case 4: case 7: s.posX = mL + 10; break;
+                        case 3: case 6: case 9: s.posX = __.playResX - mR - 10; break;
+                        default: s.posX = __.playResX / 2;
+                    }
+                    switch (a) {
+                        case 7: case 8: case 9: s.posY = mV + 10; break;
+                        case 4: case 5: case 6: s.posY = __.playResY / 2; break;
+                        default: s.posY = __.playResY - mV - 10;
+                    }
+                    s.color1 = s.origColor1 || '#ffffff';
+                    s.color3 = s.origColor3 || '#000000';
+                    s.fontSize = 25;
+                    s.outlineWidth = 2;
+                    s.blur = 2;
+                });
+                __.saveSubToStorage();
+                if (typeof __.renderStyles === 'function') __.renderStyles();
+            };
         }
 
         // Master "Dùng cài đặt chung" checkbox
@@ -627,21 +683,31 @@
 
         let assContent = '[Script Info]\n';
         assContent += 'ScriptType: v4.00+\n';
-        assContent += `PlayResX: ${__.playResX}\n`;
-        assContent += `PlayResY: ${__.playResY}\n\n`;
+        if (__.playResX) assContent += `PlayResX: ${__.playResX}\n`;
+        if (__.playResY) assContent += `PlayResY: ${__.playResY}\n\n`;
 
+        // Preserve original ASS [V4+ Styles] exactly as parsed
         assContent += '[V4+ Styles]\n';
         assContent += 'Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\n';
         Object.keys(__.styleSettings).forEach(name => {
             const s = __.styleSettings[name];
-            const c1Ass = __.hexToAss(s.color1);
-            const c3Ass = __.hexToAss(s.color3);
-            assContent += `Style: ${name},Arial,20,${c1Ass},&H0000FF,${c3Ass},&H000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,10,1\n`;
+            const c1Ass = __.hexToAss(s.origColor1 || s.color1 || '#ffffff');
+            const c3Ass = __.hexToAss(s.origColor3 || s.color3 || '#000000');
+            const fontName = s.fontName || 'Arial';
+            const fontSize = s.origFontSize || s.fontSize || 25;
+            const align = s.origAlign || s.align || 2;
+            const marginL = (s.origMarginL !== undefined && s.origMarginL !== null) ? s.origMarginL : (s.marginL || 10);
+            const marginR = (s.origMarginR !== undefined && s.origMarginR !== null) ? s.origMarginR : (s.marginR || 10);
+            const marginV = (s.origMarginV !== undefined && s.origMarginV !== null) ? s.origMarginV : (s.marginV || 10);
+            const outline = s.origOutlineWidth !== undefined ? s.origOutlineWidth : (s.outlineWidth || 2);
+            const shadow = s.origShadow !== undefined ? s.origShadow : 0;
+            assContent += `Style: ${name},${fontName},${fontSize},${c1Ass},&H0000FF,${c3Ass},&H000000,0,0,0,0,100,100,0,0,1,${outline},${shadow},${align},${marginL},${marginR},${marginV},1\n`;
         });
 
         assContent += '\n[Events]\n';
         assContent += 'Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n';
         subsToDL.forEach((sub, idx) => {
+            // Use shifted times from subsToDL
             const startStr = __.formatTimeAss(sub.start);
             const endStr = __.formatTimeAss(sub.end);
             const styleName = sub.style;

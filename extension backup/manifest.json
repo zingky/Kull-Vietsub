@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "YouTube Aegisub Loader v8.0",
-  "version": "8.0",
+  "name": "YouTube Aegisub Loader v8.1",
+  "version": "8.1",
   "permissions": ["storage", "activeTab", "scripting", "unlimitedStorage"],
   "host_permissions": [
     "https://www.youtube.com/*",
@@ -11,7 +11,7 @@
   "action": { "default_title": "Mở Menu Sub" },
   "content_scripts": [{
     "matches": ["https://www.youtube.com/*"],
-    "js": ["content.js", "js/globals.js", "js/parser.js", "js/engine-css.js", "js/ui.js", "js/main.js"],
+    "js": ["content.js", "js/globals.js", "lib/ass.global.js", "js/parser.js", "js/engine-css.js", "js/engine-libass.js", "js/ui.js", "js/main.js"],
     "run_at": "document_idle"
   }],
   "web_accessible_resources": [{

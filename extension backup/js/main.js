@@ -80,7 +80,10 @@
                 // Save to cache so subsequent auto checks don't re-fetch
                 const id = __.getVideoId();
                 if (id && __.subtitles.length) {
-                    chrome.storage.local.set({ [id]: { subtitles: __.subtitles, playResX: __.playResX, playResY: __.playResY, styleSettings: __.styleSettings } });
+                    chrome.storage.local.set({
+                        [id]: { subtitles: __.subtitles, playResX: __.playResX, playResY: __.playResY, styleSettings: __.styleSettings },
+                        [id + '_raw']: text
+                    });
                 }
                 const status = document.getElementById('auto-sub-status');
                 if (status) { status.className = "status-tag status-ok"; status.innerText = "Loaded ✅"; }
@@ -138,13 +141,15 @@
         __.styleSettings = {};
         const layer = document.getElementById('sub-ultra-layer');
         if (layer) layer.innerHTML = '';
+        // Destroy ASS.js engine instance when switching videos
+        if (typeof __.destroyAssJs === 'function') __.destroyAssJs();
         __.currentVideoId = id;
         __.timeShiftMs = 0;
         const tsInput = document.getElementById('ts-input');
         if (tsInput) tsInput.value = '0';
         const idDisp = document.getElementById('yt-id-display');
         if (idDisp) idDisp.innerText = id;
-        chrome.storage.local.get([id], (result) => {
+        chrome.storage.local.get([id, id + '_raw'], (result) => {
             if (result[id]) {
                 const data = result[id];
                 if (Array.isArray(data.subtitles)) {
@@ -156,6 +161,10 @@
                 __.styleSettings = data.styleSettings;
                 if (typeof __.renderStyles === 'function') __.renderStyles();
                 document.getElementById('auto-sub-status').innerText = "Cached 💾";
+                // If ASS.js mode, send cached subtitle to ASS.js
+                if (__.globalSettings.libassMode && data.subtitles && data.subtitles.length > 0) {
+                    __.loadSubToAssJs(result[id + '_raw'] || '');
+                }
             } else {
                 __.autoFetchSub(id);
             }

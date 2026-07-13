@@ -21,6 +21,7 @@
         closeOnClickOutside: true,
         constrainToVideo: true,
         specialEffect: 'none',
+        libassMode: false,
         effectSpeed: {
             rainbow_outline: 1, rainbow_outline_rgb: 1, rainbow_text: 1, sine_wave: 20,
             shine_sweep: 1, split_color: 1, retro_80s: 1, golden: 1, float_hover: 1,
@@ -155,6 +156,22 @@
         }));
     };
 
+    // ============ SAVE SUBTITLE DATA TO CHROME STORAGE ============
+    __.saveSubToStorage = function () {
+        const id = __.getVideoId();
+        if (id && __.subtitles.length) {
+            chrome.storage.local.set({
+                [id]: {
+                    subtitles: __.subtitles,
+                    playResX: __.playResX,
+                    playResY: __.playResY,
+                    styleSettings: __.styleSettings
+                },
+                [id + '_raw']: __.lastRawAssText || ''
+            });
+        }
+    };
+
     // Aegisub-style outline+blur: 8-direction text-shadow ring
     __.buildShadow = function (ow, bl, oc) {
         if (ow <= 0 && bl <= 0) return 'none';
@@ -187,6 +204,13 @@
         }
         layers.push(`0 0 ${bl}px ${oc}`);
         return layers.join(', ');
+    };
+
+    // Stub for renderStyles - defined by engine-css.js in CSS mode
+    __.renderStyles = __.renderStyles || function () {
+        const container = document.getElementById('styleItems');
+        if (!container) return;
+        container.innerHTML = '<div style="color:#888;font-size:8px;padding:4px;">No CSS styles (libass mode)</div>';
     };
 
     __.getActiveVideoRect = function () {

@@ -5,156 +5,156 @@ PlayResY: 1440
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Default,Arial,20,&HFFFFFF,&H0000FF,&H000000,&H000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,10,1
-Style: kanji,Arial,20,&HFFFFFF,&H0000FF,&H002BFF,&H000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,10,1
-Style: romaji,Arial,20,&HFFFFFF,&H0000FF,&H002BFF,&H000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,10,1
-Style: vietsub,Arial,20,&HFFFFFF,&H0000FF,&H002BFF,&H000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,10,1
-Style: Credit,Arial,20,&H000000,&H0000FF,&HFFFFFF,&H000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,10,1
-Style: engsub,Arial,20,&HFFFFFF,&H0000FF,&H000000,&H000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,10,1
-Style: vietsub - Sao chép,Arial,20,&HFFFFFF,&H0000FF,&H002BFF,&H000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,10,1
-Style: romaji - Sao chép,Arial,20,&HFFFFFF,&H0000FF,&H002BFF,&H000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,10,1
-Style: kanji - Sao chép,Arial,20,&HFFFFFF,&H0000FF,&H002BFF,&H000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,10,1
+Style: Default,VNF-Comic Sans,48,&HFFFFFF,&H0000FF,&H000000,&H000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,20,1
+Style: kanji,VNF-Comic Sans,70,&HFFFFFF,&H0000FF,&H002BFF,&H000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,300,1
+Style: romaji,VNF-Comic Sans,85,&HFFFFFF,&H0000FF,&H002BFF,&H000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,200,1
+Style: vietsub,VNF-Comic Sans,85,&HFFFFFF,&H0000FF,&H002BFF,&H000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,100,1
+Style: Credit,Arima Madurai,60,&H000000,&H0000FF,&HFFFFFF,&H000000,0,0,0,0,100,100,0,0,1,2,0,8,30,30,20,1
+Style: engsub,VNF-Comic Sans,70,&HFFFFFF,&H0000FF,&H000000,&H000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,50,1
+Style: vietsub - Sao chép,VNF-Comic Sans,85,&HFFFFFF,&H0000FF,&H002BFF,&H000000,0,0,0,0,100,100,0,0,1,2,0,8,10,10,100,1
+Style: romaji - Sao chép,VNF-Comic Sans,85,&HFFFFFF,&H0000FF,&H002BFF,&H000000,0,0,0,0,100,100,0,0,1,2,0,8,10,10,195,1
+Style: kanji - Sao chép,VNF-Comic Sans,70,&HFFFFFF,&H0000FF,&H002BFF,&H000000,0,0,0,0,100,100,0,0,1,2,0,8,10,10,300,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-Dialogue: 0,0:00:01.34,0:00:06.23,kanji,,0,0,0,,アナタの言葉一粒 心臓の奥を揺らす
-Dialogue: 0,0:00:10.43,0:00:14.59,kanji,,0,0,0,,ゆずれない思い こぼれる涙
-Dialogue: 0,0:00:14.59,0:00:18.86,kanji,,0,0,0,,孤独には慣れた 筈の眼の前
-Dialogue: 0,0:00:18.86,0:00:23.31,kanji,,0,0,0,,玲瓏(れいろう)な月の 照らす姿は
-Dialogue: 0,0:00:23.31,0:00:27.72,kanji,,0,0,0,,夜風に揺れ咲き 紅く燃ゆ花
-Dialogue: 0,0:00:27.72,0:00:31.76,kanji,,0,0,0,,託していいのでしょうか？
-Dialogue: 0,0:00:31.76,0:00:36.14,kanji,,0,0,0,,信じていいのでしょうか？
-Dialogue: 0,0:00:36.14,0:00:40.53,kanji,,0,0,0,,運命と云う 呼び名纏う 歯車が
-Dialogue: 0,0:00:40.53,0:00:46.85,kanji,,0,0,0,,未来への扉を 開く
-Dialogue: 0,0:00:46.85,0:00:51.67,kanji,,0,0,0,,アナタの言葉一粒 心臓の奥を揺らす
-Dialogue: 0,0:00:51.67,0:00:55.78,kanji,,0,0,0,,甘美で香しい声 包まれて
-Dialogue: 0,0:00:55.78,0:01:00.34,kanji,,0,0,0,,重なる刻 張り詰めた 琴線深く
-Dialogue: 0,0:01:00.34,0:01:02.67,kanji,,0,0,0,,優しく触れて響くは
-Dialogue: 0,0:01:02.67,0:01:07.94,kanji,,0,0,0,,きっと恋心
-Dialogue: 0,0:01:05.06,0:01:07.23,kanji - Sao chép,,0,0,0,,ひふみよ いつむなな
-Dialogue: 0,0:01:07.23,0:01:09.46,kanji - Sao chép,,0,0,0,,やここのと こだまする
-Dialogue: 0,0:01:09.46,0:01:11.68,kanji - Sao chép,,0,0,0,,ひふみよ いつむなな
-Dialogue: 0,0:01:11.68,0:01:14.33,kanji - Sao chép,,0,0,0,,やここのと こだまする
-Dialogue: 0,0:01:17.83,0:01:22.02,kanji,,0,0,0,,安らかな場所も 眠れる時も
-Dialogue: 0,0:01:22.02,0:01:26.36,kanji,,0,0,0,,指先は揺れて 視線戸惑う
-Dialogue: 0,0:01:26.57,0:01:31.09,kanji,,0,0,0,,溺れてゆくように身を委ねたら
-Dialogue: 0,0:01:31.09,0:01:35.27,kanji,,0,0,0,,愛という形 解るのならば
-Dialogue: 0,0:01:35.27,0:01:39.43,kanji,,0,0,0,,魂も捧げましょう
-Dialogue: 0,0:01:39.61,0:01:44.11,kanji,,0,0,0,,雨 祓い 風 塞ぎ
-Dialogue: 0,0:01:44.11,0:01:48.15,kanji,,0,0,0,,優しく包まれる
-Dialogue: 0,0:01:48.42,0:01:57.16,kanji,,0,0,0,,二人だけの世界へと手をとって
-Dialogue: 0,0:02:05.91,0:02:14.56,kanji,,0,0,0,,ふっと落ちてく この雫の意味は そう
-Dialogue: 0,0:02:14.56,0:02:18.68,kanji,,0,0,0,,いつもくれる 深い想い
-Dialogue: 0,0:02:18.68,0:02:23.78,kanji,,0,0,0,,身体から溢れたの
-Dialogue: 0,0:02:25.52,0:02:31.47,kanji,,0,0,0,,アナタの言葉一匙 (日々の)
-Dialogue: 0,0:02:31.47,0:02:36.56,kanji,,0,0,0,,生きてゆく糧にして (今日も)
-Dialogue: 0,0:02:38.23,0:02:43.02,kanji,,0,0,0,,アナタの言葉を浴びて この胸を強く揺らす
-Dialogue: 0,0:02:43.02,0:02:46.99,kanji,,0,0,0,,妖美で意地悪な声 心地良く
-Dialogue: 0,0:02:46.99,0:02:51.46,kanji,,0,0,0,,唇から零れ落ち 琴線の奥
-Dialogue: 0,0:02:51.46,0:02:53.99,kanji,,0,0,0,,眩しく奏で響くは
-Dialogue: 0,0:02:53.99,0:02:59.47,kanji,,0,0,0,,きっと恋心
-Dialogue: 0,0:02:56.51,0:03:00.05,kanji - Sao chép,,0,0,0,,(お願いワタシの此の全て)
-Dialogue: 0,0:03:00.05,0:03:03.82,kanji,,0,0,0,,鳴らして
-Dialogue: 0,0:03:00.87,0:03:04.77,kanji - Sao chép,,0,0,0,,(お願いアナタで染め上げて)
-Dialogue: 0,0:03:04.04,0:03:08.49,kanji,,0,0,0,,永遠まで
-Dialogue: 0,0:03:05.38,0:03:07.66,kanji - Sao chép,,0,0,0,,(ひふみよ いつむなな)
-Dialogue: 0,0:03:07.66,0:03:09.45,kanji - Sao chép,,0,0,0,,(やここのと こだまする)
-Dialogue: 0,0:03:09.45,0:03:11.65,kanji - Sao chép,,0,0,0,,(ひふみよ いつむなな)
-Dialogue: 0,0:03:11.65,0:03:13.85,kanji - Sao chép,,0,0,0,,(やここのと こだまする)
-Dialogue: 0,0:03:13.85,0:03:15.93,kanji - Sao chép,,0,0,0,,(ひふみよ いつむなな)
-Dialogue: 0,0:03:15.93,0:03:18.29,kanji - Sao chép,,0,0,0,,(やここのと こだまする)
-Dialogue: 0,0:03:18.29,0:03:21.29,kanji,,0,0,0,,
-Dialogue: 0,0:00:01.34,0:00:06.23,romaji,,0,0,0,,anata no kotoba hitotsubu shinzou no oku o yurasu
-Dialogue: 0,0:00:10.43,0:00:14.59,romaji,,0,0,0,,yuzurenai omoi koboreru namida
-Dialogue: 0,0:00:14.59,0:00:18.86,romaji,,0,0,0,,kodoku ni wa nareta hazu no me no mae
-Dialogue: 0,0:00:18.86,0:00:23.31,romaji,,0,0,0,,reirou na tsuki no terasu sugata wa
-Dialogue: 0,0:00:23.31,0:00:27.72,romaji,,0,0,0,,yokaze ni yurezaki akaku moyu hana
-Dialogue: 0,0:00:27.72,0:00:31.76,romaji,,0,0,0,,takushite ii no deshou ka?
-Dialogue: 0,0:00:31.76,0:00:36.14,romaji,,0,0,0,,shinjite ii no deshou ka?
-Dialogue: 0,0:00:36.14,0:00:40.53,romaji,,0,0,0,,unmei to iu yobina matou haguruma ga
-Dialogue: 0,0:00:40.53,0:00:46.85,romaji,,0,0,0,,mirai e no tobira o hiraku
-Dialogue: 0,0:00:46.85,0:00:51.67,romaji,,0,0,0,,anata no kotoba hitotsubu shinzou no oku o yurasu
-Dialogue: 0,0:00:51.67,0:00:55.78,romaji,,0,0,0,,kanbi de kaguwashii koe tsutsumarete
-Dialogue: 0,0:00:55.78,0:01:00.34,romaji,,0,0,0,,kasanaru toki haritsumeta kinsen fukaku
-Dialogue: 0,0:01:00.34,0:01:02.67,romaji,,0,0,0,,yasashiku furete hibiku wa
-Dialogue: 0,0:01:02.67,0:01:07.94,romaji,,0,0,0,,kitto koigokoro
-Dialogue: 0,0:01:05.06,0:01:07.23,romaji - Sao chép,,0,0,0,,hifumiyo itsumunana
-Dialogue: 0,0:01:07.23,0:01:09.46,romaji - Sao chép,,0,0,0,,yakokonoto kodama suru
-Dialogue: 0,0:01:09.46,0:01:11.68,romaji - Sao chép,,0,0,0,,hifumiyo itsumunana
-Dialogue: 0,0:01:11.68,0:01:14.33,romaji - Sao chép,,0,0,0,,yakokonoto kodama suru
-Dialogue: 0,0:01:17.83,0:01:22.02,romaji,,0,0,0,,yasuraka na basho mo nemureru toki mo
-Dialogue: 0,0:01:22.02,0:01:26.36,romaji,,0,0,0,,yubisaki wa yurete shisen tomadou
-Dialogue: 0,0:01:26.57,0:01:31.09,romaji,,0,0,0,,oborete yuku you ni mi o yudanetara
-Dialogue: 0,0:01:31.09,0:01:35.27,romaji,,0,0,0,,ai to iu katachi wakaru no naraba
-Dialogue: 0,0:01:35.27,0:01:39.43,romaji,,0,0,0,,tamashii mo sasagemashou
-Dialogue: 0,0:01:39.61,0:01:44.11,romaji,,0,0,0,,ame harai kaze fusagi
-Dialogue: 0,0:01:44.11,0:01:48.15,romaji,,0,0,0,,yasashiku tsutsumareru
-Dialogue: 0,0:01:48.42,0:01:57.16,romaji,,0,0,0,,futari dake no sekai e to te o totte
-Dialogue: 0,0:02:05.91,0:02:14.56,romaji,,0,0,0,,futto ochiteku kono shizuku no imi wa sou
-Dialogue: 0,0:02:14.56,0:02:18.68,romaji,,0,0,0,,itsumo kureru fukai omoi
-Dialogue: 0,0:02:18.68,0:02:23.78,romaji,,0,0,0,,karada kara afureta no
-Dialogue: 0,0:02:25.52,0:02:31.47,romaji,,0,0,0,,anata no kotoba hitosaji (hibi no)
-Dialogue: 0,0:02:31.47,0:02:36.56,romaji,,0,0,0,,ikite yuku kate ni shite (kyou mo)
-Dialogue: 0,0:02:38.23,0:02:43.02,romaji,,0,0,0,,anata no kotoba o abite kono mune o tsuyoku yurasu
-Dialogue: 0,0:02:43.02,0:02:46.99,romaji,,0,0,0,,youbi de ijiwaru na koe kokochiyoku
-Dialogue: 0,0:02:46.99,0:02:51.46,romaji,,0,0,0,,kuchibiru kara koboreochi kinsen no oku
-Dialogue: 0,0:02:51.46,0:02:53.99,romaji,,0,0,0,,mabushiku kanade hibiku wa
-Dialogue: 0,0:02:53.99,0:02:59.47,romaji,,0,0,0,,kitto koigokoro
-Dialogue: 0,0:02:56.51,0:03:00.05,romaji - Sao chép,,0,0,0,,(onegai watashi no kono subete)
-Dialogue: 0,0:03:00.05,0:03:03.82,romaji,,0,0,0,,narashite
-Dialogue: 0,0:03:00.87,0:03:04.77,romaji - Sao chép,,0,0,0,,(onegai anata de someagete)
-Dialogue: 0,0:03:04.04,0:03:08.49,romaji,,0,0,0,,eien made
-Dialogue: 0,0:03:05.38,0:03:07.66,romaji - Sao chép,,0,0,0,,(hifumiyo itsumunana)
-Dialogue: 0,0:03:07.66,0:03:09.45,romaji - Sao chép,,0,0,0,,(yakokonoto kodama suru)
-Dialogue: 0,0:03:09.45,0:03:11.65,romaji - Sao chép,,0,0,0,,(hifumiyo itsumunana)
-Dialogue: 0,0:03:11.65,0:03:13.85,romaji - Sao chép,,0,0,0,,(yakokonoto kodama suru)
-Dialogue: 0,0:03:13.85,0:03:15.93,romaji - Sao chép,,0,0,0,,(hifumiyo itsumunana)
-Dialogue: 0,0:03:15.93,0:03:18.29,romaji - Sao chép,,0,0,0,,(yakokonoto kodama suru)
-Dialogue: 0,0:03:18.29,0:03:21.29,romaji - Sao chép,,0,0,0,,
-Dialogue: 0,0:00:01.34,0:00:06.23,vietsub,,0,0,0,,Từng lời từng câu người nói đều làm lòng em gợn sóng.
-Dialogue: 0,0:00:10.43,0:00:14.59,vietsub,,0,0,0,,Cảm xúc không muốn nhường ai, cùng những giọt lệ.
-Dialogue: 0,0:00:14.59,0:00:18.86,vietsub,,0,0,0,,Rõ ràng đã quen với cô đơn rồi, vậy mà ngay trước mắt em...
-Dialogue: 0,0:00:18.86,0:00:23.31,vietsub,,0,0,0,,Dưới ánh trăng sáng rực rỡ, bóng hình của người...
-Dialogue: 0,0:00:23.31,0:00:27.72,vietsub,,0,0,0,,Như đóa hoa cháy đỏ rực, rung rinh trong gió đêm.
-Dialogue: 0,0:00:27.72,0:00:31.76,vietsub,,0,0,0,,Em trao lòng mình cho người có được không?
-Dialogue: 0,0:00:31.76,0:00:36.14,vietsub,,0,0,0,,Em tin người có được không?
-Dialogue: 0,0:00:36.14,0:00:40.53,vietsub,,0,0,0,,Những bánh răng gọi là định mệnh nối vào nhau,
-Dialogue: 0,0:00:40.53,0:00:46.85,vietsub,,0,0,0,,đang mở ra cánh cửa dẫn đến tương lai.
-Dialogue: 0,0:00:46.85,0:00:51.67,vietsub,,0,0,0,,Từng lời từng câu người nói đều làm lòng em gợn sóng.
-Dialogue: 0,0:00:51.67,0:00:55.78,vietsub,,0,0,0,,Giọng nói ngọt ngào ngát hương ấy ôm trọn lấy em.
-Dialogue: 0,0:00:55.78,0:01:00.34,vietsub,,0,0,0,,Từng phút từng giây bên nhau, dây đàn trong tim càng căng lên.
-Dialogue: 0,0:01:00.34,0:01:02.67,vietsub,,0,0,0,,Thanh âm vang lên khi người khẽ chạm vào...
-Dialogue: 0,0:01:02.67,0:01:07.94,vietsub,,0,0,0,,chắc đó là tình yêu rồi.
-Dialogue: 0,0:01:05.06,0:01:07.23,vietsub - Sao chép,,0,0,0,,Một hai ba bốn, năm sáu bảy.
-Dialogue: 0,0:01:07.23,0:01:09.46,vietsub - Sao chép,,0,0,0,,Tám chín mười... cứ thế vang vọng.
-Dialogue: 0,0:01:09.46,0:01:11.68,vietsub - Sao chép,,0,0,0,,Một hai ba bốn, năm sáu bảy.
-Dialogue: 0,0:01:11.68,0:01:14.33,vietsub - Sao chép,,0,0,0,,Tám chín mười... không ngừng ngân vang.
-Dialogue: 0,0:01:17.83,0:01:22.02,vietsub,,0,0,0,,Dù là nơi bình yên nhất, hay là trong giấc ngủ...
-Dialogue: 0,0:01:22.02,0:01:26.36,vietsub,,0,0,0,,Ngón tay em không ngừng run rẩy, ánh mắt thì rối bời.
-Dialogue: 0,0:01:26.57,0:01:31.09,vietsub,,0,0,0,,Nếu em buông mình mà chìm đắm vào người...
-Dialogue: 0,0:01:31.09,0:01:35.27,vietsub,,0,0,0,,Nếu làm thế mà hiểu được dáng hình tình yêu là gì...
-Dialogue: 0,0:01:35.27,0:01:39.43,vietsub,,0,0,0,,Em xin trao linh hồn này cho người.
-Dialogue: 0,0:01:39.61,0:01:44.11,vietsub,,0,0,0,,Gạt đi mưa to, cản bước gió lớn.
-Dialogue: 0,0:01:44.11,0:01:48.15,vietsub,,0,0,0,,Em được người ôm ấp thật dịu dàng,
-Dialogue: 0,0:01:48.42,0:01:57.16,vietsub,,0,0,0,,Hãy nắm tay nhau, bước đến thế giới chỉ có đôi ta.
-Dialogue: 0,0:02:05.91,0:02:14.56,vietsub,,0,0,0,,Bất chợt rơi xuống, ý nghĩa của giọt nước mắt này, đúng vậy...
-Dialogue: 0,0:02:14.56,0:02:18.68,vietsub,,0,0,0,,Chính là, tình cảm, mà người, dành cho em...
-Dialogue: 0,0:02:18.68,0:02:23.78,vietsub,,0,0,0,,Đã lấp đầy em và trào dâng mất rồi.
-Dialogue: 0,0:02:25.52,0:02:31.47,vietsub,,0,0,0,,Từng lời từng câu từng chữ người nói (mỗi ngày).
-Dialogue: 0,0:02:31.47,0:02:36.56,vietsub,,0,0,0,,Đã trở thành nguồn sống để em bước tiếp (cả hôm nay).
-Dialogue: 0,0:02:38.23,0:02:43.02,vietsub,,0,0,0,,Đắm mình trong những lời người nói, lồng ngực này lại không ngừng gợn sóng.
-Dialogue: 0,0:02:43.02,0:02:46.99,vietsub,,0,0,0,,Giọng nói cuốn hút nhưng có chút xấu tính ấy, lại làm em an lòng.
-Dialogue: 0,0:02:46.99,0:02:51.46,vietsub,,0,0,0,,Những lời trên môi người, chạm đến sâu thẳm lòng em.
-Dialogue: 0,0:02:51.46,0:02:53.99,vietsub,,0,0,0,,Khúc nhạc rực rỡ đang ngân vang này...
-Dialogue: 0,0:02:53.99,0:02:59.47,vietsub,,0,0,0,,chắc hẳn là tình yêu rồi.
-Dialogue: 0,0:02:56.51,0:03:00.05,vietsub - Sao chép,,0,0,0,,(Xin người, hãy đón lấy tất cả những gì thuộc về em...)
-Dialogue: 0,0:03:00.05,0:03:03.82,vietsub,,0,0,0,,Cùng ngân vang nhé.
-Dialogue: 0,0:03:00.87,0:03:04.77,vietsub - Sao chép,,0,0,0,,(Xin người, hãy nhuộm em bằng sắc màu của người...)
-Dialogue: 0,0:03:04.04,0:03:08.49,vietsub,,0,0,0,,Đến mãi về sau.
-Dialogue: 0,0:03:05.38,0:03:07.66,vietsub - Sao chép,,0,0,0,,(Một hai ba bốn, năm sáu bảy).
-Dialogue: 0,0:03:07.66,0:03:09.45,vietsub - Sao chép,,0,0,0,,(Tám chín mười... cứ thế vang vọng).
-Dialogue: 0,0:03:09.45,0:03:11.65,vietsub - Sao chép,,0,0,0,,(Một hai ba bốn, năm sáu bảy).
-Dialogue: 0,0:03:11.65,0:03:13.85,vietsub - Sao chép,,0,0,0,,(Tám chín mười... không ngừng ngân vang).
-Dialogue: 0,0:03:13.85,0:03:15.93,vietsub - Sao chép,,0,0,0,,(Một hai ba bốn, năm sáu bảy).
-Dialogue: 0,0:03:15.93,0:03:18.29,vietsub - Sao chép,,0,0,0,,(Tám chín mười... không ngừng ngân vang).
-Dialogue: 0,0:03:18.29,0:03:21.29,vietsub - Sao chép,,0,0,0,,
+Dialogue: 0,0:00:03.04,0:00:07.93,kanji,,0,0,0,,アナタの言葉一粒 心臓の奥を揺らす
+Dialogue: 0,0:00:12.13,0:00:16.29,kanji,,0,0,0,,ゆずれない思い こぼれる涙
+Dialogue: 0,0:00:16.29,0:00:20.56,kanji,,0,0,0,,孤独には慣れた 筈の眼の前
+Dialogue: 0,0:00:20.56,0:00:25.01,kanji,,0,0,0,,玲瓏(れいろう)な月の 照らす姿は
+Dialogue: 0,0:00:25.01,0:00:29.42,kanji,,0,0,0,,夜風に揺れ咲き 紅く燃ゆ花
+Dialogue: 0,0:00:29.42,0:00:33.46,kanji,,0,0,0,,託していいのでしょうか？
+Dialogue: 0,0:00:33.46,0:00:37.84,kanji,,0,0,0,,信じていいのでしょうか？
+Dialogue: 0,0:00:37.84,0:00:42.23,kanji,,0,0,0,,運命と云う 呼び名纏う 歯車が
+Dialogue: 0,0:00:42.23,0:00:48.55,kanji,,0,0,0,,未来への扉を 開く
+Dialogue: 0,0:00:48.55,0:00:53.37,kanji,,0,0,0,,アナタの言葉一粒 心臓の奥を揺らす
+Dialogue: 0,0:00:53.37,0:00:57.48,kanji,,0,0,0,,甘美で香しい声 包まれて
+Dialogue: 0,0:00:57.48,0:01:02.04,kanji,,0,0,0,,重なる刻 張り詰めた 琴線深く
+Dialogue: 0,0:01:02.04,0:01:04.37,kanji,,0,0,0,,優しく触れて響くは
+Dialogue: 0,0:01:04.37,0:01:09.64,kanji,,0,0,0,,きっと恋心
+Dialogue: 0,0:01:06.76,0:01:08.93,kanji - Sao chép,,0,0,0,,ひふみよ いつむなな
+Dialogue: 0,0:01:08.93,0:01:11.16,kanji - Sao chép,,0,0,0,,やここのと こだまする
+Dialogue: 0,0:01:11.16,0:01:13.38,kanji - Sao chép,,0,0,0,,ひふみよ いつむなな
+Dialogue: 0,0:01:13.38,0:01:16.03,kanji - Sao chép,,0,0,0,,やここのと こだまする
+Dialogue: 0,0:01:19.53,0:01:23.72,kanji,,0,0,0,,安らかな場所も 眠れる時も
+Dialogue: 0,0:01:23.72,0:01:28.06,kanji,,0,0,0,,指先は揺れて 視線戸惑う
+Dialogue: 0,0:01:28.27,0:01:32.79,kanji,,0,0,0,,溺れてゆくように身を委ねたら
+Dialogue: 0,0:01:32.79,0:01:36.97,kanji,,0,0,0,,愛という形 解るのならば
+Dialogue: 0,0:01:36.97,0:01:41.13,kanji,,0,0,0,,魂も捧げましょう
+Dialogue: 0,0:01:41.31,0:01:45.81,kanji,,0,0,0,,雨 祓い 風 塞ぎ
+Dialogue: 0,0:01:45.81,0:01:49.85,kanji,,0,0,0,,優しく包まれる
+Dialogue: 0,0:01:50.12,0:01:58.86,kanji,,0,0,0,,二人だけの世界へと手をとって
+Dialogue: 0,0:02:07.61,0:02:16.26,kanji,,0,0,0,,ふっと落ちてく この雫の意味は そう
+Dialogue: 0,0:02:16.26,0:02:20.38,kanji,,0,0,0,,いつもくれる 深い想い
+Dialogue: 0,0:02:20.38,0:02:25.48,kanji,,0,0,0,,身体から溢れたの
+Dialogue: 0,0:02:27.22,0:02:33.17,kanji,,0,0,0,,アナタの言葉一匙 (日々の)
+Dialogue: 0,0:02:33.17,0:02:38.26,kanji,,0,0,0,,生きてゆく糧にして (今日も)
+Dialogue: 0,0:02:39.93,0:02:44.72,kanji,,0,0,0,,アナタの言葉を浴びて この胸を強く揺らす
+Dialogue: 0,0:02:44.72,0:02:48.69,kanji,,0,0,0,,妖美で意地悪な声 心地良く
+Dialogue: 0,0:02:48.69,0:02:53.16,kanji,,0,0,0,,唇から零れ落ち 琴線の奥
+Dialogue: 0,0:02:53.16,0:02:55.69,kanji,,0,0,0,,眩しく奏で響くは
+Dialogue: 0,0:02:55.69,0:03:01.17,kanji,,0,0,0,,きっと恋心
+Dialogue: 0,0:02:58.21,0:03:01.75,kanji - Sao chép,,0,0,0,,(お願いワタシの此の全て)
+Dialogue: 0,0:03:01.75,0:03:05.52,kanji,,0,0,0,,鳴らして
+Dialogue: 0,0:03:02.57,0:03:06.47,kanji - Sao chép,,0,0,0,,(お願いアナタで染め上げて)
+Dialogue: 0,0:03:05.74,0:03:10.19,kanji,,0,0,0,,永遠まで
+Dialogue: 0,0:03:07.08,0:03:09.36,kanji - Sao chép,,0,0,0,,(ひふみよ いつむなな)
+Dialogue: 0,0:03:09.36,0:03:11.15,kanji - Sao chép,,0,0,0,,(やここのと こだまする)
+Dialogue: 0,0:03:11.15,0:03:13.35,kanji - Sao chép,,0,0,0,,(ひふみよ いつむなな)
+Dialogue: 0,0:03:13.35,0:03:15.55,kanji - Sao chép,,0,0,0,,(やここのと こだまする)
+Dialogue: 0,0:03:15.55,0:03:17.63,kanji - Sao chép,,0,0,0,,(ひふみよ いつむなな)
+Dialogue: 0,0:03:17.63,0:03:19.99,kanji - Sao chép,,0,0,0,,(やここのと こだまする)
+Dialogue: 0,0:03:19.99,0:03:22.99,kanji,,0,0,0,,
+Dialogue: 0,0:00:03.04,0:00:07.93,romaji,,0,0,0,,anata no kotoba hitotsubu shinzou no oku o yurasu
+Dialogue: 0,0:00:12.13,0:00:16.29,romaji,,0,0,0,,yuzurenai omoi koboreru namida
+Dialogue: 0,0:00:16.29,0:00:20.56,romaji,,0,0,0,,kodoku ni wa nareta hazu no me no mae
+Dialogue: 0,0:00:20.56,0:00:25.01,romaji,,0,0,0,,reirou na tsuki no terasu sugata wa
+Dialogue: 0,0:00:25.01,0:00:29.42,romaji,,0,0,0,,yokaze ni yurezaki akaku moyu hana
+Dialogue: 0,0:00:29.42,0:00:33.46,romaji,,0,0,0,,takushite ii no deshou ka?
+Dialogue: 0,0:00:33.46,0:00:37.84,romaji,,0,0,0,,shinjite ii no deshou ka?
+Dialogue: 0,0:00:37.84,0:00:42.23,romaji,,0,0,0,,unmei to iu yobina matou haguruma ga
+Dialogue: 0,0:00:42.23,0:00:48.55,romaji,,0,0,0,,mirai e no tobira o hiraku
+Dialogue: 0,0:00:48.55,0:00:53.37,romaji,,0,0,0,,anata no kotoba hitotsubu shinzou no oku o yurasu
+Dialogue: 0,0:00:53.37,0:00:57.48,romaji,,0,0,0,,kanbi de kaguwashii koe tsutsumarete
+Dialogue: 0,0:00:57.48,0:01:02.04,romaji,,0,0,0,,kasanaru toki haritsumeta kinsen fukaku
+Dialogue: 0,0:01:02.04,0:01:04.37,romaji,,0,0,0,,yasashiku furete hibiku wa
+Dialogue: 0,0:01:04.37,0:01:09.64,romaji,,0,0,0,,kitto koigokoro
+Dialogue: 0,0:01:06.76,0:01:08.93,romaji - Sao chép,,0,0,0,,hifumiyo itsumunana
+Dialogue: 0,0:01:08.93,0:01:11.16,romaji - Sao chép,,0,0,0,,yakokonoto kodama suru
+Dialogue: 0,0:01:11.16,0:01:13.38,romaji - Sao chép,,0,0,0,,hifumiyo itsumunana
+Dialogue: 0,0:01:13.38,0:01:16.03,romaji - Sao chép,,0,0,0,,yakokonoto kodama suru
+Dialogue: 0,0:01:19.53,0:01:23.72,romaji,,0,0,0,,yasuraka na basho mo nemureru toki mo
+Dialogue: 0,0:01:23.72,0:01:28.06,romaji,,0,0,0,,yubisaki wa yurete shisen tomadou
+Dialogue: 0,0:01:28.27,0:01:32.79,romaji,,0,0,0,,oborete yuku you ni mi o yudanetara
+Dialogue: 0,0:01:32.79,0:01:36.97,romaji,,0,0,0,,ai to iu katachi wakaru no naraba
+Dialogue: 0,0:01:36.97,0:01:41.13,romaji,,0,0,0,,tamashii mo sasagemashou
+Dialogue: 0,0:01:41.31,0:01:45.81,romaji,,0,0,0,,ame harai kaze fusagi
+Dialogue: 0,0:01:45.81,0:01:49.85,romaji,,0,0,0,,yasashiku tsutsumareru
+Dialogue: 0,0:01:50.12,0:01:58.86,romaji,,0,0,0,,futari dake no sekai e to te o totte
+Dialogue: 0,0:02:07.61,0:02:16.26,romaji,,0,0,0,,futto ochiteku kono shizuku no imi wa sou
+Dialogue: 0,0:02:16.26,0:02:20.38,romaji,,0,0,0,,itsumo kureru fukai omoi
+Dialogue: 0,0:02:20.38,0:02:25.48,romaji,,0,0,0,,karada kara afureta no
+Dialogue: 0,0:02:27.22,0:02:33.17,romaji,,0,0,0,,anata no kotoba hitosaji (hibi no)
+Dialogue: 0,0:02:33.17,0:02:38.26,romaji,,0,0,0,,ikite yuku kate ni shite (kyou mo)
+Dialogue: 0,0:02:39.93,0:02:44.72,romaji,,0,0,0,,anata no kotoba o abite kono mune o tsuyoku yurasu
+Dialogue: 0,0:02:44.72,0:02:48.69,romaji,,0,0,0,,youbi de ijiwaru na koe kokochiyoku
+Dialogue: 0,0:02:48.69,0:02:53.16,romaji,,0,0,0,,kuchibiru kara koboreochi kinsen no oku
+Dialogue: 0,0:02:53.16,0:02:55.69,romaji,,0,0,0,,mabushiku kanade hibiku wa
+Dialogue: 0,0:02:55.69,0:03:01.17,romaji,,0,0,0,,kitto koigokoro
+Dialogue: 0,0:02:58.21,0:03:01.75,romaji - Sao chép,,0,0,0,,(onegai watashi no kono subete)
+Dialogue: 0,0:03:01.75,0:03:05.52,romaji,,0,0,0,,narashite
+Dialogue: 0,0:03:02.57,0:03:06.47,romaji - Sao chép,,0,0,0,,(onegai anata de someagete)
+Dialogue: 0,0:03:05.74,0:03:10.19,romaji,,0,0,0,,eien made
+Dialogue: 0,0:03:07.08,0:03:09.36,romaji - Sao chép,,0,0,0,,(hifumiyo itsumunana)
+Dialogue: 0,0:03:09.36,0:03:11.15,romaji - Sao chép,,0,0,0,,(yakokonoto kodama suru)
+Dialogue: 0,0:03:11.15,0:03:13.35,romaji - Sao chép,,0,0,0,,(hifumiyo itsumunana)
+Dialogue: 0,0:03:13.35,0:03:15.55,romaji - Sao chép,,0,0,0,,(yakokonoto kodama suru)
+Dialogue: 0,0:03:15.55,0:03:17.63,romaji - Sao chép,,0,0,0,,(hifumiyo itsumunana)
+Dialogue: 0,0:03:17.63,0:03:19.99,romaji - Sao chép,,0,0,0,,(yakokonoto kodama suru)
+Dialogue: 0,0:03:19.99,0:03:22.99,romaji - Sao chép,,0,0,0,,
+Dialogue: 0,0:00:03.04,0:00:07.93,vietsub,,0,0,0,,Từng lời từng câu người nói đều làm lòng em gợn sóng.
+Dialogue: 0,0:00:12.13,0:00:16.29,vietsub,,0,0,0,,Cảm xúc không muốn nhường ai, cùng những giọt lệ.
+Dialogue: 0,0:00:16.29,0:00:20.56,vietsub,,0,0,0,,Rõ ràng đã quen với cô đơn rồi, vậy mà ngay trước mắt em...
+Dialogue: 0,0:00:20.56,0:00:25.01,vietsub,,0,0,0,,Dưới ánh trăng sáng rực rỡ, bóng hình của người...
+Dialogue: 0,0:00:25.01,0:00:29.42,vietsub,,0,0,0,,Như đóa hoa cháy đỏ rực, rung rinh trong gió đêm.
+Dialogue: 0,0:00:29.42,0:00:33.46,vietsub,,0,0,0,,Em trao lòng mình cho người có được không?
+Dialogue: 0,0:00:33.46,0:00:37.84,vietsub,,0,0,0,,Em tin người có được không?
+Dialogue: 0,0:00:37.84,0:00:42.23,vietsub,,0,0,0,,Những bánh răng gọi là định mệnh nối vào nhau,
+Dialogue: 0,0:00:42.23,0:00:48.55,vietsub,,0,0,0,,đang mở ra cánh cửa dẫn đến tương lai.
+Dialogue: 0,0:00:48.55,0:00:53.37,vietsub,,0,0,0,,Từng lời từng câu người nói đều làm lòng em gợn sóng.
+Dialogue: 0,0:00:53.37,0:00:57.48,vietsub,,0,0,0,,Giọng nói ngọt ngào ngát hương ấy ôm trọn lấy em.
+Dialogue: 0,0:00:57.48,0:01:02.04,vietsub,,0,0,0,,Từng phút từng giây bên nhau, dây đàn trong tim càng căng lên.
+Dialogue: 0,0:01:02.04,0:01:04.37,vietsub,,0,0,0,,Thanh âm vang lên khi người khẽ chạm vào...
+Dialogue: 0,0:01:04.37,0:01:09.64,vietsub,,0,0,0,,chắc đó là tình yêu rồi.
+Dialogue: 0,0:01:06.76,0:01:08.93,vietsub - Sao chép,,0,0,0,,Một hai ba bốn, năm sáu bảy.
+Dialogue: 0,0:01:08.93,0:01:11.16,vietsub - Sao chép,,0,0,0,,Tám chín mười... cứ thế vang vọng.
+Dialogue: 0,0:01:11.16,0:01:13.38,vietsub - Sao chép,,0,0,0,,Một hai ba bốn, năm sáu bảy.
+Dialogue: 0,0:01:13.38,0:01:16.03,vietsub - Sao chép,,0,0,0,,Tám chín mười... không ngừng ngân vang.
+Dialogue: 0,0:01:19.53,0:01:23.72,vietsub,,0,0,0,,Dù là nơi bình yên nhất, hay là trong giấc ngủ...
+Dialogue: 0,0:01:23.72,0:01:28.06,vietsub,,0,0,0,,Ngón tay em không ngừng run rẩy, ánh mắt thì rối bời.
+Dialogue: 0,0:01:28.27,0:01:32.79,vietsub,,0,0,0,,Nếu em buông mình mà chìm đắm vào người...
+Dialogue: 0,0:01:32.79,0:01:36.97,vietsub,,0,0,0,,Nếu làm thế mà hiểu được dáng hình tình yêu là gì...
+Dialogue: 0,0:01:36.97,0:01:41.13,vietsub,,0,0,0,,Em xin trao linh hồn này cho người.
+Dialogue: 0,0:01:41.31,0:01:45.81,vietsub,,0,0,0,,Gạt đi mưa to, cản bước gió lớn.
+Dialogue: 0,0:01:45.81,0:01:49.85,vietsub,,0,0,0,,Em được người ôm ấp thật dịu dàng,
+Dialogue: 0,0:01:50.12,0:01:58.86,vietsub,,0,0,0,,Hãy nắm tay nhau, bước đến thế giới chỉ có đôi ta.
+Dialogue: 0,0:02:07.61,0:02:16.26,vietsub,,0,0,0,,Bất chợt rơi xuống, ý nghĩa của giọt nước mắt này, đúng vậy...
+Dialogue: 0,0:02:16.26,0:02:20.38,vietsub,,0,0,0,,Chính là, tình cảm, mà người, dành cho em...
+Dialogue: 0,0:02:20.38,0:02:25.48,vietsub,,0,0,0,,Đã lấp đầy em và trào dâng mất rồi.
+Dialogue: 0,0:02:27.22,0:02:33.17,vietsub,,0,0,0,,Từng lời từng câu từng chữ người nói (mỗi ngày).
+Dialogue: 0,0:02:33.17,0:02:38.26,vietsub,,0,0,0,,Đã trở thành nguồn sống để em bước tiếp (cả hôm nay).
+Dialogue: 0,0:02:39.93,0:02:44.72,vietsub,,0,0,0,,Đắm mình trong những lời người nói, lồng ngực này lại không ngừng gợn sóng.
+Dialogue: 0,0:02:44.72,0:02:48.69,vietsub,,0,0,0,,Giọng nói cuốn hút nhưng có chút xấu tính ấy, lại làm em an lòng.
+Dialogue: 0,0:02:48.69,0:02:53.16,vietsub,,0,0,0,,Những lời trên môi người, chạm đến sâu thẳm lòng em.
+Dialogue: 0,0:02:53.16,0:02:55.69,vietsub,,0,0,0,,Khúc nhạc rực rỡ đang ngân vang này...
+Dialogue: 0,0:02:55.69,0:03:01.17,vietsub,,0,0,0,,chắc hẳn là tình yêu rồi.
+Dialogue: 0,0:02:58.21,0:03:01.75,vietsub - Sao chép,,0,0,0,,(Xin người, hãy đón lấy tất cả những gì thuộc về em...)
+Dialogue: 0,0:03:01.75,0:03:05.52,vietsub,,0,0,0,,Cùng ngân vang nhé.
+Dialogue: 0,0:03:02.57,0:03:06.47,vietsub - Sao chép,,0,0,0,,(Xin người, hãy nhuộm em bằng sắc màu của người...)
+Dialogue: 0,0:03:05.74,0:03:10.19,vietsub,,0,0,0,,Đến mãi về sau.
+Dialogue: 0,0:03:07.08,0:03:09.36,vietsub - Sao chép,,0,0,0,,(Một hai ba bốn, năm sáu bảy).
+Dialogue: 0,0:03:09.36,0:03:11.15,vietsub - Sao chép,,0,0,0,,(Tám chín mười... cứ thế vang vọng).
+Dialogue: 0,0:03:11.15,0:03:13.35,vietsub - Sao chép,,0,0,0,,(Một hai ba bốn, năm sáu bảy).
+Dialogue: 0,0:03:13.35,0:03:15.55,vietsub - Sao chép,,0,0,0,,(Tám chín mười... không ngừng ngân vang).
+Dialogue: 0,0:03:15.55,0:03:17.63,vietsub - Sao chép,,0,0,0,,(Một hai ba bốn, năm sáu bảy).
+Dialogue: 0,0:03:17.63,0:03:19.99,vietsub - Sao chép,,0,0,0,,(Tám chín mười... không ngừng ngân vang).
+Dialogue: 0,0:03:19.99,0:03:22.99,vietsub - Sao chép,,0,0,0,,
